@@ -5,25 +5,71 @@
     {
       "id": 33806,
       "nom": "Panneau CLT (lamellé-croisé), fabriqué en France par Mathis",
-      "lien_inies": "https://www.base-inies.fr/iniesV4/dist/consultation.html?id=33806",
+      "lien_inies": "https://base-inies.fr/infos-produit/33806",
       "dvr": 100,
       "date_export": "2026-10-14",
       "valeurs": {
-        "production": 19.1,
-        "construction": 17.2,
-        "b1": -2.69,
+        "production": -604.0,
+        "construction": 13.8,
+        "b1": 0.0,
         "b2": 0.0,
         "b3": 0.0,
         "b4": 0.0,
         "b5": 0.0,
         "b6": 0.0,
         "b7": 0.0,
-        "utilisation": -2.69,
-        "fin_de_vie": 4.42,
-        "total": 38.0,
-        "module_d": -1.85
+        "utilisation": 0.0,
+        "fin_de_vie": 758.0,
+        "total": 167.0,
+        "module_d": -233.0
       },
-      "acv_dynamique_attendu": 36.722
+      "acv_dynamique_attendu": -286.75
+    },
+    {
+      "id": 38252,
+      "nom": "Balcon d´épaisseur 0.2 m, en béton C30/37 XS1 CEM II/A-L ou LL pour le chantier INIES - SNBPE (Hauts-de-Seine)",
+      "lien_inies": "https://base-inies.fr/infos-produit/38252",
+      "dvr": 100,
+      "date_export": "2026-10-14",
+      "valeurs": {
+        "production": 47.7,
+        "construction": 21.2,
+        "b1": -3.95,
+        "b2": 0.0,
+        "b3": 0.0,
+        "b4": 0.0,
+        "b5": 0.0,
+        "b6": 0.0,
+        "b7": 0.0,
+        "utilisation": -3.95,
+        "fin_de_vie": 5.4,
+        "total": 70.3,
+        "module_d": -2.25
+      },
+      "acv_dynamique_attendu": 69.159
+    },
+    {
+      "id": 46528,
+      "nom": "Bloc de béton de chanvre BIOSYS® BCD épaisseur 20 cm",
+      "lien_inies": "https://base-inies.fr/infos-produit/46528",
+      "dvr": 50,
+      "date_export": "2026-10-14",
+      "valeurs": {
+        "production": -10.2,
+        "construction": 8.56,
+        "b1": -6.11,
+        "b2": 0.0,
+        "b3": 0.0,
+        "b4": 0.0,
+        "b5": 0.0,
+        "b6": 0.0,
+        "b7": 0.0,
+        "utilisation": -6.11,
+        "fin_de_vie": 35.1,
+        "total": 27.3,
+        "module_d": -0.478
+      },
+      "acv_dynamique_attendu": 13.539
     }
   ]
 }
