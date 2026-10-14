@@ -62,9 +62,9 @@ def test_page_vide_sans_erreur():
 
 def test_titre_et_textes_d_introduction():
     page = texte_page(nouvelle_app())
-    assert "Comprendre <span class=\"mot\">RÉELLEMENT</span> l'impact carbone d'un matériau</h1>" in page
-    assert '<div class="sous-titre">ACV dynamique RE2020</div>' in page
-    assert "Cet outil part des chiffres INIES et applique cette méthode dynamique réglementaire RE2020" in page
+    assert "Comprendre l'impact <span class=\"mot\">carbone</span> d'un matériau</h1>" in page
+    assert '<div class="sous-titre">L\'ACV dynamique dans la RE2020</div>' in page
+    assert "Cet outil part des chiffres INIES et applique la méthode dynamique réglementaire RE2020" in page
     assert "Un kilo de CO₂ émis tout de suite pèse plus qu'un kilo émis dans 50 ans" in page
     assert "n'est pas de classer les matériaux" in page and "trajectoire de neutralité climatique de 2050" in page
     assert "Comparer" not in page
@@ -103,7 +103,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert "Version 3.3.0 du 2026-10-14" in page
+    assert "Version 3.3.1 du 2026-10-14" in page
 
 
 # ----------------------------------------------------------------------------
@@ -116,9 +116,9 @@ def test_exemple_affiche_les_deux_resultats_le_graphique_et_les_tableaux():
     page = texte_page(app)
     assert page.count('class="carte"') == 2
     assert RESULTAT_PREMIER in page                      # premier matériau du catalogue
-    assert "a le résultat le plus bas" in page
+    assert "l'écart entre les deux matériaux est de" in page
     assert len(app.get("plotly_chart")) == 1             # un seul graphique
-    assert any("Cette comparaison carbone n'a de sens" in c.value for c in app.caption)
+    assert any("Attention, une comparaison carbone n'a de sens" in c.value for c in app.caption)
     assert page.count('class="tab-etapes') == 2          # un tableau des étapes par matériau
     assert "A4-A5 Édification" in page and "B1-B7 Exploitation" in page
 

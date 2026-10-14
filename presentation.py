@@ -58,7 +58,10 @@ EPAISSEUR_COURBE = 6            # trait épais
 TAILLE_POINT_FINAL = 13
 NB_GRADUATIONS = 8              # nombre approximatif de graduations sur tout l'axe vertical
 MARGE_AXE = 1.12                # l'axe dépasse de 12 % la valeur extrême
-PART_MIN_COTE = 0.35            # chaque côté de zéro occupe au moins 35 % de l'axe (place pour le filigrane)
+PART_MIN_COTE = 0.08            # un côté de zéro sans aucune valeur occupe 8 % de l'axe (zéro ne colle pas au bord)
+SOUS_PAS_ARRONDI = 4            # les bornes de l'axe sont arrondies au quart du pas de graduation
+FILIGRANE_VERTICAL_MIN_PX = 90  # en dessous de cette hauteur libre, le filigrane passe en horizontal
+TAILLE_FILIGRANE_HORIZONTAL = 13
 ECART_MIN_ETIQUETTES = 0.075    # écart minimal entre deux valeurs finales, en part de la hauteur de l'axe
 EPAISSEUR_STATIQUE = 3          # trait du calcul statique (pointillés)
 TAILLE_VALEUR_STATIQUE = 14
@@ -70,6 +73,7 @@ X_AXE = -3                      # position de l'axe vertical (en années)
 X_FIN_AXE = 56                  # fin de l'axe horizontal (en années)
 MARGES = dict(l=70, r=95, b=70)            # la marge du haut dépend de la taille de la légende
 MARGE_HAUT_MIN = 40             # pixels au-dessus de la légende
+ESPACE_LEGENDE_PX = 28          # pixels entre le haut du tracé et le bas de la légende
 TEXTE_EMISSIONS = "ÉMISSIONS"
 TEXTE_SEQUESTRATION = "SÉQUESTRATION"
 UNITE = "kg CO₂ eq."
@@ -150,19 +154,23 @@ def pas_rond(minimum: float) -> float:
 def echelle_y(valeur_min: float, valeur_max: float) -> tuple:
     """Échelle verticale adaptée aux courbes : renvoie (bas, haut, pas), avec bas <= 0 <= haut.
 
-    Zéro est toujours une graduation, les graduations sont rondes (1, 2 ou 5 × 10^k), et chaque côté
-    de zéro garde au moins PART_MIN_COTE de la hauteur pour y loger les mots ÉMISSIONS / SÉQUESTRATION.
+    Les bornes suivent les valeurs réellement tracées (plus MARGE_AXE), sans gonfler un côté pour
+    équilibrer l'autre. Zéro est toujours une graduation et les graduations sont rondes (1, 2 ou
+    5 × 10^k) ; les bornes, elles, sont arrondies au quart du pas pour rester proches des données.
+    Un côté sans aucune valeur garde PART_MIN_COTE de la hauteur, pour que zéro ne colle pas au bord.
     """
     haut = max(valeur_max, 0.0) * MARGE_AXE
     bas = max(-valeur_min, 0.0) * MARGE_AXE
     if haut == 0 and bas == 0:
         haut = 1.0
-    if bas < PART_MIN_COTE * (haut + bas):          # trop peu de place sous zéro : on en réserve
-        bas = PART_MIN_COTE / (1 - PART_MIN_COTE) * haut
-    if haut < PART_MIN_COTE * (haut + bas):         # trop peu de place au-dessus de zéro
-        haut = PART_MIN_COTE / (1 - PART_MIN_COTE) * bas
+    plancher = PART_MIN_COTE / (1 - PART_MIN_COTE)
+    if haut == 0:                                                # aucune valeur positive : un petit côté suffit
+        haut = plancher * bas
+    if bas == 0:                                                 # aucune valeur négative
+        bas = plancher * haut
     pas = pas_rond((haut + bas) / NB_GRADUATIONS)
-    return -math.ceil(bas / pas) * pas, math.ceil(haut / pas) * pas, pas
+    sous_pas = pas / SOUS_PAS_ARRONDI
+    return -math.ceil(bas / sous_pas - 1e-9) * sous_pas, math.ceil(haut / sous_pas - 1e-9) * sous_pas, pas
 
 
 def format_graduations(pas: float) -> str:
@@ -252,19 +260,25 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
                      arrowsize=1.3, arrowwidth=3.5, arrowcolor=theme["axes"])
     figure.add_annotation(x=X_AXE, y=haut, ax=X_AXE, ay=bas, **flechette)            # axe vertical
     figure.add_annotation(x=X_FIN_AXE, y=bas, ax=X_AXE, ay=bas, **flechette)         # axe horizontal
-    marge_haute = MARGE_HAUT_MIN + HAUTEUR_LIGNE_LEGENDE * len(courbes)               # une ligne de légende par courbe
+    marge_haute = MARGE_HAUT_MIN + ESPACE_LEGENDE_PX + HAUTEUR_LIGNE_LEGENDE * len(courbes)               # une ligne de légende par courbe
     pixels_par_unite = HAUTEUR_ZONE_TRACE / hauteur_axe
-    plus_petit_cote = min(haut, -bas) * pixels_par_unite                              # côté le moins haut, en pixels
-    taille_filigrane = min(TAILLE_FILIGRANE_MAX, int(plus_petit_cote / LONGUEUR_FILIGRANE_EM))
-    for texte, y in ((TEXTE_EMISSIONS, haut / 2), (TEXTE_SEQUESTRATION, bas / 2)):
-        figure.add_annotation(x=2.4, y=y, text=f"<b>{texte}</b>", textangle=-90, showarrow=False,
-                              font=dict(size=taille_filigrane, color=theme["filigrane"]))
+    # Filigrane : vertical s'il y a la place (côté assez haut), sinon petit et horizontal contre la ligne de zéro.
+    hauteur_cotes = {TEXTE_EMISSIONS: haut * pixels_par_unite, TEXTE_SEQUESTRATION: -bas * pixels_par_unite}
+    verticaux = [px for px in (abs(v) for v in hauteur_cotes.values()) if px >= FILIGRANE_VERTICAL_MIN_PX]
+    taille_vertical = min(TAILLE_FILIGRANE_MAX, int(min(verticaux, default=0) / LONGUEUR_FILIGRANE_EM))
+    for texte, y, sens in ((TEXTE_EMISSIONS, haut / 2, 1), (TEXTE_SEQUESTRATION, bas / 2, -1)):
+        if abs(hauteur_cotes[texte]) >= FILIGRANE_VERTICAL_MIN_PX:
+            reglage = dict(y=y, textangle=-90, font=dict(size=taille_vertical, color=theme["filigrane"]))
+        else:                                                    # horizontal, juste au-dessus ou au-dessous de zéro
+            reglage = dict(y=0, textangle=0, xanchor="left", yanchor="bottom" if sens > 0 else "top",
+                           yshift=4 * sens, font=dict(size=TAILLE_FILIGRANE_HORIZONTAL, color=theme["filigrane"]))
+        figure.add_annotation(x=2.4, text=f"<b>{texte}</b>", showarrow=False, **reglage)
 
     # --- mise en page ---------------------------------------------------------------
     figure.update_layout(
         height=HAUTEUR_ZONE_TRACE + marge_haute + MARGES["b"], margin=dict(MARGES, t=marge_haute), hovermode="closest", separators=", ",
         paper_bgcolor=theme["fond_boite"], plot_bgcolor=theme["fond_boite"], font=dict(color=theme["texte"], size=13),
-        legend=dict(orientation="v", x=0, y=1, yanchor="bottom", bgcolor="rgba(255,255,255,0)", font=dict(size=13),
+        legend=dict(orientation="v", x=0, y=1 + ESPACE_LEGENDE_PX / HAUTEUR_ZONE_TRACE, yanchor="bottom", bgcolor="rgba(255,255,255,0)", font=dict(size=13),
                     yref="paper"),
         xaxis=dict(range=[X_AXE, X_FIN_AXE], tickvals=list(range(0, acv.PERIODE_ETUDE + 1, 10)), title="années",
                    showgrid=False, zeroline=False, showline=False),

@@ -16,6 +16,7 @@ import pytest
 RACINE = Path(__file__).resolve().parent.parent
 TEXTE_A = "1.91e+1\t1.72e+1\t-2.69e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t-2.69e+0\t4.42e+0\t3.80e+1\t-1.85e+0"
 TEXTE_B = "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"
+TEXTE_CLT = "-6.04e+2\t1.38e+1\t0\t0\t0\t0\t0\t0\t0\t0\t7.58e+2\t1.67e+2\t-2.33e+2"
 ACV_A_ATTENDUE = 36.72175        # contrôlé avec l'Excel (arrondi : 36,722)
 
 sys.path.insert(0, str(RACINE))
@@ -48,22 +49,31 @@ def test_fr_3_chiffres_comme_inies(valeur, attendu):
     assert pres.fr_3_chiffres(valeur) == attendu
 
 
-def test_echelle_y_s_adapte_aux_courbes():
-    bas, haut, pas = pres.echelle_y(0.0, 36.7)                 # que du positif : peu de place sous zéro
-    assert haut >= 36.7 * pres.MARGE_AXE and bas < 0 and -bas < haut
-    assert -bas >= pres.PART_MIN_COTE * (haut - bas) - 1e-9    # mais assez pour le filigrane
-    bas, haut, pas = pres.echelle_y(-286.75, 12.0)             # surtout négatif : l'échelle suit
-    assert -bas >= 286.75 * pres.MARGE_AXE and haut < -bas
+def test_echelle_y_suit_le_maximum_reellement_trace():
+    """Le haut de l'axe se cale sur le maximum tracé : un grand côté négatif ne gonfle plus le côté positif."""
+    bas, haut, pas = pres.echelle_y(-590.2, 20.7)              # exemple CLT + fiche B, courbes dynamiques
+    assert haut == 25 and bas == -675 and pas == 100
+    bas, haut, pas = pres.echelle_y(-591.0, 89.3)              # avec les courbes statiques (maximum 89,3)
+    assert 89.3 * pres.MARGE_AXE <= haut <= 89.3 * pres.MARGE_AXE + pas / pres.SOUS_PAS_ARRONDI
+    assert haut < 150                                          # et non plus 400
+    bas, haut, pas = pres.echelle_y(0.0, 36.7)                 # que du positif : un petit côté négatif suffit
+    assert haut >= 36.7 * pres.MARGE_AXE and 0 < -bas <= pres.PART_MIN_COTE * (haut - bas) + pas / pres.SOUS_PAS_ARRONDI
+    assert pres.echelle_y(-286.75, 12.0)[0] <= -286.75 * pres.MARGE_AXE
     assert pres.echelle_y(0, 0)[1] > 0                         # aucune donnée : échelle valide
 
 
-@pytest.mark.parametrize("minimum, maximum", [(0, 0.3), (0, 3), (-5, 36.7), (-286.75, 99), (0, 540), (-12345, 40)])
-def test_echelle_y_graduations_rondes_et_zero_gradue(minimum, maximum):
+@pytest.mark.parametrize("minimum, maximum", [(0, 0.3), (0, 3), (-5, 36.7), (-286.75, 99), (0, 540), (-12345, 40), (-590.2, 20.7)])
+def test_echelle_y_graduations_rondes_bornes_au_quart_de_pas(minimum, maximum):
     bas, haut, pas = pres.echelle_y(minimum, maximum)
     assert bas <= minimum * pres.MARGE_AXE + 1e-9 and haut >= maximum * pres.MARGE_AXE - 1e-9   # tout tient
+    assert bas < 0 < haut                                                 # zéro visible
     mantisse = pas / 10 ** math.floor(math.log10(pas))
     assert min(abs(mantisse - m) for m in (1, 2, 5)) < 1e-9, pas          # pas rond : 1, 2 ou 5 × 10^k
-    assert abs(haut / pas - round(haut / pas)) < 1e-9 and abs(bas / pas - round(bas / pas)) < 1e-9  # zéro est une graduation
+    sous_pas = pas / pres.SOUS_PAS_ARRONDI
+    for borne in (bas, haut):                                             # bornes au quart de pas, au plus près des données
+        assert abs(borne / sous_pas - round(borne / sous_pas)) < 1e-6
+    if maximum > 0:                                                       # haut au plus près du maximum tracé
+        assert haut - maximum * pres.MARGE_AXE < sous_pas + 1e-9
     assert 3 <= (haut - bas) / pas <= 14                                  # ni trop ni trop peu de graduations
 
 
@@ -149,6 +159,25 @@ def test_echelle_qui_suit_les_donnees_affichees():
     assert avec[1] >= sans[1]                                              # le statique (plus haut) élargit l'échelle
     petit = pres.figure_cumul([serie(1, "B", TEXTE_B, 50)]).layout.yaxis.range
     assert petit[1] < sans[1]                                              # une courbe plus basse : échelle resserrée
+
+
+def test_filigrane_vertical_s_il_y_a_la_place_sinon_horizontal():
+    # CLT + fiche B : le côté positif est mince (25 sur 700) -> ÉMISSIONS horizontal, SÉQUESTRATION vertical
+    figure = pres.figure_cumul([serie(0, "A", TEXTE_CLT, 100), serie(1, "B", TEXTE_B, 50)])
+    emissions = next(a for a in figure.layout.annotations if a.text == f"<b>{pres.TEXTE_EMISSIONS}</b>")
+    sequestration = next(a for a in figure.layout.annotations if a.text == f"<b>{pres.TEXTE_SEQUESTRATION}</b>")
+    assert emissions.textangle == 0 and emissions.yanchor == "bottom" and emissions.y == 0
+    assert sequestration.textangle == -90
+    # courbe équilibrée (de −50 à +50) : les deux mots sont verticaux
+    equilibree = {"indice": 0, "nom": "E", "annees": list(range(51)), "cumul": [v - 50.0 for v in range(0, 101, 2)],
+                  "cumul_statique": [0.0] * 51}
+    figure = pres.figure_cumul([equilibree])
+    mots = (f"<b>{pres.TEXTE_EMISSIONS}</b>", f"<b>{pres.TEXTE_SEQUESTRATION}</b>")
+    assert {a.textangle for a in figure.layout.annotations if a.text in mots} == {-90}
+    # courbe uniquement positive : SÉQUESTRATION n'a pas la place, il passe en horizontal sous zéro
+    positive = pres.figure_cumul([serie(0, "A", TEXTE_A, 100)])
+    seq = next(a for a in positive.layout.annotations if a.text == mots[1])
+    assert seq.textangle == 0 and seq.yanchor == "top"
 
 
 def test_la_legende_a_toujours_la_place_de_s_afficher():
