@@ -133,3 +133,17 @@ def test_version_historique_et_changelog_coherents():
     changelog = " ".join(FICHIER_CHANGELOG.read_text(encoding="utf-8").split())   # espaces normalisés
     for version, date, description in acv.HISTORIQUE_VERSIONS:
         assert f"## {version} — {date} {' '.join(description.split())}" in changelog, version
+
+
+# ----------------------------------------------------------------------------
+# Courbe statique cumulée (illustration : la phase intermédiaire est répartie à parts égales)
+# ----------------------------------------------------------------------------
+@pytest.mark.parametrize("dvr", [1, 20, 50, 100])
+def test_cumul_statique_part_et_finit_aux_bonnes_valeurs(dvr):
+    r = acv.calculer_depuis_inies("19.1 17.2 -2.69 0 0 0 0 0 0 -2.69 4.42 38.0 -1.85", dvr)
+    cumul = r.cumul_statique()
+    assert len(cumul) == acv.PERIODE_ETUDE + 1
+    assert cumul[0] == pytest.approx(r.statique_t0)
+    assert cumul[-1] == pytest.approx(r.statique_total)
+    pas = [b - a for a, b in zip(cumul[1:-1], cumul[2:-1])]
+    assert max(pas) - min(pas) < 1e-9                       # répartition uniforme sur les années 1 à 49

@@ -1,8 +1,8 @@
-# ACV dynamique RE2020 — comparer deux matériaux (norme +A2)
+# Comprendre RÉELLEMENT l'impact carbone d'un matériau — ACV dynamique RE2020 (norme +A2)
 
 Application Streamlit : on colle la ligne « Réchauffement climatique » d'une fiche INIES (norme +A2),
 on indique la durée de vie de référence (DVR), et l'outil donne l'**ACV dynamique RE2020** en grand,
-à côté du total affiché dans INIES en petit. Deux matériaux peuvent être comparés.
+à côté du total affiché dans INIES en petit. Deux matériaux peuvent faire l'objet d'une comparaison carbone.
 
 La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 (onglets « Interface +A2 », « Calcul +A2 », « Art. 11 »), licence GNU GPL v3.
@@ -14,6 +14,7 @@ La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 | `acv_inies_a2.py` | **Module de calcul autonome** (bibliothèque standard seule). À copier tel quel dans un autre programme. |
 | `app.py` | Interface Streamlit (aucun calcul ici). |
 | `presentation.py` | Mise en forme : palette, graphique, tableau des étapes INIES, styles (sans Streamlit). |
+| `export.py` | Fichiers CSV téléchargeables (résumé, année par année), sans Streamlit. |
 | `catalogue.py` | Lecture / contrôle de `materiaux.json` et fabrication du bloc d'un nouveau matériau. |
 | `materiaux.json` | **Catalogue des matériaux enregistrés** (valeurs au format décimal standard, date d'export). |
 | `.streamlit/config.toml` | Thème (couleur principale) de l'application. |

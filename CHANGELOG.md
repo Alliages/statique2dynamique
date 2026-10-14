@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 3.3.0 — 2026-10-14
+Nouveau titre et textes pédagogiques (« comparaison carbone », StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées.
+
 ## 3.2.0 — 2026-10-14
 Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanches, matériaux en Pacific Cyan et Cotton Rose (chiffres du matériau B légèrement foncés pour rester lisibles), filigrane ÉMISSIONS / SÉQUESTRATION en gris clair. Thème clair unique.
 
@@ -11,7 +14,7 @@ Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanc
 Graphique resserré (traits épais, axes fléchés, filigrane émissions / séquestration, valeur finale), tableau des étapes INIES, catalogue de matériaux (materiaux.json avec date d'export), palette de couleurs et nouveau titre.
 
 ## 3.0.0 — 2026-10-13
-Version web (Streamlit) : norme +A2 uniquement, comparaison de deux matériaux,
+Version web (Streamlit) : norme +A2 uniquement, comparaison carbone de deux matériaux,
 module de calcul autonome et testé contre l'Excel.
 
 ## Excel V2 — 2023-05-15

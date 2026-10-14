@@ -25,7 +25,8 @@ import presentation as pres  # noqa: E402
 
 def serie(indice: int, nom: str, texte: str, dvr: int) -> dict:
     r = acv.calculer_depuis_inies(texte, dvr)
-    return {"indice": indice, "nom": nom, "annees": list(r.annees), "cumul": r.cumul_dynamique()}
+    return {"indice": indice, "nom": nom, "annees": list(r.annees), "cumul": r.cumul_dynamique(),
+            "cumul_statique": r.cumul_statique()}
 
 
 # ----------------------------------------------------------------------------
@@ -47,20 +48,40 @@ def test_fr_3_chiffres_comme_inies(valeur, attendu):
     assert pres.fr_3_chiffres(valeur) == attendu
 
 
-def test_limite_axe_symetrique_et_graduations_rondes():
-    assert pres.limite_axe(36.7) == 50 and pres.limite_axe(0) == 5
-    assert pres.limite_axe(286.75) == 500 and pres.limite_axe(14.0) == 25
-    for valeur in (0.3, 3, 36.7, 99, 540, 12345):
-        limite = pres.limite_axe(valeur)
-        assert limite >= valeur * pres.MARGE_AXE - 1e-9                   # la courbe tient dans l'axe
-        pas = limite / pres.NB_GRADUATIONS
-        mantisse = pas / 10 ** math.floor(math.log10(pas))
-        assert min(abs(mantisse - m) for m in (1, 2, 5)) < 1e-9, (valeur, pas)   # graduations rondes : 1, 2 ou 5 × 10^k
+def test_echelle_y_s_adapte_aux_courbes():
+    bas, haut, pas = pres.echelle_y(0.0, 36.7)                 # que du positif : peu de place sous zéro
+    assert haut >= 36.7 * pres.MARGE_AXE and bas < 0 and -bas < haut
+    assert -bas >= pres.PART_MIN_COTE * (haut - bas) - 1e-9    # mais assez pour le filigrane
+    bas, haut, pas = pres.echelle_y(-286.75, 12.0)             # surtout négatif : l'échelle suit
+    assert -bas >= 286.75 * pres.MARGE_AXE and haut < -bas
+    assert pres.echelle_y(0, 0)[1] > 0                         # aucune donnée : échelle valide
+
+
+@pytest.mark.parametrize("minimum, maximum", [(0, 0.3), (0, 3), (-5, 36.7), (-286.75, 99), (0, 540), (-12345, 40)])
+def test_echelle_y_graduations_rondes_et_zero_gradue(minimum, maximum):
+    bas, haut, pas = pres.echelle_y(minimum, maximum)
+    assert bas <= minimum * pres.MARGE_AXE + 1e-9 and haut >= maximum * pres.MARGE_AXE - 1e-9   # tout tient
+    mantisse = pas / 10 ** math.floor(math.log10(pas))
+    assert min(abs(mantisse - m) for m in (1, 2, 5)) < 1e-9, pas          # pas rond : 1, 2 ou 5 × 10^k
+    assert abs(haut / pas - round(haut / pas)) < 1e-9 and abs(bas / pas - round(bas / pas)) < 1e-9  # zéro est une graduation
+    assert 3 <= (haut - bas) / pas <= 14                                  # ni trop ni trop peu de graduations
 
 
 def test_format_graduations():
-    assert pres.format_graduations(50) == ",.0f"
+    assert pres.format_graduations(10) == ",.0f"
     assert pres.format_graduations(0.5) == ",.1f"
+
+
+def test_positions_etiquettes():
+    assert pres.positions_etiquettes([10.0, 50.0], 5) == [10.0, 50.0]              # loin : inchangées
+    deux = pres.positions_etiquettes([20.0, 20.5], 5)                              # proches : écartées, ordre conservé
+    assert deux[1] - deux[0] == pytest.approx(5) and sum(deux) / 2 == pytest.approx(20.25)
+    trois = pres.positions_etiquettes([10.0, 12.0, 14.0], 5)                       # groupe étalé
+    assert [round(b - a, 6) for a, b in zip(trois, trois[1:])] == [5, 5]
+    chaine = pres.positions_etiquettes([30.0, 20.0, 24.0, 21.0], 5)                # ordre d'entrée quelconque
+    tries = sorted(chaine)
+    assert all(b - a >= 5 - 1e-9 for a, b in zip(tries, tries[1:]))
+    assert pres.positions_etiquettes([], 5) == []
 
 
 def test_nom_court():
@@ -99,9 +120,9 @@ def test_graphique_proposition_1():
     fleches = [a for a in figure.layout.annotations if a.showarrow]
     assert len(fleches) == 2                                                # deux axes fléchés
 
-    limite = figure.layout.yaxis.range[1]
-    assert figure.layout.yaxis.range[0] == -limite                          # échelle symétrique autour de zéro
-    assert all(abs(v) <= limite for s in series for v in s["cumul"])
+    bas, haut = figure.layout.yaxis.range
+    assert bas < 0 < haut                                                   # zéro toujours visible
+    assert all(bas <= v <= haut for s in series for v in s["cumul"])        # les courbes tiennent dans l'axe
 
 
 def test_valeur_finale_du_clt_est_le_resultat_du_calcul():
@@ -116,8 +137,42 @@ def test_valeurs_finales_proches_sont_ecartees():
     a = serie(0, "A", TEXTE_A, 100)
     b = dict(serie(1, "B", TEXTE_A, 100))      # même courbe : étiquettes superposées sans correction
     figure = pres.figure_cumul([a, b])
-    decalages = sorted(an.yshift for an in figure.layout.annotations if an.text == "<b>36,7</b>")
-    assert decalages == [-13, 13]
+    hauteurs = sorted(an.y for an in figure.layout.annotations if an.text == "<b>36,7</b>")
+    bas, haut = figure.layout.yaxis.range
+    assert hauteurs[1] - hauteurs[0] == pytest.approx(pres.ECART_MIN_ETIQUETTES * (haut - bas))
+
+
+def test_echelle_qui_suit_les_donnees_affichees():
+    a = serie(0, "A", TEXTE_A, 100)
+    sans = pres.figure_cumul([a]).layout.yaxis.range
+    avec = pres.figure_cumul([a], avec_statique=True).layout.yaxis.range
+    assert avec[1] >= sans[1]                                              # le statique (plus haut) élargit l'échelle
+    petit = pres.figure_cumul([serie(1, "B", TEXTE_B, 50)]).layout.yaxis.range
+    assert petit[1] < sans[1]                                              # une courbe plus basse : échelle resserrée
+
+
+def test_la_legende_a_toujours_la_place_de_s_afficher():
+    series = [serie(0, "A", TEXTE_A, 100), serie(1, "B", TEXTE_B, 50)]
+    deux = pres.figure_cumul(series).layout
+    quatre = pres.figure_cumul(series, avec_statique=True).layout
+    assert quatre.margin.t - deux.margin.t == 2 * pres.HAUTEUR_LIGNE_LEGENDE      # une ligne de légende par courbe
+    assert quatre.height - deux.height == 2 * pres.HAUTEUR_LIGNE_LEGENDE          # la zone des courbes garde sa hauteur
+    assert deux.height - deux.margin.t - deux.margin.b == pres.HAUTEUR_ZONE_TRACE
+
+
+def test_courbes_statiques_en_option():
+    series = [serie(0, "A", TEXTE_A, 100), serie(1, "B", TEXTE_B, 50)]
+    sans = pres.figure_cumul(series)
+    avec = pres.figure_cumul(series, avec_statique=True)
+    assert len([t for t in sans.data if t.mode == "lines"]) == 2
+    traits = [t for t in avec.data if t.mode == "lines"]
+    assert len(traits) == 4
+    statiques = [t for t in traits if t.line.dash == "dot"]
+    assert len(statiques) == 2 and all(t.name.endswith("— statique") for t in statiques)
+    assert all(t.line.width == pres.EPAISSEUR_STATIQUE for t in statiques)
+    textes = [a.text for a in avec.layout.annotations]
+    for s in series:                                                       # valeur finale statique affichée
+        assert f"<b>{pres.fr(s['cumul_statique'][-1])}</b>" in textes
 
 
 def test_graphique_a_une_seule_courbe_et_vide_ne_plante_pas():
@@ -162,7 +217,7 @@ def test_css_sans_marqueur_oublie_et_avec_la_palette():
         assert couleur in feuille
     assert pres.degrade_fond() in feuille and "linear-gradient(135deg" in feuille    # fond en dégradé diagonal
     assert f"max-width: {pres.LARGEUR_MAX_GRAPHIQUE}px" in feuille    # tableau des étapes aligné sur le graphique
-    assert len(pres.COLONNES_GRAPHIQUE) == 3                          # graphique étroit : colonne centrale
+    assert ".st-key-graphique" in feuille and "width: 100%" in feuille   # graphique plafonné mais pleine largeur sur petit écran
     assert "background: #ffffff !important" in feuille                # boîtes blanches
 
 

@@ -1,5 +1,5 @@
 """
-app.py — Comparer RÉELLEMENT deux matériaux : ACV dynamique RE2020 (norme +A2) à partir de la base INIES.
+app.py — Comprendre RÉELLEMENT l'impact carbone d'un matériau : ACV dynamique RE2020 (norme +A2) à partir de la base INIES.
 
 Lancer en local :   streamlit run app.py
 
@@ -17,12 +17,13 @@ import streamlit as st
 
 import acv_inies_a2 as acv
 import catalogue as cat
+import export
 import presentation as pres
 
 # =============================================================================
 # VARIABLES (tout ce qui se règle est regroupé ici)
 # =============================================================================
-TITRE_PAGE = "Comparer RÉELLEMENT deux matériaux — ACV dynamique RE2020"
+TITRE_PAGE = "Comprendre RÉELLEMENT l'impact carbone d'un matériau — ACV dynamique RE2020"
 ICONE_PAGE = "🏗️"
 UNITE = pres.UNITE
 
@@ -37,6 +38,7 @@ DVR_PAR_DEFAUT = 50          # ans
 HAUTEUR_ZONE_COLLAGE = 110   # pixels
 FUSEAU_HORAIRE = "Europe/Paris"    # pour dater un nouveau matériau
 CHOIX_VIDE = "— choisir —"
+NOM_IMAGE_GRAPHIQUE = "acv_dynamique_re2020"   # nom du fichier image (icône appareil photo du graphique)
 
 # Exemple chargé par le bouton « Essayer avec un exemple » : A vient du catalogue, B est fictif.
 EXEMPLE_B = {
@@ -45,12 +47,15 @@ EXEMPLE_B = {
 PLACEHOLDER_COLLAGE = "Collez ici la ligne « Réchauffement climatique » copiée depuis INIES"
 
 TEXTE_INTRO = """
-Cet outil compare l'impact carbone de **deux matériaux** avec la méthode **dynamique** de la RE2020.
-Il part des chiffres affichés dans la base INIES et les transforme à votre place.
+Cet outil part des chiffres INIES et applique cette méthode dynamique réglementaire RE2020 de l'ACV dynamique à votre place. \
+Une lecture pédagogique, qui rappelle aussi qu'évaluer un matériau ne se résume jamais au seul carbone.
 
-**Pourquoi « dynamique » ?** Un kilo de CO₂ émis tout de suite pèse plus qu'un kilo émis dans 40 ans.
-La RE2020 applique donc à chaque année un coefficient qui descend de 1 (année 0) à 0,578 (année 50).
+**Pourquoi « dynamique » ?** Un kilo de CO₂ émis tout de suite pèse plus qu'un kilo émis dans 50 ans. \
+La RE2020 applique donc à chaque année un coefficient qui descend de 1 (année 0) à 0,578 (année 50). \
 Le résultat diffère ainsi du total affiché dans INIES, qui additionne tout sans pondération.
+
+L'objectif de la RE2020 (et de cet outil) n'est pas de classer les matériaux, mais d'inciter à concevoir des bâtiments \
+sobres en carbone, en cohérence avec la trajectoire de neutralité climatique de 2050.
 """
 
 TEXTE_ETAPES = f"""
@@ -67,15 +72,17 @@ TEXTE_LECTURE = f"""
 - **Le grand chiffre** est l'ACV dynamique RE2020 : les émissions sur 50 ans, chaque année pondérée par son
   coefficient, **module D inclus**, en {UNITE} pour l'unité fonctionnelle de la fiche.
 - **Le petit chiffre** est le total affiché dans INIES (sans pondération, module D à part), pour repère.
-- **Le graphique** montre le cumul année après année. Au-dessus de zéro, le matériau a émis ; en dessous, il a
+- **Le graphique** montre le cumul année après année (en trait plein, le calcul dynamique ; en pointillés, si vous
+  cochez la case, le calcul statique E+C- sans pondération, réparti à parts égales sur les années d'utilisation). Au-dessus de zéro, le matériau a émis ; en dessous, il a
   séquestré. Le chiffre au bout de chaque courbe est le résultat final.
 - **Le tableau sous le graphique** reprend les chiffres INIES étape par étape, avant toute pondération.
-- **Plus le chiffre est bas, mieux c'est.** Un résultat négatif signifie que, sur la période, le matériau compense
-  plus qu'il n'émet (par exemple grâce au carbone stocké dans le bois).
+- **Plus le chiffre est bas, mieux c'est :** un résultat négatif traduit le stockage temporaire du carbone dans les
+  matériaux biosourcés, qui contribuent ainsi à la décarbonation immédiate de la construction — une contribution au
+  climat du bâtiment, sans être un droit à émettre ailleurs (l'indicateur StockC de la RE2020 suit ce stockage).
 - **Si la DVR est inférieure à 50 ans**, le produit est remplacé en cours de route : chaque remplacement
   est ajouté, et le dernier n'est compté qu'au prorata de sa durée utile dans les 50 ans.
 - **Comparez des produits qui rendent le même service** (même unité fonctionnelle, par exemple 1 m² de mur
-  de même performance) : la comparaison n'a de sens qu'à ce prix.
+  de même performance) : la comparaison carbone n'a de sens qu'à ce prix.
 """
 
 TEXTE_ENREGISTRER = """
@@ -273,8 +280,8 @@ CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
 COULEURS = pres.THEME["matieres"]
 
 st.markdown(pres.css(), unsafe_allow_html=True)
-st.markdown('<h1 class="titre-principal">Comparer <span class="mot">RÉELLEMENT</span> deux matériaux '
-            '— ACV dynamique RE2020</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="titre-principal">Comprendre <span class="mot">RÉELLEMENT</span> l\'impact carbone '
+            'd\'un matériau</h1><div class="sous-titre">ACV dynamique RE2020</div>', unsafe_allow_html=True)
 st.markdown(TEXTE_INTRO)
 with st.expander("Comment faire ? (3 étapes)", expanded=True):
     st.markdown(TEXTE_ETAPES)
@@ -294,7 +301,7 @@ saisies_ok = [s for s in saisies if s["resultat"] is not None]
 
 # --- 2) Résultats -------------------------------------------------------------
 st.divider()
-st.markdown('<h2 class="titre-section">Résultat</h2>', unsafe_allow_html=True)
+st.markdown('<h2 class="titre-section">Résultats</h2>', unsafe_allow_html=True)
 
 if not saisies_ok:
     st.info("Collez la ligne INIES d'au moins un matériau (ou choisissez-en un dans la liste) pour voir le résultat. "
@@ -305,9 +312,9 @@ else:
             if saisie["resultat"] is not None:
                 st.markdown(carte_resultat(saisie, COULEURS[saisie["indice"]], pres.THEME["texte_matieres"][saisie["indice"]]), unsafe_allow_html=True)
             else:
-                st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} pour le comparer.")
+                st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} pour la comparaison carbone.")
 
-    # Phrase de comparaison (si les deux matériaux sont renseignés)
+    # Phrase de comparaison carbone (si les deux matériaux sont renseignés)
     if len(saisies_ok) == NB_MATERIAUX:
         saisie_a, saisie_b = saisies_ok
         ecart = saisie_a["resultat"].dynamique_total - saisie_b["resultat"].dynamique_total
@@ -317,18 +324,31 @@ else:
             meilleur, autre = (saisie_a, saisie_b) if ecart < 0 else (saisie_b, saisie_a)
             st.markdown(f"**{nom_affiche(meilleur)}** a le résultat le plus bas : "
                         f"**{pres.fr(abs(ecart))} {UNITE}** de moins que **{nom_affiche(autre)}** sur {acv.PERIODE_ETUDE} ans.")
-        st.caption("Cette comparaison n'a de sens que pour deux produits rendant le même service "
+        st.caption("Cette comparaison carbone n'a de sens que pour deux produits rendant le même service "
                    "(même unité fonctionnelle).")
 
-    # Graphique (étroit) puis, dessous, le tableau des étapes INIES de chaque matériau
+    # Graphique (largeur plafonnée par le CSS du conteneur « graphique » : pleine largeur sur un petit écran)
     series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
-               "cumul": s["resultat"].cumul_dynamique()} for s in saisies_ok]
-    # Colonne centrale : le graphique prend la largeur de SA colonne (un simple max-width CSS rognait la figure)
-    _, colonne_graphique, _ = st.columns(pres.COLONNES_GRAPHIQUE)
-    colonne_graphique.plotly_chart(pres.figure_cumul(series), width="stretch")
+               "cumul": s["resultat"].cumul_dynamique(), "cumul_statique": s["resultat"].cumul_statique()}
+              for s in saisies_ok]
+    with st.container(key="graphique"):
+        avec_statique = st.checkbox("Afficher aussi le calcul statique E+C- (en pointillés, sans pondération)",
+                                    key="avec_statique")
+        st.plotly_chart(pres.figure_cumul(series, avec_statique), width="stretch",
+                        config={"displaylogo": False, "toImageButtonOptions": {
+                            "format": "png", "filename": NOM_IMAGE_GRAPHIQUE, "scale": 2}})
+        st.caption("Pour enregistrer le graphique en image : icône appareil photo, en haut à droite au survol.")
     for saisie in saisies_ok:
         st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
                     unsafe_allow_html=True)
+
+    colonne_resume, colonne_annees, _ = st.columns([2, 2, 6])
+    lignes_export = [{"nom": nom_affiche(s), "identifiant": s.get("identifiant"), "valeurs": s["valeurs"],
+                      "resultat": s["resultat"]} for s in saisies_ok]
+    colonne_resume.download_button("Télécharger le résumé (CSV)", export.csv_resume(lignes_export), "acv_resume.csv",
+                                   "text/csv", width="stretch")
+    colonne_annees.download_button("Télécharger année par année (CSV)", export.csv_annees(lignes_export),
+                                   "acv_annee_par_annee.csv", "text/csv", width="stretch")
 
     with st.expander("Voir le détail du calcul"):
         st.markdown("**Par phase**, en " + UNITE + " (le statique E+C- compte le module D pour un tiers) :")

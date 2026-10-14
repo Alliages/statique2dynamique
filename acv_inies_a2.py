@@ -42,18 +42,20 @@ from typing import List, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "3.2.0"
+VERSION = "3.3.0"
 DATE_VERSION = "2026-10-14"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("3.3.0", "2026-10-14",
+     "Nouveau titre et textes pédagogiques (« comparaison carbone », StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées."),
     ("3.2.0", "2026-10-14",
      "Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanches, matériaux en Pacific Cyan et Cotton Rose (chiffres du matériau B légèrement foncés pour rester lisibles), filigrane ÉMISSIONS / SÉQUESTRATION en gris clair. Thème clair unique."),
     ("3.1.0", "2026-10-14",
      "Graphique resserré (traits épais, axes fléchés, filigrane émissions / séquestration, valeur finale), tableau des étapes INIES, catalogue de matériaux (materiaux.json avec date d'export), palette de couleurs et nouveau titre."),
     ("3.0.0", "2026-10-13",
-     "Version web (Streamlit) : norme +A2 uniquement, comparaison de deux matériaux, "
+     "Version web (Streamlit) : norme +A2 uniquement, comparaison carbone de deux matériaux, "
      "module de calcul autonome et testé contre l'Excel."),
     ("Excel V2", "2023-05-15", "Ajout de la norme +A2 (et de l'onglet de résultats A2)."),
     ("Excel V1", "2022-06-02", "Version initiale (norme +A1)."),
@@ -147,7 +149,7 @@ class ResultatA2:
     dynamique_intermediaire: float              # années 1 à 49
     dynamique_t50: float                        # année 50 (fin de vie + module D)
     dynamique_total: float                      # somme : LE résultat à retenir
-    # --- Statique E+C- (module D compté pour 1/3), pour comparaison ---
+    # --- Statique E+C- (module D compté pour 1/3), pour la comparaison carbone ---
     statique_t0: float
     statique_intermediaire: float
     statique_t50: float
@@ -159,6 +161,21 @@ class ResultatA2:
         for valeur in self.dynamique_par_annee:
             somme += valeur
             cumul.append(somme)
+        return cumul
+
+    def cumul_statique(self) -> List[float]:
+        """Émissions statiques E+C- cumulées année après année (pour tracer une courbe pointillée).
+
+        L'Excel ne donne le statique que par phase : année 0 (production + construction), années 1 à 49
+        (utilisation et remplacements) et année 50 (fin de vie + module D / 3). Pour le tracé, la phase
+        intermédiaire est répartie à parts égales sur les années 1 à 49 : la courbe est une illustration,
+        mais elle part de la bonne valeur et finit exactement sur `statique_total`.
+        """
+        par_an_intermediaire = self.statique_intermediaire / (PERIODE_ETUDE - 1)
+        cumul = [self.statique_t0]
+        for annee in range(1, PERIODE_ETUDE):
+            cumul.append(cumul[-1] + par_an_intermediaire)
+        cumul.append(cumul[-1] + self.statique_t50)
         return cumul
 
 
@@ -249,7 +266,7 @@ def verifier_dvr(dvr) -> int:
 
 
 def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
-    """Calcule l'ACV dynamique RE2020 (et le statique E+C- en comparaison).
+    """Calcule l'ACV dynamique RE2020 (et le statique E+C- pour la comparaison carbone).
 
     Étapes, qui suivent l'onglet « Calcul +A2 » du classeur Excel :
       1. on arrondit les valeurs INIES (5 décimales) ;
