@@ -6,6 +6,8 @@ Lancer en local :   streamlit run app.py
 Organisation du projet :
     acv_inies_a2.py   le calcul (module autonome, réutilisable ailleurs)
     catalogue.py      lecture de materiaux.json et fabrication d'un nouveau bloc
+    lien.py           liens pré-remplis vers l'application (fabrication et lecture contrôlée)
+    export.py         fichiers CSV téléchargeables
     presentation.py   nombres français, graphique, tableau des étapes, styles
     app.py            cette interface (aucun calcul ici)
 """
@@ -18,6 +20,7 @@ import streamlit as st
 import acv_inies_a2 as acv
 import catalogue as cat
 import export
+import lien
 import presentation as pres
 
 # =============================================================================
@@ -29,6 +32,8 @@ UNITE = pres.UNITE
 
 # Lien vers la fiche d'un produit à partir de son identifiant ({id} est remplacé).
 URL_FICHE_INIES = "https://base-inies.fr/infos-produit/{id}"
+# Adresse de l'application déployée : les liens « pré-remplis » partent de là.
+URL_APP = "https://statique2dynamique.streamlit.app/"
 URL_SITE_INIES = "https://www.base-inies.fr/"
 URL_METHODE = "https://www.linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activity-7064102175945175040-cOPY"
 
@@ -83,6 +88,11 @@ TEXTE_LECTURE = f"""
   est ajouté, et le dernier n'est compté qu'au prorata de sa durée utile dans les 50 ans.
 - **Comparez des produits qui rendent le même service** (même unité fonctionnelle, par exemple 1 m² de mur
   de même performance) : la comparaison carbone n'a de sens qu'à ce prix.
+"""
+
+TEXTE_LIEN = """
+Ce lien rouvre l'application avec ce matériau déjà rempli (nom, identifiant, DVR et valeurs).
+Copiez-le (icône en haut à droite) pour le mettre en favori ou l'envoyer à quelqu'un.
 """
 
 TEXTE_ENREGISTRER = """
@@ -155,6 +165,23 @@ def effacer_tout() -> None:
         st.session_state[f"cat_{i}"] = None
 
 
+def appliquer_lien() -> tuple:
+    """Si l'adresse contient un lien pré-rempli, remplit les champs. Renvoie (lettres chargées, erreurs).
+
+    Les paramètres sont retirés de l'adresse ensuite : une relance de la page ne ré-applique pas le lien
+    (qui écraserait ce que l'utilisateur a modifié depuis).
+    """
+    parametres = dict(st.query_params)
+    if not lien.contient_un_lien(parametres):
+        return [], []
+    materiaux, erreurs = lien.lire_lien(parametres)
+    for m in materiaux:
+        remplir(m.indice, m.nom, m.identifiant, m.dvr, m.texte_inies())
+        st.session_state[f"cat_{m.indice}"] = None
+    st.query_params.clear()
+    return [m.lettre for m in materiaux], erreurs
+
+
 def nom_affiche(saisie: dict) -> str:
     """Nom choisi par l'utilisateur, ou « Matériau A / B » par défaut."""
     return saisie["nom"].strip() or f"Matériau {LETTRES[saisie['indice']]}"
@@ -225,6 +252,12 @@ def saisie_materiau(indice: int, catalogue: list) -> dict:
                 if not saisie["nom"].strip():
                     st.caption("Donnez un nom au matériau avant de copier le bloc.")
 
+            # Lien pré-rempli : retrouver ou partager ce matériau
+            with st.expander("🔗 Copier le lien de ce matériau"):
+                st.markdown(TEXTE_LIEN)
+                st.code(lien.construire_lien(URL_APP, indice, saisie["nom"], saisie["identifiant"], saisie["dvr"],
+                                             saisie["valeurs"]), language=None, wrap_lines=True)
+
     return saisie
 
 
@@ -276,6 +309,7 @@ def tableau_annees(saisies_ok: list) -> pd.DataFrame:
 # =============================================================================
 st.set_page_config(page_title=TITRE_PAGE, page_icon=ICONE_PAGE, layout="wide")
 
+LETTRES_LIEN, ERREURS_LIEN = appliquer_lien()      # doit être fait avant la création des champs de saisie
 CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
 COULEURS = pres.THEME["matieres"]
 
@@ -285,6 +319,11 @@ st.markdown('<h1 class="titre-principal">Comprendre l\'impact <span class="mot">
 st.markdown(TEXTE_INTRO)
 with st.expander("Comment faire ? (3 étapes)", expanded=True):
     st.markdown(TEXTE_ETAPES)
+for erreur in ERREURS_LIEN:
+    st.error(erreur)
+if LETTRES_LIEN:
+    st.success("Lien lu : " + ("matériau " if len(LETTRES_LIEN) == 1 else "matériaux ") + " et ".join(LETTRES_LIEN)
+               + " pré-rempli" + ("" if len(LETTRES_LIEN) == 1 else "s") + ".")
 if ERREUR_CATALOGUE:
     st.warning(f"Le catalogue de matériaux n'a pas pu être lu. {ERREUR_CATALOGUE}")
 

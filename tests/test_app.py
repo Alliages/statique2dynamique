@@ -22,6 +22,7 @@ URL_METHODE = "linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activi
 
 sys.path.insert(0, str(RACINE))
 import catalogue as cat  # noqa: E402
+import lien  # noqa: E402
 import presentation as pres  # noqa: E402
 import acv_inies_a2 as acv  # noqa: E402
 
@@ -103,7 +104,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert "Version 3.3.1 du 2026-10-14" in page
+    assert "Version 3.4.0 du 2026-10-14" in page
 
 
 # ----------------------------------------------------------------------------
@@ -142,7 +143,7 @@ def test_bloc_pour_enregistrer_un_materiau():
     app.text_input(key="nom_0").set_value("Mon matériau")
     app.number_input(key="id_0").set_value(46517)
     app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
-    blocs = [c.value for c in app.code]
+    blocs = [c.value for c in app.code if c.language == "json"]      # (l'autre bloc est le lien pré-rempli)
     assert len(blocs) == 1
     entree = json.loads(blocs[0])
     assert entree["nom"] == "Mon matériau" and entree["id"] == 46517 and entree["dvr"] == 50
@@ -225,3 +226,80 @@ def test_boutons_de_telechargement_csv():
     assert not app.exception
     page = texte_page(app)
     assert "Pour enregistrer le graphique en image" in page
+
+
+# ----------------------------------------------------------------------------
+# Liens pré-remplis
+# ----------------------------------------------------------------------------
+VALEURS_50632 = "4.23655,1.51718,-0.445,0.0,0.0,0.0,0.0,0.0,0.0,-0.445,15.52815,20.83689,-0.43737"
+
+
+def app_avec_parametres(**parametres) -> AppTest:
+    app = AppTest.from_file(FICHIER_APP, default_timeout=DELAI_MAX)
+    for cle, valeur in parametres.items():
+        app.query_params[cle] = valeur
+    app.run()
+    return app
+
+
+def test_lien_prerempli_remplit_le_materiau_et_calcule():
+    app = app_avec_parametres(v="1", a_nom="Dalle Bois-Béton 15 cm", a_id="50632", a_dvr="50", a_v=VALEURS_50632)
+    assert not app.exception and not app.error
+    assert app.text_input(key="nom_0").value == "Dalle Bois-Béton 15 cm"
+    assert app.number_input(key="id_0").value == 50632 and app.number_input(key="dvr_0").value == 50
+    page = texte_page(app)
+    assert ">14,1<" in page                                          # ACV dynamique de la fiche 50632
+    assert any("Lien lu : matériau A pré-rempli" in s.value for s in app.success)
+    assert app.text_input(key="nom_1").value == ""                  # le matériau B n'est pas touché
+
+
+def test_lien_prerempli_pour_le_materiau_b():
+    app = app_avec_parametres(v="1", b_nom="Second", b_dvr="30", b_v=VALEURS_50632)
+    assert app.text_input(key="nom_1").value == "Second" and app.number_input(key="dvr_1").value == 30
+    assert app.text_input(key="nom_0").value == ""
+    assert any("matériau B" in s.value for s in app.success)
+
+
+def test_lien_invalide_affiche_une_erreur_claire_sans_planter():
+    app = app_avec_parametres(v="1", a_dvr="0", a_v="1,2,3")
+    assert not app.exception
+    assert any("Lien incomplet ou invalide pour le matériau A" in e.value for e in app.error)
+    assert app.text_input(key="nom_0").value == "" and not any("Lien lu" in x.value for x in app.success)
+
+
+def test_lien_d_un_autre_format_est_refuse():
+    app = app_avec_parametres(v="2", a_dvr="50", a_v=VALEURS_50632)
+    assert any("bon format" in e.value for e in app.error)
+
+
+def test_nom_d_un_lien_est_echappe():
+    app = app_avec_parametres(v="1", a_nom="<script>alert(1)</script>", a_dvr="50", a_v=VALEURS_50632)
+    page = texte_page(app)
+    assert "<script>" not in page and "&lt;script&gt;" in page
+
+
+def test_le_lien_n_est_applique_qu_une_fois():
+    """Après lecture, les paramètres sont retirés de l'adresse : une modification ultérieure n'est pas écrasée."""
+    app = app_avec_parametres(v="1", a_nom="Dalle", a_dvr="50", a_v=VALEURS_50632)
+    assert len(app.query_params) == 0
+    app.number_input(key="dvr_0").set_value(20).run()
+    assert app.number_input(key="dvr_0").value == 20 and not any("Lien lu" in x.value for x in app.success)
+
+
+def test_bouton_lien_sous_la_fiche_se_relit_a_l_identique():
+    app = nouvelle_app()
+    app.text_input(key="nom_0").set_value("Mon matériau")
+    app.number_input(key="id_0").set_value(46517)
+    app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
+    assert any(e.label == "🔗 Copier le lien de ce matériau" for e in app.expander)
+    liens = [c.value for c in app.code if c.value.startswith("https://statique2dynamique.streamlit.app/?")]
+    assert len(liens) == 1
+    from urllib.parse import parse_qsl, urlparse
+    materiaux, erreurs = lien.lire_lien(dict(parse_qsl(urlparse(liens[0]).query)))
+    assert erreurs == [] and materiaux[0].nom == "Mon matériau" and materiaux[0].identifiant == 46517
+    assert materiaux[0].dvr == 50 and materiaux[0].valeurs.production == pytest.approx(15.4)
+
+
+def test_pas_de_bouton_lien_tant_que_les_valeurs_ne_sont_pas_lues():
+    app = nouvelle_app()
+    assert not any(e.label == "🔗 Copier le lien de ce matériau" for e in app.expander)

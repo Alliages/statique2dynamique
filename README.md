@@ -14,6 +14,7 @@ La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 | `acv_inies_a2.py` | **Module de calcul autonome** (bibliothèque standard seule). À copier tel quel dans un autre programme. |
 | `app.py` | Interface Streamlit (aucun calcul ici). |
 | `presentation.py` | Mise en forme : palette, graphique, tableau des étapes INIES, styles (sans Streamlit). |
+| `lien.py` | Liens pré-remplis vers l'application : fabrication et lecture contrôlée (sans Streamlit). |
 | `export.py` | Fichiers CSV téléchargeables (résumé, année par année), sans Streamlit. |
 | `catalogue.py` | Lecture / contrôle de `materiaux.json` et fabrication du bloc d'un nouveau matériau. |
 | `materiaux.json` | **Catalogue des matériaux enregistrés** (valeurs au format décimal standard, date d'export). |
@@ -27,6 +28,17 @@ La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 1. Dans l'app, saisir un matériau (nom, identifiant, DVR, ligne collée) : un bloc JSON apparaît dans « Enregistrer ce matériau dans le catalogue ».
 2. Copier ce bloc et le coller à la fin de la liste `materiaux` de `materiaux.json` (avec une virgule entre deux matériaux).
 3. Pousser sur GitHub : le matériau apparaît dans les listes de l'app. `date_export` = date à laquelle les valeurs ont été exportées d'INIES.
+
+## Liens pré-remplis
+
+Sous chaque fiche, « Copier le lien de ce matériau » donne une adresse qui rouvre l'application avec le matériau
+rempli. Format (version 1), pour le matériau A (préfixe `a_`) ou B (préfixe `b_`) :
+
+    https://statique2dynamique.streamlit.app/?v=1&a_nom=Dalle&a_id=50632&a_dvr=50&a_v=4.24,1.52,...  (13 valeurs)
+
+`a_dvr` et `a_v` sont obligatoires, `a_nom` et `a_id` facultatifs. Tout est contrôlé à la lecture
+(13 nombres finis, DVR entre 1 et 1000, nom nettoyé) ; un lien invalide affiche un message clair.
+L'adresse de l'application est la constante `URL_APP` de `app.py`.
 
 ## Lancer en local
 
