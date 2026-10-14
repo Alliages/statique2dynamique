@@ -1,5 +1,5 @@
 """
-app.py — Comprendre RÉELLEMENT l'impact carbone d'un matériau : ACV dynamique RE2020 (norme +A2) à partir de la base INIES.
+app.py — Comprendre l'impact carbone d'un matériau : ACV dynamique RE2020 (norme +A2) à partir de la base INIES.
 
 Lancer en local :   streamlit run app.py
 
@@ -23,7 +23,7 @@ import presentation as pres
 # =============================================================================
 # VARIABLES (tout ce qui se règle est regroupé ici)
 # =============================================================================
-TITRE_PAGE = "Comprendre RÉELLEMENT l'impact carbone d'un matériau — ACV dynamique RE2020"
+TITRE_PAGE = "Comprendre l'impact carbone d'un matériau — L'ACV dynamique dans la RE2020"
 ICONE_PAGE = "🏗️"
 UNITE = pres.UNITE
 
@@ -47,7 +47,7 @@ EXEMPLE_B = {
 PLACEHOLDER_COLLAGE = "Collez ici la ligne « Réchauffement climatique » copiée depuis INIES"
 
 TEXTE_INTRO = """
-Cet outil part des chiffres INIES et applique cette méthode dynamique réglementaire RE2020 de l'ACV dynamique à votre place. \
+Cet outil part des chiffres INIES et applique la méthode dynamique réglementaire RE2020 de l'ACV dynamique à votre place. \
 Une lecture pédagogique, qui rappelle aussi qu'évaluer un matériau ne se résume jamais au seul carbone.
 
 **Pourquoi « dynamique » ?** Un kilo de CO₂ émis tout de suite pèse plus qu'un kilo émis dans 50 ans. \
