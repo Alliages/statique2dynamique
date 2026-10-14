@@ -319,13 +319,12 @@ else:
         saisie_a, saisie_b = saisies_ok
         ecart = saisie_a["resultat"].dynamique_total - saisie_b["resultat"].dynamique_total
         if abs(ecart) < 0.005:
-            st.markdown("**Les deux matériaux ont le même résultat** (écart inférieur à 0,01 " + UNITE + ").")
+            st.markdown("Les deux matériaux ont le même impact (écart inférieur à 0,01 " + UNITE + ").")
         else:
             meilleur, autre = (saisie_a, saisie_b) if ecart < 0 else (saisie_b, saisie_a)
-            st.markdown(f"**{nom_affiche(meilleur)}** a le résultat le plus bas : "
-                        f"**{pres.fr(abs(ecart))} {UNITE}** de moins que **{nom_affiche(autre)}** sur {acv.PERIODE_ETUDE} ans.")
-        st.caption("Cette comparaison carbone n'a de sens que pour deux produits rendant le même service "
-                   "(même unité fonctionnelle).")
+            st.markdown(f"l'écart entre les deux matériaux est de {pres.fr(abs(ecart))} {UNITE} sur {acv.PERIODE_ETUDE} ans.")
+        st.caption("Attention, une comparaison carbone n'a de sens que pour deux produits rendant le même service "
+                   "(même unité fonctionnelle au minimum).")
 
     # Graphique (largeur plafonnée par le CSS du conteneur « graphique » : pleine largeur sur un petit écran)
     series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
