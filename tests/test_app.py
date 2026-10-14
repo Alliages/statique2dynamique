@@ -19,7 +19,16 @@ FICHIER_APP = str(RACINE / "app.py")
 DELAI_MAX = 30   # secondes
 EXEMPLE_46517 = "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"
 URL_METHODE = "linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activity-7064102175945175040-cOPY"
-NOM_CLT = "Panneau CLT (lamellé-croisé), fabriqué en France par Mathis"
+
+sys.path.insert(0, str(RACINE))
+import catalogue as cat  # noqa: E402
+import presentation as pres  # noqa: E402
+import acv_inies_a2 as acv  # noqa: E402
+
+# Premier matériau du catalogue (le fichier peut évoluer : les tests ne figent pas ses valeurs)
+PREMIER = cat.charger_catalogue()[0]
+NOM_PREMIER = PREMIER.nom
+RESULTAT_PREMIER = f">{pres.fr(acv.calculer_acv_dynamique(PREMIER.valeurs, PREMIER.dvr).dynamique_total)}<"
 
 sys.path.insert(0, str(RACINE))
 
@@ -81,7 +90,7 @@ def test_exemple_affiche_les_deux_resultats_le_graphique_et_les_tableaux():
     assert not app.exception
     page = texte_page(app)
     assert page.count('class="carte"') == 2
-    assert ">36,7<" in page                              # CLT du catalogue : 36,722
+    assert RESULTAT_PREMIER in page                      # premier matériau du catalogue
     assert "a le résultat le plus bas" in page
     assert len(app.get("plotly_chart")) == 1             # un seul graphique
     assert page.count('class="tab-etapes') == 2          # un tableau des étapes par matériau
@@ -94,12 +103,12 @@ def test_choisir_un_materiau_du_catalogue_remplit_les_champs():
     assert liste.options[0].startswith("— choisir —") or liste.options[0] == "— choisir —" or "choisir" in liste.options[0]
     liste.select_index(1).run()
     assert not app.exception
-    assert app.text_input(key="nom_0").value == NOM_CLT
-    assert app.number_input(key="id_0").value == 33806 and app.number_input(key="dvr_0").value == 100
-    assert "19.1\t17.2\t-2.69" in app.text_area(key="texte_0").value
+    assert app.text_input(key="nom_0").value == NOM_PREMIER
+    assert app.number_input(key="id_0").value == PREMIER.id and app.number_input(key="dvr_0").value == PREMIER.dvr
+    assert app.text_area(key="texte_0").value == PREMIER.texte_inies()
     page = texte_page(app)
-    assert ">36,7<" in page and "13 valeurs lues" in page
-    assert "export du 14/10/2026" in app.selectbox(key="cat_0").options[1]      # la date d'export est affichée
+    assert RESULTAT_PREMIER in page and "13 valeurs lues" in page
+    assert "export du " in app.selectbox(key="cat_0").options[1]      # la date d'export est affichée
 
 
 def test_bloc_pour_enregistrer_un_materiau():
