@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 3.5.0 — 2026-10-14
+Script Tampermonkey pour base-inies.fr : un bouton sur la fiche (norme +A2) lit les 13 valeurs « Changement climatique - total » et la DVR, puis ouvre l'application avec le matériau A pré-rempli ; test sous Node contre lien.py.
+
 ## 3.4.0 — 2026-10-14
 Liens pré-remplis : l'application lit un lien (identifiant, nom, DVR, 13 valeurs) et remplit le matériau A ou B, avec contrôle strict et messages d'erreur clairs ; bouton « Copier le lien de ce matériau » sous chaque fiche.
 

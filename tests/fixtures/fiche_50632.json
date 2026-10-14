@@ -1,0 +1,5552 @@
+{
+ "idProduit": 50632,
+ "nomProduit": " Dalle Bois-Béton 15 cm (Hors dalle de compression)",
+ "dvt": 50,
+ "idNorme": 5,
+ "tIndicateurQuantites": [
+  {
+   "quantite": 1.4341744,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0.9785864,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 1.8237925,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 4.2365533,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 1.5034954,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0.013688875,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 1.517184275,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": -0.445,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": -0.445,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0.63207941,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0.82577443,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 0.45100699,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 13.619291,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 15.52815183,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": -0.43736509,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 20.83688941,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 1
+   }
+  },
+  {
+   "quantite": 16.063987,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0.97762079,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 1.0115267,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 18.05313449,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 1.5019844,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0.013463831,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 1.515448231,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": -0.445,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": -0.445,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0.6318868,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0.82497696,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 0.45193385,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": -0.30098634,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 1.60781127,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": -0.42900335,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": 20.73139399,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 2
+   }
+  },
+  {
+   "quantite": -14.653291,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.000608312,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.81167427,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": -13.84100842,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.000951885,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.000215391,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.001167276,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.000127961,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.000511129,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": -0.001133724,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 13.920116,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 13.91962137,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": -0.008105418,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.079780224,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 3
+   }
+  },
+  {
+   "quantite": 0.023478223,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.000357301,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.00059152,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.024427044,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.000559047,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 9.6525e-06,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.0005687,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 6.4645e-05,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.000286337,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.000206865,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.00016092,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.000718768,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": -0.000256317,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 0.025714511,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 4
+   }
+  },
+  {
+   "quantite": 8.02475e-07,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 2.17766e-08,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 2.48511e-08,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 8.49103e-07,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 3.40864e-08,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 3.28556e-10,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 3.4415e-08,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 9.38612e-09,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 1.81336e-08,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 9.35059e-09,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 1.00366e-08,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 4.6907e-08,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": -4.85129e-09,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 9.30425e-07,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 5
+   }
+  },
+  {
+   "quantite": 0.053232583,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.002816585,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.00457977,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.060628938,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.003650253,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 6.89772e-05,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.00371923,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.005647753,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.003795062,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.005892458,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.002655017,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.01799029,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": -0.003377324,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.082338458,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 6
+   }
+  },
+  {
+   "quantite": 0.00032103,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 7.54495e-06,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 1.6179e-05,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0.000344754,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 1.18053e-05,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 2.94854e-07,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 1.21002e-05,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 2.21044e-06,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 6.26818e-06,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 6.41994e-06,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 3.3401e-06,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 1.82387e-05,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": -1.18752e-05,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0.000375092,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 7
+   }
+  },
+  {
+   "quantite": 0.016176929,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.000855359,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.001576445,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.018608733,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.000940345,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 1.96815e-05,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.000960027,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.002625304,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.001477009,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.002466264,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.001216452,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.007785029,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": -0.000911213,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.027353788,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 8
+   }
+  },
+  {
+   "quantite": 0.15734154,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.009429876,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.016729459,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.183500875,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.01039595,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.000212073,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.010608023,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.028779674,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.016226115,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.027179601,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.011710749,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.083896139,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": -0.01238933,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.278005037,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 9
+   }
+  },
+  {
+   "quantite": 0.053475408,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.004566373,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.006151211,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.064192992,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.006106844,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 7.37214e-05,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.006180566,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.008611287,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.00570144,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.008134363,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.004274002,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.026721091,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": -0.003255511,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 0.097094649,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 10
+   }
+  },
+  {
+   "quantite": 267.967,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 14.558217,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 49.744376,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 332.269593,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 22.786382,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 1.2291173,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 24.0154993,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 8.2292969,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 11.910213,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 8.3240208,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 8.5025627,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 36.9660934,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": -9.1670736,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 393.2511857,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 11
+   }
+  },
+  {
+   "quantite": 6.35171e-05,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 2.79524e-06,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 3.79193e-06,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 7.01043e-05,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 4.3734e-06,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 7.90478e-08,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 4.45245e-06,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 2.25487e-07,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 2.69827e-06,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 6.57661e-06,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 5.46392e-07,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 1.00468e-05,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": -5.70628e-06,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 8.46035e-05,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 12
+   }
+  },
+  {
+   "quantite": 2.7348595,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.06614618,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.34466374,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 3.14566942,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.10349658,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.005123682,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.108620262,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.017576736,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.049355029,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.030349862,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.21272818,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 0.310009807,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": -0.28320928,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 3.564299489,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 13
+   }
+  },
+  {
+   "quantite": 5.00474e-07,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 9.76895e-08,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 9.01466e-08,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 6.8831e-07,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 1.48542e-07,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 9.16185e-10,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 1.49458e-07,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 1.37736e-06,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 8.11022e-08,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 1.04915e-06,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 6.42436e-08,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 2.57186e-06,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": -6.53957e-08,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 3.40962e-06,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 14
+   }
+  },
+  {
+   "quantite": 1.2463356,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.00600086,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.42493209,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 1.67726855,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.009389711,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.011332468,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.020722179,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.001368016,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.005323865,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.004653724,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.002809025,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 0.01415463,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": -0.051255583,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 1.712145359,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 15
+   }
+  },
+  {
+   "quantite": 162.714218,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 1.70595753,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 4.71315609,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 169.1333316,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 2.6692375,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0.02827577,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 2.69751327,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0.44616058,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 1.56365981,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 1.10644114,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 0.71665694,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 3.83291847,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": -1.81251075,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 175.6637634,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 16
+   }
+  },
+  {
+   "quantite": 6.10896e-08,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 1.60576e-10,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 8.81961e-10,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 6.21321e-08,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 2.48138e-10,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 3.56997e-12,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 2.51708e-10,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 6.42245e-11,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 2.10724e-10,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 1.36255e-10,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 6.93378e-11,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 4.80541e-10,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": -2.1656e-10,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 6.28644e-08,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 17
+   }
+  },
+  {
+   "quantite": 3.73621e-05,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 9.34767e-09,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 3.82394e-07,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 3.77539e-05,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 1.45896e-08,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 1.29745e-10,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 1.47194e-08,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 1.01033e-09,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 8.28082e-09,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 6.41704e-09,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 2.55628e-09,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 1.82645e-08,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": -5.19242e-09,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 3.77869e-05,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 18
+   }
+  },
+  {
+   "quantite": 603.22651,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 14.638916,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 8.3654222,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 626.2308482,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 22.903809,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0.17268405,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 23.07649305,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 0.54605483,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 8.8815109,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 2.9360072,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 16.474088,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 28.83766093,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": -10.604716,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 678.1450022,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 19
+   }
+  },
+  {
+   "quantite": 13.886709,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.17989648,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": -3.5219687,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 10.54463678,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.28148441,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.086643039,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.368127449,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.042479601,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.15687174,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.14049979,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.091316244,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.431167375,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": -0.50904502,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 11.3439316,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 20
+   }
+  },
+  {
+   "quantite": 0.6427345,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": -8.0873106,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": -7.4445761,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": -7.4445761,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 21
+   }
+  },
+  {
+   "quantite": 14.5294435,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.17989648,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": -11.6092793,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 3.10006068,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.28148441,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.086643039,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.368127449,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.042479601,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.15687174,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.14049979,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.091316244,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 0.431167375,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": -0.50904502,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 3.899355504,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 22
+   }
+  },
+  {
+   "quantite": 259.5274233,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 14.558971,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 50.26842649,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 324.3548208,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 22.787561,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 1.2291258,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 24.0166868,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 8.229364,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 11.910766,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 8.3243931,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 8.50311,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 36.9676331,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": -9.1673323,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 385.3391407,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 23
+   }
+  },
+  {
+   "quantite": 1.3047267,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": -0.92259549,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0.38213121,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 0.38213121,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 24
+   }
+  },
+  {
+   "quantite": 260.83215,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 14.558971,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 49.345831,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 324.736952,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 22.787561,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 1.2291258,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 24.0166868,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 8.229364,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 11.910766,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 8.3243931,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 8.50311,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 36.9676331,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": -9.1673323,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 385.7212719,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 25
+   }
+  },
+  {
+   "quantite": 5.096164,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0.05096164,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 5.14712564,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 5.14712564,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 26
+   }
+  },
+  {
+   "quantite": 10.60124,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0.1060124,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 10.7072524,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 10.7072524,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 27
+   }
+  },
+  {
+   "quantite": 8.09172,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0.0809172,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 8.1726372,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 8.1726372,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 28
+   }
+  },
+  {
+   "quantite": 0.16341137,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.001880513,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.014729814,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.180021697,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.002942446,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.000369539,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.003311985,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.000514038,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.001462012,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.000988914,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.073697904,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.076662868,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": -0.035623435,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.25999655,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 29
+   }
+  },
+  {
+   "quantite": 0.61019663,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.015526471,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.14052313,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.766246231,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.024294148,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.001816619,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.026110767,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.007417303,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.012489802,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.013130695,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.11543387,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.14847167,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": -0.034685745,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 0.940828669,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 30
+   }
+  },
+  {
+   "quantite": 6.4106567,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 1.409643,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.42485584,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 8.24515554,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 2.2054744,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.3270613,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 2.5325357,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.050628801,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.86833568,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.28217656,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 47.047389,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 48.24853004,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": -0.37527446,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 59.02622128,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 31
+   }
+  },
+  {
+   "quantite": 0.002700848,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 4.0048e-06,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0.000561357,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0.00326621,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 6.26639e-06,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 1.47029e-05,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 2.09692e-05,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 8.61058e-07,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 3.63052e-06,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 3.44551e-06,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 1.68161e-06,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 9.6187e-06,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": -6.42812e-05,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 0.003296798,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 32
+   }
+  },
+  {
+   "quantite": 4.94485e-05,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0.33311356,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0.333163008,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0.333163008,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 33
+   }
+  },
+  {
+   "quantite": 0.95905776,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0.1264892,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 1.08554696,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 124.7058,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 124.7058,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 125.791347,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 34
+   }
+  },
+  {
+   "quantite": 0.00011362,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 1.1362e-06,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0.000114756,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0.000114756,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 35
+   }
+  },
+  {
+   "quantite": 0.013579879,
+   "idPhaseNorme": 92,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 93,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 1.260405369,
+   "idPhaseNorme": 94,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 1.273985248,
+   "idPhaseNorme": 95,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 96,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 97,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 112,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 98,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 99,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 100,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 101,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 102,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 103,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 104,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 113,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 105,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 106,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 107,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 108,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 109,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 0,
+   "idPhaseNorme": 111,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  },
+  {
+   "quantite": 1.273985248,
+   "idPhaseNorme": 110,
+   "idIndicateurNormeNavigation": {
+    "ordre": 36
+   }
+  }
+ ]
+}

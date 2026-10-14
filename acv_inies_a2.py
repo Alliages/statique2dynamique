@@ -42,12 +42,14 @@ from typing import List, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "3.4.0"
+VERSION = "3.5.0"
 DATE_VERSION = "2026-10-14"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("3.5.0", "2026-10-14",
+     "Script Tampermonkey pour base-inies.fr : un bouton sur la fiche (norme +A2) lit les 13 valeurs « Changement climatique - total » et la DVR, puis ouvre l'application avec le matériau A pré-rempli ; test sous Node contre lien.py."),
     ("3.4.0", "2026-10-14",
      "Liens pré-remplis : l'application lit un lien (identifiant, nom, DVR, 13 valeurs) et remplit le matériau A ou B, avec contrôle strict et messages d'erreur clairs ; bouton « Copier le lien de ce matériau » sous chaque fiche."),
     ("3.3.1", "2026-10-14",
