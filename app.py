@@ -281,7 +281,7 @@ COULEURS = pres.THEME["matieres"]
 
 st.markdown(pres.css(), unsafe_allow_html=True)
 st.markdown('<h1 class="titre-principal">Comprendre l\'impact <span class="mot">carbone</span> '
-            'd\'un matériau</h1><div class="sous-titre">L'ACV dynamique dans la RE2020</div>', unsafe_allow_html=True)
+            'd\'un matériau</h1><div class="sous-titre">L\'ACV dynamique dans la RE2020</div>', unsafe_allow_html=True)
 st.markdown(TEXTE_INTRO)
 with st.expander("Comment faire ? (3 étapes)", expanded=True):
     st.markdown(TEXTE_ETAPES)
