@@ -13,9 +13,19 @@ La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 |---|---|
 | `acv_inies_a2.py` | **Module de calcul autonome** (bibliothèque standard seule). À copier tel quel dans un autre programme. |
 | `app.py` | Interface Streamlit (aucun calcul ici). |
+| `presentation.py` | Mise en forme : palette, graphique, tableau des étapes INIES, styles (sans Streamlit). |
+| `catalogue.py` | Lecture / contrôle de `materiaux.json` et fabrication du bloc d'un nouveau matériau. |
+| `materiaux.json` | **Catalogue des matériaux enregistrés** (valeurs au format décimal standard, date d'export). |
+| `.streamlit/config.toml` | Thème (couleur principale) de l'application. |
 | `CHANGELOG.md` | Historique des versions (repris dans l'app). |
 | `tests/` | Tests automatiques ; les valeurs attendues viennent de l'Excel recalculé. |
 | `reference/` | Classeur Excel d'origine, pour régénérer les valeurs de référence. |
+
+## Enregistrer un matériau
+
+1. Dans l'app, saisir un matériau (nom, identifiant, DVR, ligne collée) : un bloc JSON apparaît dans « Enregistrer ce matériau dans le catalogue ».
+2. Copier ce bloc et le coller à la fin de la liste `materiaux` de `materiaux.json` (avec une virgule entre deux matériaux).
+3. Pousser sur GitHub : le matériau apparaît dans les listes de l'app. `date_export` = date à laquelle les valeurs ont été exportées d'INIES.
 
 ## Lancer en local
 

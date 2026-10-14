@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "description": "Catalogue de matériaux enregistrés (valeurs INIES, norme +A2, en kg CO2 eq., format décimal standard). date_export = date de l'export des valeurs depuis INIES.",
+  "materiaux": [
+    {
+      "id": 33806,
+      "nom": "Panneau CLT (lamellé-croisé), fabriqué en France par Mathis",
+      "lien_inies": "https://www.base-inies.fr/iniesV4/dist/consultation.html?id=33806",
+      "dvr": 100,
+      "date_export": "2026-10-14",
+      "valeurs": {
+        "production": 19.1,
+        "construction": 17.2,
+        "b1": -2.69,
+        "b2": 0.0,
+        "b3": 0.0,
+        "b4": 0.0,
+        "b5": 0.0,
+        "b6": 0.0,
+        "b7": 0.0,
+        "utilisation": -2.69,
+        "fin_de_vie": 4.42,
+        "total": 38.0,
+        "module_d": -1.85
+      },
+      "acv_dynamique_attendu": 36.722
+    }
+  ]
+}

@@ -3,6 +3,7 @@ Tests de l'interface Streamlit (sans navigateur) avec streamlit.testing.
 
 Lancer :  python3 -m pytest -q
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -17,6 +18,8 @@ RACINE = Path(__file__).resolve().parent.parent
 FICHIER_APP = str(RACINE / "app.py")
 DELAI_MAX = 30   # secondes
 EXEMPLE_46517 = "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"
+URL_METHODE = "linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activity-7064102175945175040-cOPY"
+NOM_CLT = "Panneau CLT (lamellé-croisé), fabriqué en France par Mathis"
 
 sys.path.insert(0, str(RACINE))
 
@@ -39,28 +42,87 @@ def bouton(app: AppTest, libelle: str):
     return next(b for b in app.button if b.label == libelle)
 
 
+# ----------------------------------------------------------------------------
+# Page d'accueil, titre, étapes, pied de page
+# ----------------------------------------------------------------------------
 def test_page_vide_sans_erreur():
     app = nouvelle_app()
     assert not app.exception
     assert any("Collez la ligne INIES" in m.value for m in app.info)
 
 
-def test_exemple_affiche_les_deux_resultats_et_le_total_inies():
+def test_titre_comparer_reellement_en_couleur():
+    page = texte_page(nouvelle_app())
+    assert 'Comparer <span class="mot">RÉELLEMENT</span> deux matériaux — ACV dynamique RE2020' in page
+
+
+def test_etapes_la_norme_a2_n_est_plus_une_etape():
+    app = nouvelle_app()
+    assert any(e.label == "Comment faire ? (3 étapes)" for e in app.expander)
+    page = texte_page(app)
+    assert "vérifiez que la norme est" not in page and "ne traite pas la norme +A1" not in page
+    assert "Dans l'onglet **« Indicateurs »**, **copiez la ligne « Réchauffement climatique »**" in page
+    assert "Toujours dans" not in page
+    assert page.count("\n1. ") + page.count("\n2. ") + page.count("\n3. ") >= 3 and "\n4. " not in page
+
+
+def test_pied_de_page_lien_vers_la_methode():
+    page = texte_page(nouvelle_app())
+    assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
+    assert "Version 3.1.0 du 2026-10-14" in page
+
+
+# ----------------------------------------------------------------------------
+# Exemple, catalogue, résultats
+# ----------------------------------------------------------------------------
+def test_exemple_affiche_les_deux_resultats_le_graphique_et_les_tableaux():
     app = nouvelle_app()
     bouton(app, "Essayer avec un exemple").click().run()
     assert not app.exception
     page = texte_page(app)
     assert page.count('class="carte"') == 2
-    assert "−286,8" in page            # CLT, DVR 100 : -286,75 de l'Excel, arrondi à 1 décimale
-    assert "167,0 kg CO₂ eq." in page or "167" in page   # total INIES affiché en petit
-    assert "le résultat le plus bas" in page
+    assert ">36,7<" in page                              # CLT du catalogue : 36,722
+    assert "a le résultat le plus bas" in page
+    assert len(app.get("plotly_chart")) == 1             # un seul graphique
+    assert page.count('class="tab-etapes') == 2          # un tableau des étapes par matériau
+    assert "A4-A5 Édification" in page and "B1-B7 Exploitation" in page
+
+
+def test_choisir_un_materiau_du_catalogue_remplit_les_champs():
+    app = nouvelle_app()
+    liste = app.selectbox(key="cat_0")
+    assert liste.options[0].startswith("— choisir —") or liste.options[0] == "— choisir —" or "choisir" in liste.options[0]
+    liste.select_index(1).run()
+    assert not app.exception
+    assert app.text_input(key="nom_0").value == NOM_CLT
+    assert app.number_input(key="id_0").value == 33806 and app.number_input(key="dvr_0").value == 100
+    assert "19.1\t17.2\t-2.69" in app.text_area(key="texte_0").value
+    page = texte_page(app)
+    assert ">36,7<" in page and "13 valeurs lues" in page
+    assert "export du 14/10/2026" in app.selectbox(key="cat_0").options[1]      # la date d'export est affichée
+
+
+def test_bloc_pour_enregistrer_un_materiau():
+    app = nouvelle_app()
+    app.text_input(key="nom_0").set_value("Mon matériau")
+    app.number_input(key="id_0").set_value(46517)
+    app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
+    blocs = [c.value for c in app.code]
+    assert len(blocs) == 1
+    entree = json.loads(blocs[0])
+    assert entree["nom"] == "Mon matériau" and entree["id"] == 46517 and entree["dvr"] == 50
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", entree["date_export"])
+    assert entree["valeurs"]["production"] == 15.4 and entree["acv_dynamique_attendu"] == pytest.approx(20.733, abs=1e-3)
+    sans_chaines = re.sub(r'"[^"]*"', "", blocs[0])
+    assert not re.search(r"\d[eE][+-]?\d", sans_chaines)       # pas de notation scientifique dans les valeurs
 
 
 def test_une_seule_ligne_collee():
     app = nouvelle_app()
     app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
     assert not app.exception
-    assert texte_page(app).count('class="carte"') == 1
+    page = texte_page(app)
+    assert page.count('class="carte"') == 1 and page.count('class="tab-etapes') == 1
     assert any("Collez la ligne INIES du matériau B" in m.value for m in app.info)
 
 
@@ -105,3 +167,4 @@ def test_tout_effacer():
     bouton(app, "Tout effacer").click().run()
     assert not app.exception
     assert any("Collez la ligne INIES" in m.value for m in app.info)
+    assert app.text_input(key="nom_0").value == "" and app.selectbox(key="cat_0").value is None

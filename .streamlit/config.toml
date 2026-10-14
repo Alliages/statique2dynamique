@@ -1,0 +1,6 @@
+# Couleur d'accent de l'interface (boutons principaux, focus) : Pacific Cyan, lisible en clair et en sombre.
+[theme]
+primaryColor = "#388697"
+
+[browser]
+gatherUsageStats = false

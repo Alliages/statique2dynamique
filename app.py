@@ -1,62 +1,48 @@
 """
-app.py — Comparateur d'ACV dynamique RE2020 (norme +A2) à partir des chiffres de la base INIES.
+app.py — Comparer RÉELLEMENT deux matériaux : ACV dynamique RE2020 (norme +A2) à partir de la base INIES.
 
 Lancer en local :   streamlit run app.py
-Tout le calcul est dans `acv_inies_a2.py` (module autonome, réutilisable ailleurs).
-Ce fichier ne contient que l'interface.
+
+Organisation du projet :
+    acv_inies_a2.py   le calcul (module autonome, réutilisable ailleurs)
+    catalogue.py      lecture de materiaux.json et fabrication d'un nouveau bloc
+    presentation.py   nombres français, graphique, tableau des étapes, styles
+    app.py            cette interface (aucun calcul ici)
 """
 import html
+from datetime import datetime
 
 import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
 
 import acv_inies_a2 as acv
+import catalogue as cat
+import presentation as pres
 
 # =============================================================================
 # VARIABLES (tout ce qui se règle est regroupé ici)
 # =============================================================================
-TITRE_PAGE = "ACV dynamique RE2020 — comparer deux matériaux"
+TITRE_PAGE = "Comparer RÉELLEMENT deux matériaux — ACV dynamique RE2020"
 ICONE_PAGE = "🏗️"
-UNITE = "kg CO₂ eq."
+UNITE = pres.UNITE
 
 # Lien vers la fiche d'un produit à partir de son identifiant ({id} est remplacé).
-# Format repris de l'adresse d'où viennent vos copier-coller ; à ajuster si INIES le change.
 URL_FICHE_INIES = "https://base-inies.fr/infos-produit/{id}"
 URL_SITE_INIES = "https://www.base-inies.fr/"
+URL_METHODE = "https://www.linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activity-7064102175945175040-cOPY"
 
 NB_MATERIAUX = 2
 LETTRES = ("A", "B")
 DVR_PAR_DEFAUT = 50          # ans
 HAUTEUR_ZONE_COLLAGE = 110   # pixels
+FUSEAU_HORAIRE = "Europe/Paris"    # pour dater un nouveau matériau
+CHOIX_VIDE = "— choisir —"
 
-# Couleurs des deux matériaux (palette validée : contraste et daltonisme, mode clair / sombre)
-COULEURS_CLAIR = ("#2a78d6", "#eb6834")     # bleu, orange
-COULEURS_SOMBRE = ("#3987e5", "#d95926")
-
-# Exemples chargés par le bouton « Essayer avec un exemple »
-EXEMPLES = (
-    # Matériau A : panneau CLT, valeurs de l'Excel d'origine (DVR 100 ans)
-    {"nom": "Panneau CLT (exemple)", "id": 33806, "dvr": 100,
-     "texte": "-6.04e+2\t1.38e+1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t7.58e+2\t1.67e+2\t-2.33e+2"},
-    # Matériau B : fiche 46517, valeurs copiées depuis INIES ; la DVR de 50 ans est fictive (exemple)
-    {"nom": "Fiche 46517 (exemple, DVR fictive)", "id": 46517, "dvr": 50,
-     "texte": "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"},
-)
+# Exemple chargé par le bouton « Essayer avec un exemple » : A vient du catalogue, B est fictif.
+EXEMPLE_B = {
+    "nom": "Fiche 46517 (exemple, DVR fictive)", "id": 46517, "dvr": 50,
+    "texte": "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"}
 PLACEHOLDER_COLLAGE = "Collez ici la ligne « Réchauffement climatique » copiée depuis INIES"
-
-# Style des grandes cartes de résultat (suit automatiquement le thème clair / sombre)
-STYLE_CARTES = """
-<style>
-.carte {border-left: 6px solid var(--couleur); background: rgba(128,128,128,.10);
-        border-radius: 6px; padding: .8rem 1.1rem; margin-bottom: .5rem;}
-.carte .nom {font-weight: 600; font-size: 1.05rem;}
-.carte .grand {font-size: 3.2rem; font-weight: 700; line-height: 1.15;}
-.carte .unite {font-size: 1rem; font-weight: 400; opacity: .75; margin-left: .35rem;}
-.carte .legende {font-size: .95rem; opacity: .85;}
-.carte .petit {font-size: .85rem; opacity: .65; margin-top: .5rem;}
-</style>
-"""
 
 TEXTE_INTRO = """
 Cet outil compare l'impact carbone de **deux matériaux** avec la méthode **dynamique** de la RE2020.
@@ -67,12 +53,11 @@ La RE2020 applique donc à chaque année un coefficient qui descend de 1 (année
 Le résultat diffère ainsi du total affiché dans INIES, qui additionne tout sans pondération.
 """
 
-TEXTE_ETAPES = """
-1. **Trouvez le produit sur INIES** ([base-inies.fr](""" + URL_SITE_INIES + """)). Si vous connaissez son identifiant,
-   saisissez-le ci-dessous : un bouton ouvre la fiche.
+TEXTE_ETAPES = f"""
+1. **Trouvez le produit sur INIES** ([base-inies.fr]({URL_SITE_INIES})). Si vous connaissez son identifiant,
+   saisissez-le ci-dessous : un bouton ouvre la fiche. Vous pouvez aussi **choisir un matériau déjà enregistré**.
 2. Onglet **« Unité fonctionnelle »** : notez la **durée de vie de référence (DVR)**, en années.
-3. Onglet **« Indicateurs »** : vérifiez que la norme est **+A2**. Cet outil ne traite pas la norme +A1.
-4. Toujours dans « Indicateurs », **copiez la ligne « Réchauffement climatique »** (toutes les valeurs, de
+3. Dans l'onglet **« Indicateurs »**, **copiez la ligne « Réchauffement climatique »** (toutes les valeurs, de
    « Étape de production » jusqu'à « D - Bénéfices et charges », sans les autres lignes) et collez-la dans la case.
 
 *Attention : l'arrondi affiché par le site INIES peut différer légèrement des valeurs de la FDES.*
@@ -82,6 +67,9 @@ TEXTE_LECTURE = f"""
 - **Le grand chiffre** est l'ACV dynamique RE2020 : les émissions sur 50 ans, chaque année pondérée par son
   coefficient, **module D inclus**, en {UNITE} pour l'unité fonctionnelle de la fiche.
 - **Le petit chiffre** est le total affiché dans INIES (sans pondération, module D à part), pour repère.
+- **Le graphique** montre le cumul année après année. Au-dessus de zéro, le matériau a émis ; en dessous, il a
+  séquestré. Le chiffre au bout de chaque courbe est le résultat final.
+- **Le tableau sous le graphique** reprend les chiffres INIES étape par étape, avant toute pondération.
 - **Plus le chiffre est bas, mieux c'est.** Un résultat négatif signifie que, sur la période, le matériau compense
   plus qu'il n'émet (par exemple grâce au carbone stocké dans le bois).
 - **Si la DVR est inférieure à 50 ans**, le produit est remplacé en cours de route : chaque remplacement
@@ -90,20 +78,15 @@ TEXTE_LECTURE = f"""
   de même performance) : la comparaison n'a de sens qu'à ce prix.
 """
 
+TEXTE_ENREGISTRER = """
+Pour garder ce matériau dans le catalogue : copiez le bloc ci-dessous (icône en haut à droite) et ajoutez-le
+dans la liste `materiaux` du fichier `materiaux.json`, **avec une virgule entre deux matériaux**.
+"""
+
 
 # =============================================================================
-# OUTILS D'AFFICHAGE
+# OUTILS
 # =============================================================================
-def fr(valeur: float, decimales: int = None) -> str:
-    """Nombre au format français : virgule décimale, espace fine pour les milliers, vrai signe moins."""
-    if decimales is None:       # plus la valeur est petite, plus on garde de décimales
-        decimales = 3 if abs(valeur) < 1 else 2 if abs(valeur) < 10 else 1
-    if round(valeur, decimales) == 0:
-        valeur = 0.0            # évite « −0,0 »
-    texte = f"{valeur:,.{decimales}f}".replace(",", " ").replace(".", ",")
-    return texte.replace("-", "−")
-
-
 def theme_sombre() -> bool:
     """Vrai si l'utilisateur est en thème sombre (faux si Streamlit ne sait pas le dire)."""
     try:
@@ -112,38 +95,89 @@ def theme_sombre() -> bool:
         return False
 
 
-def nom_affiche(saisie: dict) -> str:
-    """Nom choisi par l'utilisateur, ou « Matériau A / B » par défaut."""
-    return saisie["nom"].strip() or f"Matériau {LETTRES[saisie['indice']]}"
+def aujourd_hui():
+    """Date du jour à Paris (ou date du serveur si le fuseau est indisponible)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo(FUSEAU_HORAIRE)).date()
+    except Exception:
+        return datetime.now().date()
+
+
+@st.cache_data(show_spinner=False)
+def _catalogue_depuis_fichier(horodatage: float):
+    """Lit materiaux.json (relu automatiquement quand le fichier change). Renvoie (liste, message d'erreur)."""
+    try:
+        return cat.charger_catalogue(), None
+    except cat.ErreurCatalogue as erreur:
+        return [], str(erreur)
+
+
+def charger_catalogue():
+    """Catalogue des matériaux enregistrés, et message d'erreur éventuel."""
+    fichier = cat.FICHIER_PAR_DEFAUT
+    return _catalogue_depuis_fichier(fichier.stat().st_mtime if fichier.exists() else 0.0)
+
+
+def remplir(indice: int, nom: str, identifiant, dvr: int, texte: str) -> None:
+    """Remplit les champs d'un matériau (noms de clés utilisés par les champs de saisie)."""
+    st.session_state[f"nom_{indice}"] = nom
+    st.session_state[f"id_{indice}"] = identifiant
+    st.session_state[f"dvr_{indice}"] = dvr
+    st.session_state[f"texte_{indice}"] = texte
+
+
+def choisir_catalogue(indice: int) -> None:
+    """Un matériau du catalogue vient d'être choisi dans la liste : on remplit ses champs."""
+    choix = st.session_state.get(f"cat_{indice}")
+    catalogue, _ = charger_catalogue()
+    if choix is not None and choix < len(catalogue):
+        m = catalogue[choix]
+        remplir(indice, m.nom, m.id, m.dvr, m.texte_inies())
 
 
 def charger_exemple() -> None:
     """Remplit les deux matériaux avec les exemples (appelé par le bouton)."""
-    for i, exemple in enumerate(EXEMPLES):
-        st.session_state[f"nom_{i}"] = exemple["nom"]
-        st.session_state[f"id_{i}"] = exemple["id"]
-        st.session_state[f"dvr_{i}"] = exemple["dvr"]
-        st.session_state[f"texte_{i}"] = exemple["texte"]
+    catalogue, _ = charger_catalogue()
+    if catalogue:
+        m = catalogue[0]
+        remplir(0, m.nom, m.id, m.dvr, m.texte_inies())
+        st.session_state["cat_0"] = 0
+    else:
+        remplir(0, "Fiche 46517 (exemple, DVR 30)", 46517, 30, EXEMPLE_B["texte"])
+    remplir(1, EXEMPLE_B["nom"], EXEMPLE_B["id"], EXEMPLE_B["dvr"], EXEMPLE_B["texte"])
+    st.session_state["cat_1"] = None
 
 
 def effacer_tout() -> None:
     """Vide les deux matériaux (appelé par le bouton)."""
     for i in range(NB_MATERIAUX):
-        st.session_state[f"nom_{i}"] = ""
-        st.session_state[f"id_{i}"] = None
-        st.session_state[f"dvr_{i}"] = DVR_PAR_DEFAUT
-        st.session_state[f"texte_{i}"] = ""
+        remplir(i, "", None, DVR_PAR_DEFAUT, "")
+        st.session_state[f"cat_{i}"] = None
+
+
+def nom_affiche(saisie: dict) -> str:
+    """Nom choisi par l'utilisateur, ou « Matériau A / B » par défaut."""
+    return saisie["nom"].strip() or f"Matériau {LETTRES[saisie['indice']]}"
 
 
 # =============================================================================
 # 1) SAISIES — une carte par matériau
 # =============================================================================
-def saisie_materiau(indice: int) -> dict:
+def saisie_materiau(indice: int, catalogue: list) -> dict:
     """Affiche les champs d'un matériau, lit la ligne collée, et renvoie tout ce qu'il faut pour la suite."""
     saisie = {"indice": indice, "valeurs": None, "resultat": None}
 
     with st.container(border=True):
-        st.subheader(f"Matériau {LETTRES[indice]}")
+        st.markdown(f'<div class="bandeau mat-{LETTRES[indice]}">Matériau {LETTRES[indice]}</div>', unsafe_allow_html=True)
+
+        if catalogue:
+            st.selectbox(
+                "Charger un matériau enregistré", options=[None] + list(range(len(catalogue))), key=f"cat_{indice}",
+                format_func=lambda k: CHOIX_VIDE if k is None else catalogue[k].etiquette(),
+                on_change=choisir_catalogue, args=(indice,),
+                help="Les matériaux sont enregistrés dans le fichier materiaux.json du dépôt GitHub.")
+
         saisie["nom"] = st.text_input("Nom (facultatif)", key=f"nom_{indice}", placeholder="Ex. : panneau bois, béton…")
 
         colonne_id, colonne_lien = st.columns([3, 2], vertical_alignment="bottom")
@@ -165,7 +199,7 @@ def saisie_materiau(indice: int) -> dict:
         saisie["texte"] = st.text_area(
             "Ligne « Réchauffement climatique » copiée depuis INIES", key=f"texte_{indice}",
             height=HAUTEUR_ZONE_COLLAGE, placeholder=PLACEHOLDER_COLLAGE,
-            help="Onglet « Indicateurs » de la fiche, norme +A2 : 13 valeurs. Les tabulations, espaces et retours "
+            help="Onglet « Indicateurs » de la fiche : 13 valeurs. Les tabulations, espaces et retours "
                  "à la ligne sont acceptés.")
 
         # Lecture immédiate de ce qui a été collé, avec un retour clair
@@ -173,17 +207,30 @@ def saisie_materiau(indice: int) -> dict:
             try:
                 saisie["valeurs"] = acv.lire_valeurs_inies(saisie["texte"])
                 saisie["resultat"] = acv.calculer_acv_dynamique(saisie["valeurs"], saisie["dvr"])
-                st.success(f"{acv.NB_VALEURS_A2} valeurs lues (norme +A2).")
+                st.success(f"{acv.NB_VALEURS_A2} valeurs lues.")
                 for avertissement in acv.controler_coherence(saisie["valeurs"]):
                     st.warning(avertissement)
             except acv.ErreurInies as erreur:
                 st.error(str(erreur))
 
+        # Bloc à ajouter au catalogue
+        if saisie["resultat"] is not None:
+            with st.expander("Enregistrer ce matériau dans le catalogue"):
+                st.markdown(TEXTE_ENREGISTRER)
+                identifiant = saisie["identifiant"]
+                st.code(cat.bloc_json_materiau(
+                    nom=nom_affiche(saisie), identifiant=int(identifiant) if identifiant else None,
+                    lien_inies=URL_FICHE_INIES.format(id=int(identifiant)) if identifiant else None,
+                    dvr=saisie["dvr"], valeurs=saisie["valeurs"], acv_dynamique=saisie["resultat"].dynamique_total,
+                    date_export=aujourd_hui()), language="json")
+                if not saisie["nom"].strip():
+                    st.caption("Donnez un nom au matériau avant de copier le bloc.")
+
     return saisie
 
 
 # =============================================================================
-# 2) AFFICHAGE DES RÉSULTATS
+# 2) RÉSULTATS
 # =============================================================================
 def carte_resultat(saisie: dict, couleur: str) -> str:
     """HTML de la grande carte d'un matériau : résultat dynamique en gros, total INIES en petit."""
@@ -191,34 +238,11 @@ def carte_resultat(saisie: dict, couleur: str) -> str:
     return f"""
     <div class="carte" style="--couleur:{couleur}">
       <div class="nom">{html.escape(nom_affiche(saisie))}</div>
-      <div class="grand">{fr(resultat.dynamique_total)}<span class="unite">{UNITE}</span></div>
+      <div class="grand">{pres.fr(resultat.dynamique_total)}<span class="unite">{UNITE}</span></div>
       <div class="legende">ACV dynamique RE2020 sur {acv.PERIODE_ETUDE} ans, module D inclus</div>
-      <div class="petit">Total affiché dans INIES : {fr(valeurs.total)} {UNITE}
-        (module D, à part : {fr(valeurs.module_d)}) · DVR {resultat.dvr} ans</div>
+      <div class="petit">Total affiché dans INIES : {pres.fr(valeurs.total)} {UNITE}
+        (module D, à part : {pres.fr(valeurs.module_d)}) · DVR {resultat.dvr} ans</div>
     </div>"""
-
-
-def graphique_cumul(saisies_ok: list, couleurs: tuple) -> go.Figure:
-    """Courbes des émissions dynamiques cumulées, année après année."""
-    figure = go.Figure()
-    for saisie, couleur in saisies_ok:
-        cumul = saisie["resultat"].cumul_dynamique()
-        nom = nom_affiche(saisie)
-        figure.add_trace(go.Scatter(
-            x=list(saisie["resultat"].annees), y=cumul, mode="lines", name=nom,
-            line=dict(color=couleur, width=2.5),
-            hovertemplate=f"{html.escape(nom)}<br>Année %{{x}} : %{{y:,.2f}} {UNITE} cumulés<extra></extra>"))
-        # Étiquette directe au bout de la courbe, alignée à droite pour ne jamais être coupée
-        figure.add_annotation(x=acv.PERIODE_ETUDE, y=cumul[-1], text=f"<b>{html.escape(nom)}</b>", showarrow=False,
-                              xanchor="right", yanchor="bottom", yshift=8, font=dict(color=couleur))
-    figure.add_hline(y=0, line_width=1, line_color="rgba(128,128,128,.6)")
-    figure.update_layout(
-        height=420, margin=dict(l=10, r=20, t=40, b=10), hovermode="x unified",
-        separators=", ", legend=dict(orientation="h", y=1.12, x=0),
-        xaxis=dict(title="Année après la construction", range=[0, acv.PERIODE_ETUDE], dtick=5, showgrid=False),
-        yaxis=dict(title=f"{UNITE} cumulés", gridcolor="rgba(128,128,128,.25)", zeroline=False),
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
-    return figure
 
 
 def tableau_phases(saisies_ok: list) -> pd.DataFrame:
@@ -230,21 +254,21 @@ def tableau_phases(saisies_ok: list) -> pd.DataFrame:
         ("Total", "dynamique_total", "statique_total"),
     )
     tableau = {"Phase": [ligne[0] for ligne in lignes]}
-    for saisie, _ in saisies_ok:
+    for saisie in saisies_ok:
         nom = nom_affiche(saisie)
-        tableau[f"{nom} — dynamique RE2020"] = [fr(getattr(saisie["resultat"], l[1])) for l in lignes]
-        tableau[f"{nom} — statique E+C-"] = [fr(getattr(saisie["resultat"], l[2])) for l in lignes]
+        tableau[f"{nom} — dynamique RE2020"] = [pres.fr(getattr(saisie["resultat"], l[1])) for l in lignes]
+        tableau[f"{nom} — statique E+C-"] = [pres.fr(getattr(saisie["resultat"], l[2])) for l in lignes]
     return pd.DataFrame(tableau)
 
 
 def tableau_annees(saisies_ok: list) -> pd.DataFrame:
     """Tableau année par année (pour vérifier le calcul)."""
     tableau = {"Année": list(range(acv.PERIODE_ETUDE + 1)),
-               "Coefficient (art. 11)": [fr(c, 3) for c in acv.COEFFICIENTS_ART11]}
-    for saisie, _ in saisies_ok:
+               "Coefficient (art. 11)": [pres.fr(c, 3) for c in acv.COEFFICIENTS_ART11]}
+    for saisie in saisies_ok:
         nom = nom_affiche(saisie)
-        tableau[f"{nom} — émissions pondérées"] = [fr(v, 3) for v in saisie["resultat"].dynamique_par_annee]
-        tableau[f"{nom} — cumul"] = [fr(v, 3) for v in saisie["resultat"].cumul_dynamique()]
+        tableau[f"{nom} — émissions pondérées"] = [pres.fr(v, 3) for v in saisie["resultat"].dynamique_par_annee]
+        tableau[f"{nom} — cumul"] = [pres.fr(v, 3) for v in saisie["resultat"].cumul_dynamique()]
     return pd.DataFrame(tableau)
 
 
@@ -252,37 +276,40 @@ def tableau_annees(saisies_ok: list) -> pd.DataFrame:
 # PAGE
 # =============================================================================
 st.set_page_config(page_title=TITRE_PAGE, page_icon=ICONE_PAGE, layout="wide")
-st.markdown(STYLE_CARTES, unsafe_allow_html=True)
 
-st.title(TITRE_PAGE)
+SOMBRE = theme_sombre()
+CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
+COULEURS = pres.THEMES[SOMBRE]["matieres"]
+
+st.markdown(pres.css(SOMBRE), unsafe_allow_html=True)
+st.markdown('<h1 class="titre-principal">Comparer <span class="mot">RÉELLEMENT</span> deux matériaux '
+            '— ACV dynamique RE2020</h1>', unsafe_allow_html=True)
 st.markdown(TEXTE_INTRO)
-with st.expander("Comment faire ? (4 étapes)", expanded=True):
+with st.expander("Comment faire ? (3 étapes)", expanded=True):
     st.markdown(TEXTE_ETAPES)
+if ERREUR_CATALOGUE:
+    st.warning(f"Le catalogue de matériaux n'a pas pu être lu. {ERREUR_CATALOGUE}")
 
 bouton_exemple, bouton_effacer, _ = st.columns([2, 2, 6])
-bouton_exemple.button("Essayer avec un exemple", on_click=charger_exemple, width="stretch")
+bouton_exemple.button("Essayer avec un exemple", on_click=charger_exemple, type="primary", width="stretch")
 bouton_effacer.button("Tout effacer", on_click=effacer_tout, width="stretch")
 
-# --- 1) Saisies --------------------------------------------------------------
-colonnes_saisie = st.columns(NB_MATERIAUX)
+# --- 1) Saisies ---------------------------------------------------------------
 saisies = []
-for i, colonne in enumerate(colonnes_saisie):
+for i, colonne in enumerate(st.columns(NB_MATERIAUX)):
     with colonne:
-        saisies.append(saisie_materiau(i))
+        saisies.append(saisie_materiau(i, CATALOGUE))
+saisies_ok = [s for s in saisies if s["resultat"] is not None]
 
 # --- 2) Résultats -------------------------------------------------------------
-COULEURS = COULEURS_SOMBRE if theme_sombre() else COULEURS_CLAIR
-saisies_ok = [(s, COULEURS[s["indice"]]) for s in saisies if s["resultat"] is not None]
-
 st.divider()
-st.header("Résultat")
+st.markdown('<h2 class="titre-section">Résultat</h2>', unsafe_allow_html=True)
 
 if not saisies_ok:
-    st.info("Collez la ligne INIES d'au moins un matériau pour voir le résultat. "
+    st.info("Collez la ligne INIES d'au moins un matériau (ou choisissez-en un dans la liste) pour voir le résultat. "
             "Le bouton « Essayer avec un exemple » montre le principe.")
 else:
-    colonnes_resultat = st.columns(NB_MATERIAUX)
-    for saisie, colonne in zip(saisies, colonnes_resultat):
+    for saisie, colonne in zip(saisies, st.columns(NB_MATERIAUX)):
         with colonne:
             if saisie["resultat"] is not None:
                 st.markdown(carte_resultat(saisie, COULEURS[saisie["indice"]]), unsafe_allow_html=True)
@@ -291,18 +318,26 @@ else:
 
     # Phrase de comparaison (si les deux matériaux sont renseignés)
     if len(saisies_ok) == NB_MATERIAUX:
-        (saisie_a, _), (saisie_b, _) = saisies_ok
+        saisie_a, saisie_b = saisies_ok
         ecart = saisie_a["resultat"].dynamique_total - saisie_b["resultat"].dynamique_total
         if abs(ecart) < 0.005:
             st.markdown("**Les deux matériaux ont le même résultat** (écart inférieur à 0,01 " + UNITE + ").")
         else:
             meilleur, autre = (saisie_a, saisie_b) if ecart < 0 else (saisie_b, saisie_a)
             st.markdown(f"**{nom_affiche(meilleur)}** a le résultat le plus bas : "
-                        f"**{fr(abs(ecart))} {UNITE}** de moins que **{nom_affiche(autre)}** sur {acv.PERIODE_ETUDE} ans.")
+                        f"**{pres.fr(abs(ecart))} {UNITE}** de moins que **{nom_affiche(autre)}** sur {acv.PERIODE_ETUDE} ans.")
         st.caption("Cette comparaison n'a de sens que pour deux produits rendant le même service "
                    "(même unité fonctionnelle).")
 
-    st.plotly_chart(graphique_cumul(saisies_ok, COULEURS), width="stretch")
+    # Graphique (étroit) puis, dessous, le tableau des étapes INIES de chaque matériau
+    series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
+               "cumul": s["resultat"].cumul_dynamique()} for s in saisies_ok]
+    # Colonne centrale : le graphique prend la largeur de SA colonne (un simple max-width CSS rognait la figure)
+    _, colonne_graphique, _ = st.columns(pres.COLONNES_GRAPHIQUE)
+    colonne_graphique.plotly_chart(pres.figure_cumul(series, SOMBRE), width="stretch")
+    for saisie in saisies_ok:
+        st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
+                    unsafe_allow_html=True)
 
     with st.expander("Voir le détail du calcul"):
         st.markdown("**Par phase**, en " + UNITE + " (le statique E+C- compte le module D pour un tiers) :")
@@ -315,8 +350,9 @@ with st.expander("Comment lire ce résultat ?"):
 
 # --- 3) Pied de page : version, licence, historique ----------------------------
 st.divider()
-st.caption(f"Version {acv.VERSION} du {acv.DATE_VERSION} · Licence GNU GPL v3 · Méthode issue du classeur Excel "
-           f"« ACV_Dynamique_INIES_V2 » de Guillaume Meunier · Coefficients : arrêté du 4 août 2021, article 11.")
+st.caption(f"Version {acv.VERSION} du {acv.DATE_VERSION} · Licence GNU GPL v3 · "
+           f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier]({URL_METHODE}) · "
+           f"Coefficients : arrêté du 4 août 2021, article 11.")
 with st.expander("Historique des versions"):
     st.dataframe(pd.DataFrame(acv.HISTORIQUE_VERSIONS, columns=["Version", "Date", "Changements"]),
                  hide_index=True, width="stretch")
