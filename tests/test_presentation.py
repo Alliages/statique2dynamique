@@ -71,11 +71,10 @@ def test_nom_court():
 # ----------------------------------------------------------------------------
 # 2) Graphique
 # ----------------------------------------------------------------------------
-@pytest.mark.parametrize("sombre", [False, True])
-def test_graphique_proposition_1(sombre):
+def test_graphique_proposition_1():
     series = [serie(0, "Panneau CLT", TEXTE_A, 100), serie(1, "Fiche 46517", TEXTE_B, 50)]
-    figure = pres.figure_cumul(series, sombre)
-    theme = pres.THEMES[sombre]
+    figure = pres.figure_cumul(series)
+    theme = pres.THEME
 
     courbes = [t for t in figure.data if t.mode == "lines"]
     assert len(courbes) == 2                                                # uniquement les courbes dynamiques
@@ -92,7 +91,11 @@ def test_graphique_proposition_1(sombre):
     for annotation in figure.layout.annotations:                            # valeur finale : dans la bonne couleur
         for s, indice in zip(series, (0, 1)):
             if annotation.text == f"<b>{pres.fr(s['cumul'][-1])}</b>":
-                assert annotation.font.color == theme["matieres"][indice]
+                assert annotation.font.color == theme["texte_matieres"][indice]   # lisible sur fond blanc
+    for texte in (pres.TEXTE_EMISSIONS, pres.TEXTE_SEQUESTRATION):                # filigrane en gris clair
+        filigrane = next(a for a in figure.layout.annotations if a.text == f"<b>{texte}</b>")
+        assert filigrane.font.color == "#d3d7db"
+    assert figure.layout.paper_bgcolor == "#ffffff"                              # graphique sur fond blanc
     fleches = [a for a in figure.layout.annotations if a.showarrow]
     assert len(fleches) == 2                                                # deux axes fléchés
 
@@ -152,17 +155,32 @@ def test_nom_echappe_dans_le_tableau():
 # ----------------------------------------------------------------------------
 # 4) Styles
 # ----------------------------------------------------------------------------
-@pytest.mark.parametrize("sombre", [False, True])
-def test_css_sans_marqueur_oublie_et_avec_la_palette(sombre):
-    feuille = pres.css(sombre)
+def test_css_sans_marqueur_oublie_et_avec_la_palette():
+    feuille = pres.css()
     assert "__" not in feuille                                  # tous les marqueurs ont été remplacés
-    for couleur in pres.THEMES[sombre]["matieres"]:
+    for couleur in pres.THEME["matieres"]:
         assert couleur in feuille
+    assert pres.degrade_fond() in feuille and "linear-gradient(135deg" in feuille    # fond en dégradé diagonal
     assert f"max-width: {pres.LARGEUR_MAX_GRAPHIQUE}px" in feuille    # tableau des étapes aligné sur le graphique
     assert len(pres.COLONNES_GRAPHIQUE) == 3                          # graphique étroit : colonne centrale
+    assert "background: #ffffff !important" in feuille                # boîtes blanches
+
+
+def test_degrade_utilise_les_couleurs_de_la_palette_eclaircies():
+    assert pres.eclaircir("#08415c", 0) == "#08415c" and pres.eclaircir("#08415c", 1) == "#ffffff"
+    degrade = pres.degrade_fond()
+    for couleur in pres.ORDRE_DEGRADE:
+        assert pres.eclaircir(couleur) in degrade
+        assert pres.eclaircir(couleur) != couleur               # éclaircies, pas pures
+
+
+def test_texte_du_materiau_b_plus_fonce_que_le_cotton_rose_pour_etre_lisible():
+    assert pres.THEME["texte_matieres"][0] == pres.PACIFIC_CYAN
+    assert pres.assombrir("#ffffff", 0) == "#ffffff" and pres.assombrir("#ffffff", 1) == "#000000"
+    assert pres.THEME["texte_matieres"][1] != pres.COTTON_ROSE and "__" not in pres.css()
 
 
 def test_palette_de_l_utilisateur():
     assert (pres.YALE_BLUE, pres.TOMATO_JAM, pres.COTTON_ROSE, pres.PACIFIC_CYAN, pres.AQUAMARINE) == (
         "#08415c", "#cc2936", "#ebbab9", "#388697", "#b5ffe1")
-    assert pres.THEMES[False]["matieres"] == (pres.YALE_BLUE, pres.TOMATO_JAM)
+    assert pres.THEME["matieres"] == (pres.PACIFIC_CYAN, pres.COTTON_ROSE)    # couleurs des deux matériaux

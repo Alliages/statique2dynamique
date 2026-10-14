@@ -87,14 +87,6 @@ dans la liste `materiaux` du fichier `materiaux.json`, **avec une virgule entre 
 # =============================================================================
 # OUTILS
 # =============================================================================
-def theme_sombre() -> bool:
-    """Vrai si l'utilisateur est en thème sombre (faux si Streamlit ne sait pas le dire)."""
-    try:
-        return st.context.theme.type == "dark"
-    except Exception:
-        return False
-
-
 def aujourd_hui():
     """Date du jour à Paris (ou date du serveur si le fuseau est indisponible)."""
     try:
@@ -168,14 +160,14 @@ def saisie_materiau(indice: int, catalogue: list) -> dict:
     """Affiche les champs d'un matériau, lit la ligne collée, et renvoie tout ce qu'il faut pour la suite."""
     saisie = {"indice": indice, "valeurs": None, "resultat": None}
 
-    with st.container(border=True):
+    with st.container(border=True, key=f"boite_{LETTRES[indice]}"):   # la clé donne la classe CSS « st-key-boite_A »
         st.markdown(f'<div class="bandeau mat-{LETTRES[indice]}">Matériau {LETTRES[indice]}</div>', unsafe_allow_html=True)
 
         if catalogue:
             st.selectbox(
                 "Charger un matériau enregistré", options=[None] + list(range(len(catalogue))), key=f"cat_{indice}",
                 format_func=lambda k: CHOIX_VIDE if k is None else catalogue[k].etiquette(),
-                on_change=choisir_catalogue, args=(indice,),
+                on_change=choisir_catalogue, args=(indice,), placeholder=CHOIX_VIDE,
                 help="Les matériaux sont enregistrés dans le fichier materiaux.json du dépôt GitHub.")
 
         saisie["nom"] = st.text_input("Nom (facultatif)", key=f"nom_{indice}", placeholder="Ex. : panneau bois, béton…")
@@ -232,11 +224,11 @@ def saisie_materiau(indice: int, catalogue: list) -> dict:
 # =============================================================================
 # 2) RÉSULTATS
 # =============================================================================
-def carte_resultat(saisie: dict, couleur: str) -> str:
+def carte_resultat(saisie: dict, couleur: str, couleur_texte: str) -> str:
     """HTML de la grande carte d'un matériau : résultat dynamique en gros, total INIES en petit."""
     resultat, valeurs = saisie["resultat"], saisie["valeurs"]
     return f"""
-    <div class="carte" style="--couleur:{couleur}">
+    <div class="carte" style="--couleur:{couleur}; --couleur-texte:{couleur_texte}">
       <div class="nom">{html.escape(nom_affiche(saisie))}</div>
       <div class="grand">{pres.fr(resultat.dynamique_total)}<span class="unite">{UNITE}</span></div>
       <div class="legende">ACV dynamique RE2020 sur {acv.PERIODE_ETUDE} ans, module D inclus</div>
@@ -277,11 +269,10 @@ def tableau_annees(saisies_ok: list) -> pd.DataFrame:
 # =============================================================================
 st.set_page_config(page_title=TITRE_PAGE, page_icon=ICONE_PAGE, layout="wide")
 
-SOMBRE = theme_sombre()
 CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
-COULEURS = pres.THEMES[SOMBRE]["matieres"]
+COULEURS = pres.THEME["matieres"]
 
-st.markdown(pres.css(SOMBRE), unsafe_allow_html=True)
+st.markdown(pres.css(), unsafe_allow_html=True)
 st.markdown('<h1 class="titre-principal">Comparer <span class="mot">RÉELLEMENT</span> deux matériaux '
             '— ACV dynamique RE2020</h1>', unsafe_allow_html=True)
 st.markdown(TEXTE_INTRO)
@@ -312,7 +303,7 @@ else:
     for saisie, colonne in zip(saisies, st.columns(NB_MATERIAUX)):
         with colonne:
             if saisie["resultat"] is not None:
-                st.markdown(carte_resultat(saisie, COULEURS[saisie["indice"]]), unsafe_allow_html=True)
+                st.markdown(carte_resultat(saisie, COULEURS[saisie["indice"]], pres.THEME["texte_matieres"][saisie["indice"]]), unsafe_allow_html=True)
             else:
                 st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} pour le comparer.")
 
@@ -334,7 +325,7 @@ else:
                "cumul": s["resultat"].cumul_dynamique()} for s in saisies_ok]
     # Colonne centrale : le graphique prend la largeur de SA colonne (un simple max-width CSS rognait la figure)
     _, colonne_graphique, _ = st.columns(pres.COLONNES_GRAPHIQUE)
-    colonne_graphique.plotly_chart(pres.figure_cumul(series, SOMBRE), width="stretch")
+    colonne_graphique.plotly_chart(pres.figure_cumul(series), width="stretch")
     for saisie in saisies_ok:
         st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
                     unsafe_allow_html=True)

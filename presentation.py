@@ -8,8 +8,8 @@ Mise en forme de l'application, SANS Streamlit (donc testable seul) :
   - feuille de style (CSS) aux couleurs de la palette.
 
 Palette : Yale Blue, Tomato Jam, Cotton Rose, Pacific Cyan, Aquamarine.
-En thème sombre, le Yale Blue (trop sombre) est remplacé par le Pacific Cyan,
-et le Tomato Jam par le Cotton Rose, pour garder des contrastes lisibles.
+Un seul thème (clair, imposé par .streamlit/config.toml) : fond en dégradé diagonal des couleurs
+de la palette éclaircies, boîtes blanches, matériau A = Pacific Cyan, matériau B = Cotton Rose.
 """
 from __future__ import annotations
 
@@ -32,30 +32,22 @@ COTTON_ROSE = "#ebbab9"
 PACIFIC_CYAN = "#388697"
 AQUAMARINE = "#b5ffe1"
 
-# --- Couleurs selon le thème (clé : thème sombre ou non) ------------------------
-THEMES: Dict[bool, dict] = {
-    False: {   # thème clair
-        "matieres": (YALE_BLUE, TOMATO_JAM),            # matériau A, matériau B
-        "titre": YALE_BLUE, "mot_couleur": TOMATO_JAM,
-        "texte_sur_couleur": "#ffffff",                 # texte posé sur une couleur de matériau
-        "fond_carte": "rgba(181,255,225,.38)",          # Aquamarine léger
-        "fond_ligne_valeurs": "rgba(235,186,185,.28)",  # Cotton Rose léger
-        "axes": "#111111", "grille": "rgba(0,0,0,.08)", "zero": "rgba(0,0,0,.45)",
-        "filigrane_emissions": "rgba(204,41,54,.18)",
-        "filigrane_sequestration": "rgba(56,134,151,.28)",
-        "texte": "#1f2933", "texte_discret": "#5b6670",
-    },
-    True: {    # thème sombre
-        "matieres": (PACIFIC_CYAN, COTTON_ROSE),
-        "titre": AQUAMARINE, "mot_couleur": COTTON_ROSE,
-        "texte_sur_couleur": "#0e1117",
-        "fond_carte": "rgba(56,134,151,.22)",
-        "fond_ligne_valeurs": "rgba(235,186,185,.12)",
-        "axes": "#f2f2f2", "grille": "rgba(255,255,255,.10)", "zero": "rgba(255,255,255,.5)",
-        "filigrane_emissions": "rgba(235,186,185,.20)",
-        "filigrane_sequestration": "rgba(181,255,225,.20)",
-        "texte": "#f2f2f2", "texte_discret": "#aab3bb",
-    },
+# --- Couleurs de l'interface ---------------------------------------------------
+ECLAIRCISSEMENT = 0.78          # part de blanc mélangée aux couleurs du dégradé de fond (0 = pur, 1 = blanc)
+ANGLE_DEGRADE = 135             # degrés : 135 = diagonale du haut-gauche vers le bas-droite
+ORDRE_DEGRADE = (YALE_BLUE, PACIFIC_CYAN, AQUAMARINE, COTTON_ROSE, TOMATO_JAM)
+ASSOMBRISSEMENT_TEXTE = 0.42    # part de noir ajoutée au Cotton Rose pour les chiffres sur fond blanc
+THEME: dict = {
+    "matieres": (PACIFIC_CYAN, COTTON_ROSE),            # matériau A, matériau B
+    "texte_matieres": (PACIFIC_CYAN, ""),   # chiffres posés sur fond blanc (le Cotton Rose pur y serait illisible)
+    "texte_sur_matiere": ("#ffffff", YALE_BLUE),        # texte posé sur la couleur du matériau (lisible sur chacune)
+    "titre": YALE_BLUE, "mot_couleur": TOMATO_JAM,
+    "fond_boite": "#ffffff",                            # toutes les boîtes sont blanches
+    "bordure_boite": "rgba(8,65,92,.12)",
+    "fond_ligne_valeurs": "#ffffff",
+    "axes": "#111111", "grille": "rgba(0,0,0,.08)", "zero": "rgba(0,0,0,.45)",
+    "filigrane": "#d3d7db",                             # ÉMISSIONS et SÉQUESTRATION : gris clair
+    "texte": "#1f2933",
 }
 
 # --- Graphique ----------------------------------------------------------------
@@ -84,6 +76,30 @@ COLONNES_ETAPES = (
     ("", "Total cycle de vie", "total"),
     ("D", "D-Bénéfices et charges au-delà des frontières du système", "module_d"),
 )
+
+
+# =============================================================================
+# COULEURS
+# =============================================================================
+def eclaircir(couleur: str, part_de_blanc: float = ECLAIRCISSEMENT) -> str:
+    """Couleur « #rrggbb » mélangée avec du blanc (0 = inchangée, 1 = blanc)."""
+    rvb = [int(couleur[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(c + (255 - c) * part_de_blanc):02x}" for c in rvb)
+
+
+def assombrir(couleur: str, part_de_noir: float = ASSOMBRISSEMENT_TEXTE) -> str:
+    """Couleur « #rrggbb » mélangée avec du noir (0 = inchangée, 1 = noir)."""
+    rvb = [int(couleur[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(c * (1 - part_de_noir)):02x}" for c in rvb)
+
+
+THEME["texte_matieres"] = (PACIFIC_CYAN, assombrir(COTTON_ROSE))
+
+
+def degrade_fond() -> str:
+    """Dégradé diagonal des couleurs de la palette éclaircies (valeur CSS de « background »)."""
+    couleurs = ", ".join(eclaircir(c) for c in ORDRE_DEGRADE)
+    return f"linear-gradient({ANGLE_DEGRADE}deg, {couleurs})"
 
 
 # =============================================================================
@@ -138,13 +154,13 @@ def format_graduations(limite: float) -> str:
 # =============================================================================
 # GRAPHIQUE (proposition 1 : traits épais, axes fléchés, filigrane, valeur finale)
 # =============================================================================
-def figure_cumul(series: List[dict], sombre: bool = False) -> go.Figure:
+def figure_cumul(series: List[dict]) -> go.Figure:
     """Courbes dynamiques cumulées sur 50 ans.
 
     `series` : une entrée par matériau, avec les clés
         "indice" (0 pour A, 1 pour B : fixe la couleur), "nom", "annees", "cumul".
     """
-    theme = THEMES[sombre]
+    theme = THEME
     limite = limite_axe(max((abs(v) for s in series for v in s["cumul"]), default=0.0))
     dernier_x = acv.PERIODE_ETUDE
     figure = go.Figure()
@@ -158,7 +174,7 @@ def figure_cumul(series: List[dict], sombre: bool = False) -> go.Figure:
             hovertemplate=html.escape(s["nom"]) + "<br>Année %{x} : %{y:,.2f} " + UNITE + " cumulés<extra></extra>"))
         figure.add_trace(go.Scatter(
             x=[dernier_x], y=[s["cumul"][-1]], mode="markers", showlegend=False, hoverinfo="skip",
-            marker=dict(color=couleur, size=TAILLE_POINT_FINAL, line=dict(color="rgba(255,255,255,.9)", width=2))))
+            marker=dict(color=couleur, size=TAILLE_POINT_FINAL, line=dict(color="#ffffff", width=2))))
 
     # valeurs finales : si deux étiquettes se touchent, on les écarte l'une de l'autre
     finales = sorted(series, key=lambda s: s["cumul"][-1])
@@ -167,7 +183,7 @@ def figure_cumul(series: List[dict], sombre: bool = False) -> go.Figure:
         decalage = (-13 if rang == 0 else 13) if proches else 0
         figure.add_annotation(
             x=dernier_x, y=s["cumul"][-1], text=f"<b>{fr(s['cumul'][-1])}</b>", showarrow=False,
-            xanchor="left", xshift=16, yshift=decalage, font=dict(size=18, color=theme["matieres"][s["indice"]]))
+            xanchor="left", xshift=16, yshift=decalage, font=dict(size=18, color=theme["texte_matieres"][s["indice"]]))
 
     # --- ligne de zéro, axes fléchés et filigrane ÉMISSIONS / SÉQUESTRATION -----------
     figure.add_hline(y=0, line_width=1.5, line_dash="dash", line_color=theme["zero"])
@@ -177,16 +193,16 @@ def figure_cumul(series: List[dict], sombre: bool = False) -> go.Figure:
     figure.add_annotation(x=X_FIN_AXE, y=-limite, ax=X_AXE, ay=-limite, **flechette)       # axe horizontal
     hauteur_demi_trace = (HAUTEUR_GRAPHIQUE - MARGES["t"] - MARGES["b"]) / 2
     taille_filigrane = min(26, int(hauteur_demi_trace / 8.8))                               # tient dans la demi-hauteur
-    for texte, y, couleur in ((TEXTE_EMISSIONS, limite / 2, theme["filigrane_emissions"]),
-                              (TEXTE_SEQUESTRATION, -limite / 2, theme["filigrane_sequestration"])):
+    for texte, y, couleur in ((TEXTE_EMISSIONS, limite / 2, theme["filigrane"]),
+                              (TEXTE_SEQUESTRATION, -limite / 2, theme["filigrane"])):
         figure.add_annotation(x=2.4, y=y, text=f"<b>{texte}</b>", textangle=-90, showarrow=False,
                               font=dict(size=taille_filigrane, color=couleur))
 
     # --- mise en page ---------------------------------------------------------------
     figure.update_layout(
         height=HAUTEUR_GRAPHIQUE, margin=MARGES, hovermode="closest", separators=", ",
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=theme["texte"], size=13),
-        legend=dict(orientation="h", y=1.13, x=0, bgcolor="rgba(0,0,0,0)", font=dict(size=13)),
+        paper_bgcolor=theme["fond_boite"], plot_bgcolor=theme["fond_boite"], font=dict(color=theme["texte"], size=13),
+        legend=dict(orientation="h", y=1.13, x=0, bgcolor="rgba(255,255,255,0)", font=dict(size=13)),
         xaxis=dict(range=[X_AXE, X_FIN_AXE], tickvals=list(range(0, acv.PERIODE_ETUDE + 1, 10)), title="années",
                    showgrid=False, zeroline=False, showline=False),
         yaxis=dict(range=[-limite, limite], dtick=limite / NB_GRADUATIONS, title=f"{UNITE} cumulés",
@@ -213,44 +229,56 @@ def tableau_etapes_html(nom: str, valeurs: acv.ValeursA2, indice: int) -> str:
 # =============================================================================
 _CSS = """
 <style>
+.stApp {background: __DEGRADE__; background-attachment: fixed;}
+header[data-testid="stHeader"] {background: transparent;}
+/* Boîtes : fond blanc */
+[data-testid="stExpander"] details, [data-testid="stAlert"], [data-testid="stAlertContainer"], div[data-testid="stPlotlyChart"],
+[class*="st-key-boite_"], div[data-baseweb="select"], div[data-baseweb="select"] div,
+.carte, .tab-etapes, div[data-testid="stTextArea"] textarea, div[data-testid="stTextInput"] input,
+div[data-testid="stNumberInput"] input, div[data-testid="stNumberInput"] > div > div, [data-testid="stCode"] {
+    background: __FOND_BOITE__ !important; border-radius: 8px;}
+[data-testid="stExpander"] details, [data-testid="stAlert"], div[data-baseweb="select"] > div {border: 1px solid __BORDURE__;}
+div[data-testid="stPlotlyChart"] {border: 1px solid __BORDURE__; padding: .4rem;}
 .titre-principal {font-size: 2.1rem; font-weight: 800; line-height: 1.2; margin: .2rem 0 .6rem 0; color: __TITRE__;}
 .titre-principal .mot {color: __MOT__;}
 .titre-section {font-size: 1.7rem; font-weight: 700; margin: .4rem 0 .6rem 0; color: __TITRE__;
                 border-bottom: 3px solid __MOT__; display: inline-block; padding-bottom: .1rem;}
-.bandeau {font-size: 1.3rem; font-weight: 700; color: __SURCOULEUR__; padding: .35rem .8rem; border-radius: 6px;
-          margin-bottom: .6rem;}
-.bandeau.mat-A {background: __COULEUR_A__;}
-.bandeau.mat-B {background: __COULEUR_B__;}
-.carte {border-left: 8px solid var(--couleur); background: __FOND_CARTE__; border-radius: 8px;
-        padding: .8rem 1.1rem; margin-bottom: .5rem;}
+.bandeau {font-size: 1.3rem; font-weight: 700; padding: .35rem .8rem; border-radius: 6px; margin-bottom: .6rem;}
+.bandeau.mat-A {background: __COULEUR_A__; color: __TEXTE_A__;}
+.bandeau.mat-B {background: __COULEUR_B__; color: __TEXTE_B__;}
+.carte {border: 1px solid __BORDURE__; border-left: 8px solid var(--couleur); padding: .8rem 1.1rem; margin-bottom: .5rem;}
 .carte .nom {font-weight: 600; font-size: 1.05rem;}
-.carte .grand {font-size: 3.4rem; font-weight: 800; line-height: 1.15; color: var(--couleur);}
+.carte .grand {font-size: 3.4rem; font-weight: 800; line-height: 1.15; color: var(--couleur-texte);}
 .carte .unite {font-size: 1rem; font-weight: 400; opacity: .8; margin-left: .35rem; color: __TEXTE__;}
 .carte .legende {font-size: .95rem; opacity: .9;}
 .carte .petit {font-size: .85rem; opacity: .7; margin-top: .5rem;}
-.tab-etapes {margin: 1rem auto .4rem auto; max-width: __LARGEUR__px; overflow-x: auto;}
+.tab-etapes {margin: 1rem auto .4rem auto; max-width: __LARGEUR__px; overflow-x: auto; padding: .6rem .7rem;
+             border: 1px solid __BORDURE__;}
 .tab-etapes .tab-nom {font-weight: 700; margin-bottom: .3rem;}
 .tab-etapes .tab-nom span {font-weight: 400; opacity: .75;}
 .tab-etapes table {width: 100%; border-collapse: collapse; table-layout: fixed; text-align: center; font-size: .85rem;}
-.tab-etapes th {color: __SURCOULEUR__; padding: .35rem .3rem; font-weight: 700;}
+.tab-etapes th {padding: .35rem .3rem; font-weight: 700;}
 .tab-etapes td {padding: .35rem .3rem; vertical-align: top;}
 .tab-etapes tr.libelles td {font-size: .72rem; opacity: .85; border-bottom: 1px solid rgba(128,128,128,.35);}
 .tab-etapes tr.valeurs td {font-size: 1.15rem; font-weight: 700; background: __FOND_VALEURS__;}
-.tab-A th {background: __COULEUR_A__;}
-.tab-B th {background: __COULEUR_B__;}
-.tab-A tr.valeurs td {color: __COULEUR_A__;}
-.tab-B tr.valeurs td {color: __COULEUR_B__;}
+.tab-A th {background: __COULEUR_A__; color: __TEXTE_A__;}
+.tab-B th {background: __COULEUR_B__; color: __TEXTE_B__;}
+.tab-A tr.valeurs td {color: __TEXTE_COULEUR_A__;}
+.tab-B tr.valeurs td {color: __TEXTE_COULEUR_B__;}
 </style>
 """
 
 
-def css(sombre: bool = False) -> str:
-    """Feuille de style complète (thème clair ou sombre)."""
-    theme = THEMES[sombre]
+def css() -> str:
+    """Feuille de style complète."""
+    theme = THEME
     remplacements = {
-        "__TITRE__": theme["titre"], "__MOT__": theme["mot_couleur"], "__SURCOULEUR__": theme["texte_sur_couleur"],
+        "__DEGRADE__": degrade_fond(), "__FOND_BOITE__": theme["fond_boite"], "__BORDURE__": theme["bordure_boite"],
+        "__TITRE__": theme["titre"], "__MOT__": theme["mot_couleur"],
         "__COULEUR_A__": theme["matieres"][0], "__COULEUR_B__": theme["matieres"][1],
-        "__FOND_CARTE__": theme["fond_carte"], "__FOND_VALEURS__": theme["fond_ligne_valeurs"],
+        "__TEXTE_A__": theme["texte_sur_matiere"][0], "__TEXTE_B__": theme["texte_sur_matiere"][1],
+        "__TEXTE_COULEUR_A__": theme["texte_matieres"][0], "__TEXTE_COULEUR_B__": theme["texte_matieres"][1],
+        "__FOND_VALEURS__": theme["fond_ligne_valeurs"],
         "__TEXTE__": theme["texte"], "__LARGEUR__": str(LARGEUR_MAX_GRAPHIQUE),
     }
     feuille = _CSS

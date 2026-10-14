@@ -1,6 +1,9 @@
-# Couleur d'accent de l'interface (boutons principaux, focus) : Pacific Cyan, lisible en clair et en sombre.
+# Thème unique et clair (le fond en dégradé et les boîtes blanches sont définis dans presentation.py).
+# Couleur d'accent de l'interface (boutons principaux, focus) : Pacific Cyan.
 [theme]
+base = "light"
 primaryColor = "#388697"
+textColor = "#1f2933"
 
 [browser]
 gatherUsageStats = false
