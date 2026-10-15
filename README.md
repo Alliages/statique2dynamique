@@ -43,7 +43,11 @@ L'adresse de l'application est la constante `URL_APP` de `app.py`.
 
 ## Bouton sur base-inies.fr (script Tampermonkey)
 
-Sur une fiche INIES en norme +A2, le script affiche un petit panneau (en haut à droite) :
+Sur une fiche INIES en norme +A2, le script affiche en haut à droite (à 10 px du haut) un panneau déroulant : seul le titre
+« ACV dynamique RE2020 ▾ » est visible ; le survol de la souris déroule le contenu, un clic sur le titre le garde ouvert
+(un second clic le referme).
+
+Contenu du panneau :
 
 - « Mettre en A » / « Mettre en B » lit la fiche ouverte (comme le fait le site lui-même), en extrait la DVR et les
   13 valeurs « Changement climatique - total » (arrondies à 5 décimales) et les range dans l'emplacement A ou B.

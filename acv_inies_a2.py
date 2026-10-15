@@ -42,12 +42,14 @@ from typing import List, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "3.6.0"
+VERSION = "3.6.1"
 DATE_VERSION = "2026-10-15"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("3.6.1", "2026-10-15",
+     "Script Tampermonkey 1.2.0 : panneau déroulant à 10 px du haut, réduit au titre « ACV dynamique RE2020 » ; le survol le déroule, un clic sur le titre le garde ouvert (ou le referme)."),
     ("3.6.0", "2026-10-15",
      "Script Tampermonkey 1.1.0 : deux emplacements A et B mémorisés d'une fiche INIES à l'autre (« Mettre en A », « Mettre en B », « Voir les 2 »), lien unique contenant A et/ou B ; texte du panneau foncé."),
     ("3.5.0", "2026-10-14",

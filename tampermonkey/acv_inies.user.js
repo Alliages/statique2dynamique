@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ACV dynamique RE2020 - envoyer les fiches INIES
 // @namespace    https://github.com/Alliages/statique2dynamique
-// @version      1.1.0
+// @version      1.2.0
 // @description  Ajoute un panneau sur les fiches base-inies.fr (norme +A2) : mettre une fiche en A, une autre en B, puis ouvrir l'outil ACV dynamique RE2020 avec les valeurs déjà remplies.
 // @author       Alliages
 // @match        https://www.base-inies.fr/*
@@ -46,7 +46,8 @@ const CLE_MEMOIRE = "acv_emplacements";      // clé de mémorisation Tampermonk
 const LETTRES = ["A", "B"];
 // Aspect du panneau
 const COULEUR_FOND = "#ebbab9", COULEUR_TEXTE = "#08415c";
-const POSITION_PANNEAU = { right: "20px", top: "85px" };
+const POSITION_PANNEAU = { right: "20px", top: "10px" };
+const LARGEUR_PANNEAU_OUVERT = "290px";
 // Textes affichés
 const TEXTE_TITRE = "ACV dynamique RE2020";
 const TEXTE_VIDE = "(vide)";
@@ -213,28 +214,26 @@ function creerBoutonPanneau(texte, action, principal = false) {
   return b;
 }
 
-/** (Re)dessine le contenu du panneau d'après les emplacements mémorisés. */
-function dessiner(panneau) {
+/** (Re)dessine le contenu du panneau (le corps déroulant) d'après les emplacements mémorisés. */
+function dessiner(corps) {
   const emplacements = lireEmplacements();
-  panneau.replaceChildren();
-  panneau.appendChild(style(document.createElement("div"), { font: "700 14px sans-serif", marginBottom: "8px" }))
-    .textContent = TEXTE_TITRE;
+  corps.replaceChildren();
 
   LETTRES.forEach((lettre) => {
     const fiche = emplacements[lettre];
     const ligne = style(document.createElement("div"), { display: "flex", gap: "6px", alignItems: "center", marginBottom: "6px" });
-    ligne.appendChild(creerBoutonPanneau(`${fiche ? "Remplacer" : "Mettre en"} ${lettre}`, () => mettre(panneau, lettre)));
+    ligne.appendChild(creerBoutonPanneau(`${fiche ? "Remplacer" : "Mettre en"} ${lettre}`, () => mettre(corps, lettre)));
     const libelle = style(document.createElement("span"), { font: "13px sans-serif", maxWidth: "130px", overflow: "hidden",
                                                             textOverflow: "ellipsis", whiteSpace: "nowrap" });
     libelle.textContent = `${lettre} : ${fiche ? fiche.nom || `fiche ${fiche.id}` : TEXTE_VIDE}`;
     libelle.title = libelle.textContent;
     ligne.appendChild(libelle);
     if (fiche) {
-      const croix = creerBoutonPanneau("✕", () => { ecrireEmplacements({ ...lireEmplacements(), [lettre]: null }); dessiner(panneau); });
+      const croix = creerBoutonPanneau("✕", () => { ecrireEmplacements({ ...lireEmplacements(), [lettre]: null }); dessiner(corps); });
       croix.title = `Vider l'emplacement ${lettre}`;
       ligne.appendChild(croix);
     }
-    panneau.appendChild(ligne);
+    corps.appendChild(ligne);
   });
 
   const voir = creerBoutonPanneau(texteVoir(emplacements), () => {
@@ -244,31 +243,52 @@ function dessiner(panneau) {
   voir.disabled = !LETTRES.some((l) => emplacements[l]);
   voir.style.width = "100%";
   voir.style.opacity = voir.disabled ? "0.5" : "1";
-  panneau.appendChild(voir);
+  corps.appendChild(voir);
 }
 
 /** Lit la fiche ouverte et la range dans l'emplacement `lettre`. */
-async function mettre(panneau, lettre) {
+async function mettre(corps, lettre) {
   const id = idDeLaPage();
   if (!id) return;
-  panneau.style.opacity = "0.6";
+  corps.style.opacity = "0.6";
   try {
     const fiche = await lireFiche(id);
     ecrireEmplacements({ ...lireEmplacements(), [lettre]: fiche });
   } catch (erreur) {
     alert(TEXTE_ERREUR + erreur.message);
   } finally {
-    panneau.style.opacity = "1";
-    dessiner(panneau);
+    corps.style.opacity = "1";
+    dessiner(corps);
   }
 }
 
+/**
+ * Panneau déroulant : seul le titre est visible. Le survol déroule le contenu ; un clic sur le titre l'épingle
+ * ouvert (ou le referme). `epingle` = ouvert par clic : le survol ne le referme plus.
+ */
 function creerPanneau() {
   const panneau = style(document.createElement("div"), {
-    position: "fixed", ...POSITION_PANNEAU, zIndex: "2147483647", padding: "12px", width: "290px",
+    position: "fixed", ...POSITION_PANNEAU, zIndex: "2147483647", padding: "10px 12px",
     background: COULEUR_FOND, color: COULEUR_TEXTE, borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,.35)" });
   panneau.id = ID_PANNEAU;
-  dessiner(panneau);
+  const entete = style(document.createElement("div"), { font: "700 14px sans-serif", cursor: "pointer", userSelect: "none",
+                                                        whiteSpace: "nowrap" });
+  const corps = style(document.createElement("div"), { display: "none", marginTop: "8px" });
+  let epingle = false, ouvert = false;
+
+  const afficher = (ouvrir) => {
+    ouvert = ouvrir;
+    if (ouvrir) dessiner(corps);          // relu à chaque ouverture : un autre onglet a pu changer les emplacements
+    corps.style.display = ouvrir ? "block" : "none";
+    panneau.style.width = ouvrir ? LARGEUR_PANNEAU_OUVERT : "auto";
+    entete.textContent = `${TEXTE_TITRE} ${ouvrir ? "▴" : "▾"}`;
+  };
+  entete.addEventListener("click", () => { epingle = !epingle; afficher(epingle); });
+  panneau.addEventListener("mouseenter", () => { if (!ouvert) afficher(true); });
+  panneau.addEventListener("mouseleave", () => { if (!epingle) afficher(false); });
+
+  panneau.append(entete, corps);
+  afficher(false);
   return panneau;
 }
 
