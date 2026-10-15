@@ -34,10 +34,23 @@ RESULTAT_PREMIER = f">{pres.fr(acv.calculer_acv_dynamique(PREMIER.valeurs, PREMI
 sys.path.insert(0, str(RACINE))
 
 
-def nouvelle_app() -> AppTest:
+def nouvelle_app(**parametres) -> AppTest:
+    """Application lancée, avec d'éventuels paramètres d'adresse (ex. materiaux="2")."""
     app = AppTest.from_file(FICHIER_APP, default_timeout=DELAI_MAX)
+    for cle, valeur in parametres.items():
+        app.query_params[cle] = valeur
     app.run()
     return app
+
+
+def app_deux_materiaux() -> AppTest:
+    """Application avec deux matériaux."""
+    return nouvelle_app(materiaux="2")
+
+
+def a_le_champ(app: AppTest, cle: str) -> bool:
+    """Vrai si le champ texte de cette clé est affiché."""
+    return any(w.key == cle for w in app.text_input)
 
 
 def texte_page(app: AppTest) -> str:
@@ -88,7 +101,9 @@ def test_texte_de_lecture_stockc():
     page = "\n".join(m.value for m in app.markdown)
     assert "un résultat négatif traduit le stockage temporaire du carbone dans les" in page.replace("\n  ", " ")
     assert "l'indicateur StockC de la RE2020 suit ce stockage" in page.replace("\n  ", " ")
-    assert "la comparaison carbone n'a de sens qu'à ce prix" in page.replace("\n  ", " ")
+    assert "la comparaison carbone n'a de sens qu'à ce prix" not in page.replace("\n  ", " ")
+    page_deux = "\n".join(m.value for m in app_deux_materiaux().markdown)
+    assert "la comparaison carbone n'a de sens qu'à ce prix" in page_deux.replace("\n  ", " ")
 
 
 def test_etapes_la_norme_a2_n_est_plus_une_etape():
@@ -104,14 +119,14 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert "Version 3.6.1 du 2026-10-15" in page
+    assert "Version 3.9.0 du 2026-10-15" in page
 
 
 # ----------------------------------------------------------------------------
 # Exemple, catalogue, résultats
 # ----------------------------------------------------------------------------
 def test_exemple_affiche_les_deux_resultats_le_graphique_et_les_tableaux():
-    app = nouvelle_app()
+    app = app_deux_materiaux()
     bouton(app, "Essayer avec un exemple").click().run()
     assert not app.exception
     page = texte_page(app)
@@ -153,8 +168,8 @@ def test_bloc_pour_enregistrer_un_materiau():
     assert not re.search(r"\d[eE][+-]?\d", sans_chaines)       # pas de notation scientifique dans les valeurs
 
 
-def test_une_seule_ligne_collee():
-    app = nouvelle_app()
+def test_une_seule_ligne_collee_en_mode_deux_materiaux():
+    app = app_deux_materiaux()
     app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
     assert not app.exception
     page = texte_page(app)
@@ -206,17 +221,18 @@ def test_tout_effacer():
     assert app.text_input(key="nom_0").value == "" and app.selectbox(key="cat_0").value is None
 
 
-def test_case_statique_ajoute_les_courbes_pointillees():
-    app = nouvelle_app()
+@pytest.mark.parametrize("parametres, nb", [({}, 1), ({"materiaux": "2"}, 2)])
+def test_case_statique_ajoute_les_courbes_pointillees(parametres, nb):
+    app = nouvelle_app(**parametres)
     bouton(app, "Essayer avec un exemple").click().run()
     case = app.checkbox(key="avec_statique")
     assert case.value is False
     def nb_courbes(a):
         figure = json.loads(a.get("plotly_chart")[0].proto.spec)
         return len([t for t in figure["data"] if t.get("mode") == "lines"])
-    assert nb_courbes(app) == 2
+    assert nb_courbes(app) == nb
     case.check().run()
-    assert not app.exception and nb_courbes(app) == 4
+    assert not app.exception and nb_courbes(app) == 2 * nb
 
 
 def test_boutons_de_telechargement_csv():
@@ -249,15 +265,16 @@ def test_lien_prerempli_remplit_le_materiau_et_calcule():
     assert app.number_input(key="id_0").value == 50632 and app.number_input(key="dvr_0").value == 50
     page = texte_page(app)
     assert ">14,1<" in page                                          # ACV dynamique de la fiche 50632
-    assert any("Lien lu : matériau A pré-rempli" in s.value for s in app.success)
-    assert app.text_input(key="nom_1").value == ""                  # le matériau B n'est pas touché
+    assert any("Lien lu : matériau pré-rempli." in s.value for s in app.success)
+    assert not a_le_champ(app, "nom_1")                             # un lien A seul garde un seul matériau
 
 
 def test_lien_prerempli_pour_le_materiau_b():
     app = app_avec_parametres(v="1", b_nom="Second", b_dvr="30", b_v=VALEURS_50632)
     assert app.text_input(key="nom_1").value == "Second" and app.number_input(key="dvr_1").value == 30
     assert app.text_input(key="nom_0").value == ""
-    assert any("matériau B" in s.value for s in app.success)
+    assert any("Lien lu : matériau B pré-rempli." in s.value for s in app.success)
+    assert dict(app.query_params) == {"materiaux": "2"}
 
 
 def test_lien_invalide_affiche_une_erreur_claire_sans_planter():
@@ -303,3 +320,89 @@ def test_bouton_lien_sous_la_fiche_se_relit_a_l_identique():
 def test_pas_de_bouton_lien_tant_que_les_valeurs_ne_sont_pas_lues():
     app = nouvelle_app()
     assert not any(e.label == "🔗 Copier le lien de ce matériau" for e in app.expander)
+
+
+# ----------------------------------------------------------------------------
+# Interface à un ou deux matériaux
+# ----------------------------------------------------------------------------
+def test_par_defaut_un_seul_materiau_sans_trace_du_b():
+    app = nouvelle_app()
+    assert not app.exception
+    assert a_le_champ(app, "nom_0") and not a_le_champ(app, "nom_1")
+    page = texte_page(app)
+    assert '<div class="bandeau mat-A">Matériau</div>' in page and '"bandeau mat-B"' not in page
+    assert "Matériau A" not in page and "matériau B" not in page
+    assert not any(b.label == "Revenir à un seul matériau" for b in app.button)
+
+
+def test_exemple_en_mode_un_materiau():
+    app = nouvelle_app()
+    bouton(app, "Essayer avec un exemple").click().run()
+    assert not app.exception
+    page = texte_page(app)
+    assert page.count('class="carte"') == 1 and RESULTAT_PREMIER in page
+    assert page.count('class="tab-etapes') == 1 and len(app.get("plotly_chart")) == 1
+    assert "écart entre les deux matériaux" not in page and "omparaison" not in page
+
+
+def test_une_seule_ligne_collee():
+    app = nouvelle_app()
+    app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
+    assert not app.exception
+    page = texte_page(app)
+    assert page.count('class="carte"') == 1 and page.count('class="tab-etapes') == 1
+    assert len(app.info) == 0                                       # aucune invitation à remplir un matériau B
+
+
+def test_mode_deux_materiaux_par_l_adresse():
+    app = app_deux_materiaux()
+    assert not app.exception
+    assert a_le_champ(app, "nom_0") and a_le_champ(app, "nom_1")
+    page = texte_page(app)
+    assert ">Matériau A</div>" in page and ">Matériau B</div>" in page
+
+
+@pytest.mark.parametrize("valeur", ["1", "3", "deux", ""])
+def test_toute_autre_valeur_de_mode_garde_un_seul_materiau(valeur):
+    app = nouvelle_app(materiaux=valeur)
+    assert not app.exception and not a_le_champ(app, "nom_1")
+
+
+def test_bouton_revenir_a_un_seul_materiau():
+    app = app_deux_materiaux()
+    bouton(app, "Revenir à un seul matériau").click().run()
+    assert not app.exception
+    assert not a_le_champ(app, "nom_1") and "materiaux" not in app.query_params
+
+
+def test_lien_avec_a_et_b_ouvre_le_mode_deux_materiaux():
+    app = nouvelle_app(v="1", a_nom="Premier", a_dvr="50", a_v=VALEURS_50632,
+                       b_nom="Second", b_dvr="30", b_v=VALEURS_50632)
+    assert not app.exception and not app.error
+    assert app.text_input(key="nom_0").value == "Premier" and app.text_input(key="nom_1").value == "Second"
+    assert any("Lien lu : matériaux A et B pré-remplis." in s.value for s in app.success)
+    assert texte_page(app).count('class="carte"') == 2
+    assert dict(app.query_params) == {"materiaux": "2"}        # paramètres du lien retirés, le mode reste
+    app.number_input(key="dvr_1").set_value(20).run()          # une relance garde bien les deux matériaux
+    assert a_le_champ(app, "nom_1") and app.number_input(key="dvr_1").value == 20
+
+
+def test_mode_de_base_saisie_un_tiers_resultats_deux_tiers_graphique_sous_le_resultat():
+    app = nouvelle_app()
+    bouton(app, "Essayer avec un exemple").click().run()
+    assert not app.exception
+    saisie = [c for c in app.columns if c.proto.weight == pytest.approx(1 / 3)]
+    resultats = [c for c in app.columns if c.proto.weight == pytest.approx(2 / 3)]
+    assert len(saisie) == 1 and len(resultats) == 1
+    assert any(w.key == "nom_0" for w in saisie[0].text_input)
+    colonne = resultats[0]
+    assert any('class="carte"' in m.value for m in colonne.markdown)            # le résultat...
+    assert len(colonne.get("plotly_chart")) == 1                                  # ...et le graphique dessous
+    assert any('class="tab-etapes' in m.value for m in colonne.markdown)
+
+
+def test_readme_sans_tampermonkey_notice_dans_son_dossier():
+    readme = (RACINE / "README.md").read_text(encoding="utf-8")
+    assert "tampermonkey" not in readme.lower() and "materiaux=2" not in readme and "caché" not in readme
+    notice = (RACINE / "tampermonkey" / "infos.txt").read_text(encoding="utf-8")
+    assert "acv_inies.user.js" in notice and "INSTALLATION" in notice and "?materiaux=2" in notice

@@ -258,13 +258,13 @@ def test_degrade_utilise_les_couleurs_de_la_palette_eclaircies():
         assert pres.eclaircir(couleur) != couleur               # éclaircies, pas pures
 
 
-def test_texte_du_materiau_b_plus_fonce_que_le_cotton_rose_pour_etre_lisible():
-    assert pres.THEME["texte_matieres"][0] == pres.PACIFIC_CYAN
+def test_texte_du_materiau_a_plus_fonce_que_le_cotton_rose_pour_etre_lisible():
+    assert pres.THEME["texte_matieres"][1] == pres.PACIFIC_CYAN
     assert pres.assombrir("#ffffff", 0) == "#ffffff" and pres.assombrir("#ffffff", 1) == "#000000"
-    assert pres.THEME["texte_matieres"][1] != pres.COTTON_ROSE and "__" not in pres.css()
+    assert pres.THEME["texte_matieres"][0] == pres.assombrir(pres.COTTON_ROSE) and "__" not in pres.css()
 
 
 def test_palette_de_l_utilisateur():
     assert (pres.YALE_BLUE, pres.TOMATO_JAM, pres.COTTON_ROSE, pres.PACIFIC_CYAN, pres.AQUAMARINE) == (
         "#08415c", "#cc2936", "#ebbab9", "#388697", "#b5ffe1")
-    assert pres.THEME["matieres"] == (pres.PACIFIC_CYAN, pres.COTTON_ROSE)    # couleurs des deux matériaux
+    assert pres.THEME["matieres"] == (pres.COTTON_ROSE, pres.PACIFIC_CYAN)    # A (ou matériau seul) rose, B bleu-vert

@@ -3,7 +3,7 @@ Tests du script Tampermonkey (tampermonkey/acv_inies.user.js), exécuté avec No
 
 Le script doit produire EXACTEMENT les mêmes nombres, arrondis et liens que le code Python (lien.py).
 Les tests sont ignorés si Node n'est pas installé. Le bouton sur la page INIES (partie DOM) ne se teste
-pas ici : il se vérifie à la main sur une fiche (voir README).
+pas ici : il se vérifie à la main sur une fiche (voir tampermonkey/infos.txt).
 
 Lancer depuis la racine du projet :  python3 -m pytest -q
 """

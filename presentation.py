@@ -38,9 +38,9 @@ ANGLE_DEGRADE = 135             # degrés : 135 = diagonale du haut-gauche vers 
 ORDRE_DEGRADE = (YALE_BLUE, PACIFIC_CYAN, AQUAMARINE, COTTON_ROSE, TOMATO_JAM)
 ASSOMBRISSEMENT_TEXTE = 0.42    # part de noir ajoutée au Cotton Rose pour les chiffres sur fond blanc
 THEME: dict = {
-    "matieres": (PACIFIC_CYAN, COTTON_ROSE),            # matériau A, matériau B
-    "texte_matieres": (PACIFIC_CYAN, ""),   # chiffres posés sur fond blanc (le Cotton Rose pur y serait illisible)
-    "texte_sur_matiere": ("#ffffff", YALE_BLUE),        # texte posé sur la couleur du matériau (lisible sur chacune)
+    "matieres": (COTTON_ROSE, PACIFIC_CYAN),            # matériau A (ou matériau seul), matériau B
+    "texte_matieres": ("", PACIFIC_CYAN),   # chiffres posés sur fond blanc (le Cotton Rose pur y serait illisible)
+    "texte_sur_matiere": (YALE_BLUE, "#ffffff"),        # texte posé sur la couleur du matériau (lisible sur chacune)
     "titre": YALE_BLUE, "mot_couleur": TOMATO_JAM,
     "fond_boite": "#ffffff",                            # toutes les boîtes sont blanches
     "bordure_boite": "rgba(8,65,92,.12)",
@@ -105,7 +105,7 @@ def assombrir(couleur: str, part_de_noir: float = ASSOMBRISSEMENT_TEXTE) -> str:
     return "#" + "".join(f"{round(c * (1 - part_de_noir)):02x}" for c in rvb)
 
 
-THEME["texte_matieres"] = (PACIFIC_CYAN, assombrir(COTTON_ROSE))
+THEME["texte_matieres"] = (assombrir(COTTON_ROSE), PACIFIC_CYAN)
 
 
 def degrade_fond() -> str:

@@ -97,6 +97,12 @@ def cles_connues() -> List[str]:
     return [PARAM_FORMAT] + [f"{p}_{suffixe}" for p in PREFIXES for suffixe in ("nom", "id", "dvr", "v")]
 
 
+def contient_le_materiau(parametres: Mapping[str, str], indice: int) -> bool:
+    """Vrai si l'adresse contient au moins un paramètre du matériau `indice` (0 pour A, 1 pour B)."""
+    p = PREFIXES[indice]
+    return any(f"{p}_{suffixe}" in parametres for suffixe in ("nom", "id", "dvr", "v"))
+
+
 def _entier(texte: str, nom_param: str, minimum: int, maximum: Optional[int] = None) -> int:
     """Entier strict (chiffres seulement) dans [minimum, maximum], sinon ValueError avec un message clair."""
     if not re.fullmatch(r"\d{1,9}", texte.strip()):
@@ -159,7 +165,7 @@ def lire_lien(parametres: Mapping[str, str]) -> Tuple[List[MaterielLien], List[s
     materiaux: List[MaterielLien] = []
     erreurs: List[str] = []
     for indice, p in enumerate(PREFIXES):
-        if not any(f"{p}_{suffixe}" in parametres for suffixe in ("nom", "id", "dvr", "v")):
+        if not contient_le_materiau(parametres, indice):
             continue
         try:
             materiaux.append(_lire_materiau(parametres, indice))

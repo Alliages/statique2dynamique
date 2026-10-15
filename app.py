@@ -37,8 +37,16 @@ URL_APP = "https://statique2dynamique.streamlit.app/"
 URL_SITE_INIES = "https://www.base-inies.fr/"
 URL_METHODE = "https://www.linkedin.com/posts/meunierguillaume_fdes-re2020-opensource-activity-7064102175945175040-cOPY"
 
-NB_MATERIAUX = 2
-LETTRES = ("A", "B")
+LETTRES = ("A", "B")         # emplacements des matériaux
+
+PARAM_MODE = "materiaux"     # paramètre d'adresse lu par nombre_de_materiaux()
+VALEUR_MODE_DEUX = "2"
+
+# Un seul matériau : largeur de la saisie et des résultats (1/3 - 2/3). Sur un écran étroit (téléphone),
+# Streamlit empile les colonnes : saisie, puis résultat, graphique, tableaux, les uns sous les autres.
+PROPORTIONS_UN_MATERIAU = (1, 2)
+PROPORTIONS_BOUTONS_CSV = {1: (1, 1), 2: (2, 2, 6)}    # selon le nombre de matériaux affichés
+
 DVR_PAR_DEFAUT = 50          # ans
 HAUTEUR_ZONE_COLLAGE = 110   # pixels
 FUSEAU_HORAIRE = "Europe/Paris"    # pour dater un nouveau matériau
@@ -86,9 +94,16 @@ TEXTE_LECTURE = f"""
   climat du bâtiment, sans être un droit à émettre ailleurs (l'indicateur StockC de la RE2020 suit ce stockage).
 - **Si la DVR est inférieure à 50 ans**, le produit est remplacé en cours de route : chaque remplacement
   est ajouté, et le dernier n'est compté qu'au prorata de sa durée utile dans les 50 ans.
+"""
+
+# Ajouté à TEXTE_LECTURE quand deux matériaux sont affichés
+TEXTE_LECTURE_DEUX = """
 - **Comparez des produits qui rendent le même service** (même unité fonctionnelle, par exemple 1 m² de mur
   de même performance) : la comparaison carbone n'a de sens qu'à ce prix.
 """
+
+MESSAGE_ATTENTE = ("Collez la ligne INIES d'un matériau (ou choisissez-en un dans la liste) pour voir le résultat. "
+                   "Le bouton « Essayer avec un exemple » montre le principe.")
 
 TEXTE_LIEN = """
 Ce lien rouvre l'application avec ce matériau déjà rempli (nom, identifiant, DVR et valeurs).
@@ -145,8 +160,8 @@ def choisir_catalogue(indice: int) -> None:
         remplir(indice, m.nom, m.id, m.dvr, m.texte_inies())
 
 
-def charger_exemple() -> None:
-    """Remplit les deux matériaux avec les exemples (appelé par le bouton)."""
+def charger_exemple(nb_materiaux: int) -> None:
+    """Remplit le ou les matériaux affichés avec les exemples (appelé par le bouton)."""
     catalogue, _ = charger_catalogue()
     if catalogue:
         m = catalogue[0]
@@ -154,13 +169,14 @@ def charger_exemple() -> None:
         st.session_state["cat_0"] = 0
     else:
         remplir(0, "Fiche 46517 (exemple, DVR 30)", 46517, 30, EXEMPLE_B["texte"])
-    remplir(1, EXEMPLE_B["nom"], EXEMPLE_B["id"], EXEMPLE_B["dvr"], EXEMPLE_B["texte"])
-    st.session_state["cat_1"] = None
+    if nb_materiaux == 2:
+        remplir(1, EXEMPLE_B["nom"], EXEMPLE_B["id"], EXEMPLE_B["dvr"], EXEMPLE_B["texte"])
+        st.session_state["cat_1"] = None
 
 
 def effacer_tout() -> None:
-    """Vide les deux matériaux (appelé par le bouton)."""
-    for i in range(NB_MATERIAUX):
+    """Vide tous les emplacements (appelé par le bouton)."""
+    for i in range(len(LETTRES)):
         remplir(i, "", None, DVR_PAR_DEFAUT, "")
         st.session_state[f"cat_{i}"] = None
 
@@ -168,7 +184,7 @@ def effacer_tout() -> None:
 def appliquer_lien() -> tuple:
     """Si l'adresse contient un lien pré-rempli, remplit les champs. Renvoie (lettres chargées, erreurs).
 
-    Les paramètres sont retirés de l'adresse ensuite : une relance de la page ne ré-applique pas le lien
+    Les paramètres du lien sont retirés de l'adresse ensuite : une relance de la page ne ré-applique pas le lien
     (qui écraserait ce que l'utilisateur a modifié depuis).
     """
     parametres = dict(st.query_params)
@@ -178,24 +194,52 @@ def appliquer_lien() -> tuple:
     for m in materiaux:
         remplir(m.indice, m.nom, m.identifiant, m.dvr, m.texte_inies())
         st.session_state[f"cat_{m.indice}"] = None
-    st.query_params.clear()
+    for cle in lien.cles_connues():
+        if cle in st.query_params:
+            del st.query_params[cle]
+    if lien.contient_le_materiau(parametres, 1):
+        st.query_params[PARAM_MODE] = VALEUR_MODE_DEUX
     return [m.lettre for m in materiaux], erreurs
 
 
+def nombre_de_materiaux() -> int:
+    """Nombre de matériaux à afficher, lu dans l'adresse (1 par défaut)."""
+    return 2 if st.query_params.get(PARAM_MODE) == VALEUR_MODE_DEUX else 1
+
+
+def quitter_mode_deux() -> None:
+    """Revient à un seul matériau (appelé par le bouton)."""
+    if PARAM_MODE in st.query_params:
+        del st.query_params[PARAM_MODE]
+
+
+def libelle_materiau(indice: int, nb_materiaux: int) -> str:
+    """« Matériau » seul quand il n'y en a qu'un, sinon « Matériau A » / « Matériau B »."""
+    return "Matériau" if nb_materiaux == 1 else f"Matériau {LETTRES[indice]}"
+
+
+def message_lien(lettres: list, nb_materiaux: int) -> str:
+    """Message de confirmation après lecture d'un lien pré-rempli."""
+    if nb_materiaux == 1:
+        return "Lien lu : matériau pré-rempli."
+    pluriel = len(lettres) > 1
+    return f"Lien lu : matériau{'x' if pluriel else ''} {' et '.join(lettres)} pré-rempli{'s' if pluriel else ''}."
+
+
 def nom_affiche(saisie: dict) -> str:
-    """Nom choisi par l'utilisateur, ou « Matériau A / B » par défaut."""
-    return saisie["nom"].strip() or f"Matériau {LETTRES[saisie['indice']]}"
+    """Nom choisi par l'utilisateur, ou « Matériau » / « Matériau A » / « Matériau B » par défaut."""
+    return saisie["nom"].strip() or saisie["libelle"]
 
 
 # =============================================================================
 # 1) SAISIES — une carte par matériau
 # =============================================================================
-def saisie_materiau(indice: int, catalogue: list) -> dict:
+def saisie_materiau(indice: int, catalogue: list, nb_materiaux: int) -> dict:
     """Affiche les champs d'un matériau, lit la ligne collée, et renvoie tout ce qu'il faut pour la suite."""
-    saisie = {"indice": indice, "valeurs": None, "resultat": None}
+    saisie = {"indice": indice, "libelle": libelle_materiau(indice, nb_materiaux), "valeurs": None, "resultat": None}
 
     with st.container(border=True, key=f"boite_{LETTRES[indice]}"):   # la clé donne la classe CSS « st-key-boite_A »
-        st.markdown(f'<div class="bandeau mat-{LETTRES[indice]}">Matériau {LETTRES[indice]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="bandeau mat-{LETTRES[indice]}">{saisie["libelle"]}</div>', unsafe_allow_html=True)
 
         if catalogue:
             st.selectbox(
@@ -277,6 +321,60 @@ def carte_resultat(saisie: dict, couleur: str, couleur_texte: str) -> str:
     </div>"""
 
 
+def afficher_carte(saisie: dict) -> None:
+    """Affiche la grande carte d'un matériau, dans sa couleur."""
+    indice = saisie["indice"]
+    st.markdown(carte_resultat(saisie, pres.THEME["matieres"][indice], pres.THEME["texte_matieres"][indice]),
+                unsafe_allow_html=True)
+
+
+def titre_resultats() -> None:
+    st.markdown('<h2 class="titre-section">Résultats</h2>', unsafe_allow_html=True)
+
+
+def afficher_details(saisies_ok: list, nb_materiaux: int) -> None:
+    """Ce qui suit le ou les résultats : écart (deux matériaux), graphique, tableaux des étapes, exports CSV, détail."""
+    # Phrase de comparaison carbone (deux matériaux renseignés)
+    if len(saisies_ok) == 2:
+        saisie_a, saisie_b = saisies_ok
+        ecart = saisie_a["resultat"].dynamique_total - saisie_b["resultat"].dynamique_total
+        if abs(ecart) < 0.005:
+            st.markdown("Les deux matériaux ont le même impact (écart inférieur à 0,01 " + UNITE + ").")
+        else:
+            st.markdown(f"l'écart entre les deux matériaux est de {pres.fr(abs(ecart))} {UNITE} sur {acv.PERIODE_ETUDE} ans.")
+        st.caption("Attention, une comparaison carbone n'a de sens que pour deux produits rendant le même service "
+                   "(même unité fonctionnelle au minimum).")
+
+    # Graphique (largeur plafonnée par le CSS du conteneur « graphique » : pleine largeur sur un petit écran)
+    series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
+               "cumul": s["resultat"].cumul_dynamique(), "cumul_statique": s["resultat"].cumul_statique()}
+              for s in saisies_ok]
+    with st.container(key="graphique"):
+        avec_statique = st.checkbox("Afficher aussi le calcul statique E+C- (en pointillés, sans pondération)",
+                                    key="avec_statique")
+        st.plotly_chart(pres.figure_cumul(series, avec_statique), width="stretch",
+                        config={"displaylogo": False, "toImageButtonOptions": {
+                            "format": "png", "filename": NOM_IMAGE_GRAPHIQUE, "scale": 2}})
+        st.caption("Pour enregistrer le graphique en image : icône appareil photo, en haut à droite au survol.")
+    for saisie in saisies_ok:
+        st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
+                    unsafe_allow_html=True)
+
+    colonne_resume, colonne_annees = st.columns(PROPORTIONS_BOUTONS_CSV[nb_materiaux])[:2]
+    lignes_export = [{"nom": nom_affiche(s), "identifiant": s.get("identifiant"), "valeurs": s["valeurs"],
+                      "resultat": s["resultat"]} for s in saisies_ok]
+    colonne_resume.download_button("Télécharger le résumé (CSV)", export.csv_resume(lignes_export), "acv_resume.csv",
+                                   "text/csv", width="stretch")
+    colonne_annees.download_button("Télécharger année par année (CSV)", export.csv_annees(lignes_export),
+                                   "acv_annee_par_annee.csv", "text/csv", width="stretch")
+
+    with st.expander("Voir le détail du calcul"):
+        st.markdown("**Par phase**, en " + UNITE + " (le statique E+C- compte le module D pour un tiers) :")
+        st.dataframe(tableau_phases(saisies_ok), hide_index=True, width="stretch")
+        st.markdown("**Année par année** (émissions de l'année × coefficient de l'article 11) :")
+        st.dataframe(tableau_annees(saisies_ok), hide_index=True, width="stretch", height=300)
+
+
 def tableau_phases(saisies_ok: list) -> pd.DataFrame:
     """Tableau récapitulatif par phase, dynamique et statique, pour chaque matériau."""
     lignes = (
@@ -310,6 +408,7 @@ def tableau_annees(saisies_ok: list) -> pd.DataFrame:
 st.set_page_config(page_title=TITRE_PAGE, page_icon=ICONE_PAGE, layout="wide")
 
 LETTRES_LIEN, ERREURS_LIEN = appliquer_lien()      # doit être fait avant la création des champs de saisie
+NB_MATERIAUX = nombre_de_materiaux()               # lu APRÈS le lien
 CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
 COULEURS = pres.THEME["matieres"]
 
@@ -322,80 +421,58 @@ with st.expander("Comment faire ? (3 étapes)", expanded=True):
 for erreur in ERREURS_LIEN:
     st.error(erreur)
 if LETTRES_LIEN:
-    st.success("Lien lu : " + ("matériau " if len(LETTRES_LIEN) == 1 else "matériaux ") + " et ".join(LETTRES_LIEN)
-               + " pré-rempli" + ("" if len(LETTRES_LIEN) == 1 else "s") + ".")
+    st.success(message_lien(LETTRES_LIEN, NB_MATERIAUX))
 if ERREUR_CATALOGUE:
     st.warning(f"Le catalogue de matériaux n'a pas pu être lu. {ERREUR_CATALOGUE}")
 
-bouton_exemple, bouton_effacer, _ = st.columns([2, 2, 6])
-bouton_exemple.button("Essayer avec un exemple", on_click=charger_exemple, type="primary", width="stretch")
+bouton_exemple, bouton_effacer, bouton_mode, _ = st.columns([2, 2, 2, 4])
+bouton_exemple.button("Essayer avec un exemple", on_click=charger_exemple, args=(NB_MATERIAUX,), type="primary",
+                      width="stretch")
 bouton_effacer.button("Tout effacer", on_click=effacer_tout, width="stretch")
+if NB_MATERIAUX == 2:
+    bouton_mode.button("Revenir à un seul matériau", on_click=quitter_mode_deux, width="stretch")
 
-# --- 1) Saisies ---------------------------------------------------------------
-saisies = []
-for i, colonne in enumerate(st.columns(NB_MATERIAUX)):
-    with colonne:
-        saisies.append(saisie_materiau(i, CATALOGUE))
+
+# --- 1) Saisie(s) et résultat principal ----------------------------------------
+if NB_MATERIAUX == 1:
+    # Un seul matériau : la saisie à gauche (1/3) ; à droite (2/3) le résultat,
+    # puis dessous le graphique, les tableaux et les exports
+    colonne_saisie, colonne_resultats = st.columns(PROPORTIONS_UN_MATERIAU, gap="large")
+    with colonne_saisie:
+        saisies = [saisie_materiau(0, CATALOGUE, NB_MATERIAUX)]
+    with colonne_resultats:
+        titre_resultats()
+        if saisies[0]["resultat"] is not None:
+            afficher_carte(saisies[0])
+            afficher_details(saisies, NB_MATERIAUX)
+        else:
+            st.info(MESSAGE_ATTENTE)
+else:
+    # Deux matériaux : les deux saisies côte à côte, puis les deux résultats côte à côte
+    saisies = []
+    for i, colonne in enumerate(st.columns(NB_MATERIAUX)):
+        with colonne:
+            saisies.append(saisie_materiau(i, CATALOGUE, NB_MATERIAUX))
+    st.divider()
+    titre_resultats()
+    if not any(s["resultat"] is not None for s in saisies):
+        st.info(MESSAGE_ATTENTE)
+    else:
+        for saisie, colonne in zip(saisies, st.columns(NB_MATERIAUX)):
+            with colonne:
+                if saisie["resultat"] is not None:
+                    afficher_carte(saisie)
+                else:
+                    st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} "
+                            f"pour la comparaison carbone.")
 saisies_ok = [s for s in saisies if s["resultat"] is not None]
 
-# --- 2) Résultats -------------------------------------------------------------
-st.divider()
-st.markdown('<h2 class="titre-section">Résultats</h2>', unsafe_allow_html=True)
-
-if not saisies_ok:
-    st.info("Collez la ligne INIES d'au moins un matériau (ou choisissez-en un dans la liste) pour voir le résultat. "
-            "Le bouton « Essayer avec un exemple » montre le principe.")
-else:
-    for saisie, colonne in zip(saisies, st.columns(NB_MATERIAUX)):
-        with colonne:
-            if saisie["resultat"] is not None:
-                st.markdown(carte_resultat(saisie, COULEURS[saisie["indice"]], pres.THEME["texte_matieres"][saisie["indice"]]), unsafe_allow_html=True)
-            else:
-                st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} pour la comparaison carbone.")
-
-    # Phrase de comparaison carbone (si les deux matériaux sont renseignés)
-    if len(saisies_ok) == NB_MATERIAUX:
-        saisie_a, saisie_b = saisies_ok
-        ecart = saisie_a["resultat"].dynamique_total - saisie_b["resultat"].dynamique_total
-        if abs(ecart) < 0.005:
-            st.markdown("Les deux matériaux ont le même impact (écart inférieur à 0,01 " + UNITE + ").")
-        else:
-            meilleur, autre = (saisie_a, saisie_b) if ecart < 0 else (saisie_b, saisie_a)
-            st.markdown(f"l'écart entre les deux matériaux est de {pres.fr(abs(ecart))} {UNITE} sur {acv.PERIODE_ETUDE} ans.")
-        st.caption("Attention, une comparaison carbone n'a de sens que pour deux produits rendant le même service "
-                   "(même unité fonctionnelle au minimum).")
-
-    # Graphique (largeur plafonnée par le CSS du conteneur « graphique » : pleine largeur sur un petit écran)
-    series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
-               "cumul": s["resultat"].cumul_dynamique(), "cumul_statique": s["resultat"].cumul_statique()}
-              for s in saisies_ok]
-    with st.container(key="graphique"):
-        avec_statique = st.checkbox("Afficher aussi le calcul statique E+C- (en pointillés, sans pondération)",
-                                    key="avec_statique")
-        st.plotly_chart(pres.figure_cumul(series, avec_statique), width="stretch",
-                        config={"displaylogo": False, "toImageButtonOptions": {
-                            "format": "png", "filename": NOM_IMAGE_GRAPHIQUE, "scale": 2}})
-        st.caption("Pour enregistrer le graphique en image : icône appareil photo, en haut à droite au survol.")
-    for saisie in saisies_ok:
-        st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
-                    unsafe_allow_html=True)
-
-    colonne_resume, colonne_annees, _ = st.columns([2, 2, 6])
-    lignes_export = [{"nom": nom_affiche(s), "identifiant": s.get("identifiant"), "valeurs": s["valeurs"],
-                      "resultat": s["resultat"]} for s in saisies_ok]
-    colonne_resume.download_button("Télécharger le résumé (CSV)", export.csv_resume(lignes_export), "acv_resume.csv",
-                                   "text/csv", width="stretch")
-    colonne_annees.download_button("Télécharger année par année (CSV)", export.csv_annees(lignes_export),
-                                   "acv_annee_par_annee.csv", "text/csv", width="stretch")
-
-    with st.expander("Voir le détail du calcul"):
-        st.markdown("**Par phase**, en " + UNITE + " (le statique E+C- compte le module D pour un tiers) :")
-        st.dataframe(tableau_phases(saisies_ok), hide_index=True, width="stretch")
-        st.markdown("**Année par année** (émissions de l'année × coefficient de l'article 11) :")
-        st.dataframe(tableau_annees(saisies_ok), hide_index=True, width="stretch", height=300)
+# --- 2) Détails, quand deux matériaux sont affichés (sinon ils sont déjà sous le résultat)
+if NB_MATERIAUX == 2 and saisies_ok:
+    afficher_details(saisies_ok, NB_MATERIAUX)
 
 with st.expander("Comment lire ce résultat ?"):
-    st.markdown(TEXTE_LECTURE)
+    st.markdown(TEXTE_LECTURE + (TEXTE_LECTURE_DEUX if NB_MATERIAUX == 2 else ""))
 
 # --- 3) Pied de page : version, licence, historique ----------------------------
 st.divider()

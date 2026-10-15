@@ -2,7 +2,7 @@
 
 Application Streamlit : on colle la ligne « Réchauffement climatique » d'une fiche INIES (norme +A2),
 on indique la durée de vie de référence (DVR), et l'outil donne l'**ACV dynamique RE2020** en grand,
-à côté du total affiché dans INIES en petit. Deux matériaux peuvent faire l'objet d'une comparaison carbone.
+à côté du total affiché dans INIES en petit.
 
 La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 (onglets « Interface +A2 », « Calcul +A2 », « Art. 11 »), licence GNU GPL v3.
@@ -15,7 +15,6 @@ La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 | `app.py` | Interface Streamlit (aucun calcul ici). |
 | `presentation.py` | Mise en forme : palette, graphique, tableau des étapes INIES, styles (sans Streamlit). |
 | `lien.py` | Liens pré-remplis vers l'application : fabrication et lecture contrôlée (sans Streamlit). |
-| `tampermonkey/acv_inies.user.js` | Script Tampermonkey : bouton sur une fiche INIES qui ouvre l'application pré-remplie. |
 | `export.py` | Fichiers CSV téléchargeables (résumé, année par année), sans Streamlit. |
 | `catalogue.py` | Lecture / contrôle de `materiaux.json` et fabrication du bloc d'un nouveau matériau. |
 | `materiaux.json` | **Catalogue des matériaux enregistrés** (valeurs au format décimal standard, date d'export). |
@@ -40,43 +39,6 @@ rempli. Format (version 1), pour le matériau A (préfixe `a_`) ou B (préfixe `
 `a_dvr` et `a_v` sont obligatoires, `a_nom` et `a_id` facultatifs. Tout est contrôlé à la lecture
 (13 nombres finis, DVR entre 1 et 1000, nom nettoyé) ; un lien invalide affiche un message clair.
 L'adresse de l'application est la constante `URL_APP` de `app.py`.
-
-## Bouton sur base-inies.fr (script Tampermonkey)
-
-Sur une fiche INIES en norme +A2, le script affiche en haut à droite (à 10 px du haut) un panneau déroulant : seul le titre
-« ACV dynamique RE2020 ▾ » est visible ; le survol de la souris déroule le contenu, un clic sur le titre le garde ouvert
-(un second clic le referme).
-
-Contenu du panneau :
-
-- « Mettre en A » / « Mettre en B » lit la fiche ouverte (comme le fait le site lui-même), en extrait la DVR et les
-  13 valeurs « Changement climatique - total » (arrondies à 5 décimales) et les range dans l'emplacement A ou B.
-  Les emplacements sont mémorisés par Tampermonkey : vous pouvez changer de fiche, puis remplir l'autre.
-- ✕ vide un emplacement ; « Remplacer A » / « Remplacer B » met la fiche ouverte à la place de l'ancienne.
-- « Voir les 2 ▸ » (ou « Voir A ▸ », « Voir B ▸ » si un seul emplacement est rempli) ouvre l'application dans un
-  nouvel onglet, avec A et/ou B déjà remplis. Chaque clic ouvre un nouvel onglet.
-
-Une seule fiche est lue par clic ; rien n'est envoyé ailleurs que dans l'adresse du lien.
-
-**Installation (une seule fois)**
-
-1. Installer l'extension [Tampermonkey](https://www.tampermonkey.net/) dans Chrome.
-2. Sur Chrome récent : `chrome://extensions` → Tampermonkey → Détails → activer **« Autoriser les scripts utilisateur »**
-   (ou le mode développeur, selon la version de Chrome).
-3. Ouvrir ce lien, puis cliquer sur « Installer » :
-   https://raw.githubusercontent.com/Alliages/statique2dynamique/main/tampermonkey/acv_inies.user.js
-   (Tampermonkey se met ensuite à jour tout seul quand le fichier change sur GitHub.)
-4. Ouvrir une fiche, par exemple https://www.base-inies.fr/infos-produit/50632 : le panneau apparaît.
-
-**Mise à jour du script** : Tampermonkey vérifie seul les mises à jour (version dans l'en-tête du script). Pour forcer :
-icône Tampermonkey → Tableau de bord → onglet « Scripts installés » → ligne du script → clic sur la version / « Dernière mise à jour »,
-ou ouvrir de nouveau le lien d'installation ci-dessus et cliquer sur « Mettre à jour ».
-
-**Si ça ne marche pas** : le message d'erreur s'affiche dans une fenêtre (fiche non +A2, DVR absente, valeur introuvable,
-réponse du site inattendue). L'adresse de l'outil et les numéros de phases sont regroupés en haut du script.
-
-**Test** : `tests/test_userscript.py` exécute le script sous Node et vérifie qu'il produit exactement les mêmes nombres
-et le même lien que `lien.py` sur la fiche 50632. Seul le bouton (affichage sur la page INIES) se vérifie à la main.
 
 ## Lancer en local
 

@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 3.9.0 — 2026-10-15
+Réorganisation de l'interface.
+
 ## 3.6.1 — 2026-10-15
 Script Tampermonkey 1.2.0 : panneau déroulant à 10 px du haut, réduit au titre « ACV dynamique RE2020 » ; le survol le déroule, un clic sur le titre le garde ouvert (ou le referme).
 
