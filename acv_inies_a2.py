@@ -15,6 +15,10 @@ UTILISATION RAPIDE
     print(resultat.dynamique_total)      # kg CO2 eq. dynamique RE2020, module D inclus
     print(resultat.statique_total)       # kg CO2 eq. statique (E+C-, module D / 3)
 
+    Pour les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) :
+        from acv_inies_a2 import calculer_indicateurs_climat
+        resultats = calculer_indicateurs_climat(texte_des_4_lignes, dvr=50)   # dict clé -> résultat
+
     En ligne de commande :  python acv_inies_a2.py "<13 valeurs>" 50
 
 ORIGINE DE LA MÉTHODE
@@ -33,21 +37,24 @@ PRINCIPE DE L'ACV DYNAMIQUE
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
-from typing import List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # =============================================================================
 # PARAMÈTRES (tout ce qui peut se régler est regroupé ici)
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "3.9.0"
-DATE_VERSION = "2026-10-15"
+VERSION = "4.0.0"
+DATE_VERSION = "2026-10-16"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("4.0.0", "2026-10-16",
+     "Détail du changement climatique d'un matériau : un second champ, sous le premier, reçoit les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) ; à droite, courbes cumulées puis barres empilées par étape du cycle de vie. Palette : le biogénique en vert-bleu et l'occupation des sols en vert-jaune."),
     ("3.9.0", "2026-10-15",
      "Réorganisation de l'interface."),
     ("3.6.1", "2026-10-15",
@@ -103,6 +110,28 @@ LIBELLES_VALEURS_A2: Tuple[str, ...] = (
     "Étape de fin de vie (C)",
     "Total cycle de vie",
     "D - Bénéfices et charges au-delà du système",
+)
+
+# --- Les 4 lignes « Changement climatique » d'une fiche INIES +A2 -------------
+# (clé, libellé affiché, mot repère cherché dans le libellé INIES, en minuscules et sans accent).
+# Le total est la somme des trois autres : fossile + biogénique + occupation des sols.
+INDICATEURS_CLIMAT: Tuple[Tuple[str, str, str], ...] = (
+    ("total", "Total", "total"),
+    ("fossile", "Fossile", "fossil"),
+    ("biogenique", "Biogénique", "biogen"),
+    ("sols", "Occupation des sols", "occupation"),
+)
+CLE_TOTAL = "total"
+CLES_COMPOSANTES = ("fossile", "biogenique", "sols")
+MOT_REPERE_LIGNE_CLIMAT = "changement climatique"   # toutes les lignes utiles contiennent ce libellé
+
+# Étapes du cycle de vie retenues pour répartir le résultat dynamique : (clé, libellé).
+ETAPES: Tuple[Tuple[str, str], ...] = (
+    ("production", "Production (A1-A3)"),
+    ("construction", "Construction (A4-A5)"),
+    ("utilisation", "Utilisation (B)"),
+    ("fin_de_vie", "Fin de vie (C)"),
+    ("module_d", "Module D"),
 )
 
 # Coefficients de pondération dynamique, année 0 à année 50 (51 valeurs).
@@ -166,6 +195,8 @@ class ResultatA2:
     statique_intermediaire: float
     statique_t50: float
     statique_total: float
+    # --- Répartition du total dynamique par étape : ((clé de ETAPES, valeur), ...) ; la somme = dynamique_total ---
+    dynamique_par_etape: Tuple[Tuple[str, float], ...] = ()
 
     def cumul_dynamique(self) -> List[float]:
         """Émissions dynamiques cumulées année après année (pour tracer une courbe)."""
@@ -257,6 +288,91 @@ def controler_coherence(valeurs: ValeursA2) -> List[str]:
     return avertissements
 
 
+# --- Les 4 lignes « Changement climatique » ----------------------------------
+def _sans_accent_minuscule(texte: str) -> str:
+    """« Biogénique » -> « biogenique » : sert à repérer un libellé quelle que soit sa typographie."""
+    decompose = unicodedata.normalize("NFD", texte)
+    return "".join(c for c in decompose if not unicodedata.combining(c)).lower()
+
+
+def _libelle_indicateur(cle: str) -> str:
+    """Libellé affiché d'un indicateur (« fossile » -> « Fossile »)."""
+    return next(libelle for k, libelle, _ in INDICATEURS_CLIMAT if k == cle)
+
+
+def lire_indicateurs_climat(texte: str) -> Dict[str, ValeursA2]:
+    """Lit les 4 lignes « Changement climatique » collées depuis INIES.
+
+    Chaque ligne est reconnue par son libellé (total, fossil, biogénique, occupation des sols),
+    pas par sa position : l'ordre des lignes et les lignes en trop (libellés de colonnes, autres
+    indicateurs) n'ont pas d'importance. Renvoie {clé: ValeursA2}, dans l'ordre de INDICATEURS_CLIMAT.
+    """
+    trouvees: Dict[str, ValeursA2] = {}
+    for ligne in (texte or "").splitlines():
+        libelle = _sans_accent_minuscule(ligne)
+        if MOT_REPERE_LIGNE_CLIMAT not in libelle:
+            continue                                   # libellé de colonne, autre indicateur, ligne vide
+        cle = next((k for k, _, repere in INDICATEURS_CLIMAT if repere in libelle), None)
+        if cle is None:
+            continue                                   # ligne « Changement climatique » d'un autre type
+        if cle in trouvees:
+            raise ErreurInies(f"La ligne « {_libelle_indicateur(cle)} » apparaît deux fois. "
+                              f"Collez les 4 lignes une seule fois.")
+        nombres = extraire_nombres(ligne)
+        if len(nombres) != NB_VALEURS_A2:
+            raise ErreurInies(f"La ligne « {_libelle_indicateur(cle)} » contient {len(nombres)} valeurs "
+                              f"au lieu de {NB_VALEURS_A2}. Copiez-la en entier.")
+        trouvees[cle] = ValeursA2(*nombres)
+
+    manquantes = [libelle for cle, libelle, _ in INDICATEURS_CLIMAT if cle not in trouvees]
+    if len(manquantes) == len(INDICATEURS_CLIMAT):
+        raise ErreurInies("Aucune ligne « Changement climatique » trouvée. Copiez les 4 lignes du tableau INIES "
+                          "(total, fossil, biogénique, occupation des sols) avec leur libellé, puis collez-les ici.")
+    if manquantes:
+        raise ErreurInies("Il manque la ou les lignes : " + ", ".join(manquantes) + ". Il faut les 4 lignes "
+                          "« Changement climatique » (total, fossil, biogénique, occupation des sols).")
+    return {cle: trouvees[cle] for cle, _, _ in INDICATEURS_CLIMAT}
+
+
+def controler_coherence_indicateurs(valeurs: Dict[str, ValeursA2]) -> List[str]:
+    """Contrôles de bon sens sur les 4 lignes : renvoie la liste des avertissements (vide si tout est cohérent).
+
+    1) chaque ligne est cohérente en elle-même (voir `controler_coherence`) ;
+    2) pour chacune des 13 colonnes : fossile + biogénique + occupation des sols = total.
+    """
+    avertissements = []
+
+    for cle, libelle, _ in INDICATEURS_CLIMAT:
+        avertissements += [f"Ligne « {libelle} » : {a}" for a in controler_coherence(valeurs[cle])]
+
+    colonnes_en_ecart = []
+    total = valeurs[CLE_TOTAL].en_liste()
+    composantes = [valeurs[cle].en_liste() for cle in CLES_COMPOSANTES]
+    for i, libelle_colonne in enumerate(LIBELLES_VALEURS_A2):
+        somme = sum(c[i] for c in composantes)
+        echelle = max([abs(total[i])] + [abs(c[i]) for c in composantes] + [1e-12])
+        if abs(somme - total[i]) > TOLERANCE_COHERENCE * echelle:
+            colonnes_en_ecart.append(f"{libelle_colonne} (somme {somme:.4g}, total {total[i]:.4g})")
+    if colonnes_en_ecart:
+        avertissements.append("Fossile + biogénique + occupation des sols ne donne pas le total pour : "
+                              + " ; ".join(colonnes_en_ecart) + ". Vérifiez les lignes copiées.")
+    return avertissements
+
+
+def controler_meme_materiau(valeurs_materiau: ValeursA2, valeurs_total: ValeursA2) -> Optional[str]:
+    """Message si la ligne « total » des 4 lignes n'est pas celle du matériau saisi au-dessus, sinon None.
+
+    Les deux lignes viennent de la même fiche INIES : leurs 13 valeurs doivent être les mêmes
+    (à l'arrondi près, voir TOLERANCE_COHERENCE).
+    """
+    a, b = valeurs_materiau.en_liste(), valeurs_total.en_liste()
+    echelle = max([abs(x) for x in a + b] + [1e-12])
+    if any(abs(x - y) > TOLERANCE_COHERENCE * echelle for x, y in zip(a, b)):
+        return ("La ligne « total » ne correspond pas à la ligne « Réchauffement climatique » du matériau ci-dessus : "
+                "vérifiez que les deux viennent de la même fiche INIES.")
+    return None
+
+
 # =============================================================================
 # 2) CALCUL DE L'ACV DYNAMIQUE
 # =============================================================================
@@ -290,6 +406,8 @@ def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
          chaque remplacement ajoute production + construction + fin de vie (et le module D) ;
          le dernier remplacement n'est compté qu'au prorata de sa durée utile dans les 50 ans ;
       4. chaque année est multipliée par son coefficient de l'article 11, puis on additionne.
+
+    Le résultat donne aussi la répartition du total par étape (`dynamique_par_etape`).
     """
     dvr = verifier_dvr(dvr)
 
@@ -303,7 +421,6 @@ def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
 
     # --- Grandeurs dérivées ----------------------------------------------------------------------
     utilisation_par_an = utilisation / dvr                       # B réparti sur la durée de vie
-    cout_remplacement = production + construction + fin_de_vie   # un remplacement complet
     nb_cycles_entiers = PERIODE_ETUDE // dvr                     # « ALPHA » de l'Excel
     part_dernier_cycle = PERIODE_ETUDE / dvr - nb_cycles_entiers  # « Futil » de l'Excel
     annee_dernier_cycle = dvr * nb_cycles_entiers                # année où tombe le dernier remplacement
@@ -311,30 +428,37 @@ def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
     # --- Frise année par année -------------------------------------------------------------------
     annees = tuple(range(PERIODE_ETUDE + 1))
     dynamique_par_annee = []
+    par_etape = {cle: 0.0 for cle, _ in ETAPES}      # total pondéré de chaque étape, sur les 50 ans
     for annee in annees:
         coefficient = COEFFICIENTS_ART11[annee]
+        emissions = {cle: 0.0 for cle, _ in ETAPES}  # émissions de l'année, par étape, avant pondération
 
         # (a) produit d'origine
         if annee == 0:
-            emission = production + construction
-        elif annee == PERIODE_ETUDE:
-            emission = utilisation_par_an + fin_de_vie + module_d
+            emissions["production"] += production
+            emissions["construction"] += construction
         else:
-            emission = utilisation_par_an
-        total_annee = emission * coefficient
+            emissions["utilisation"] += utilisation_par_an
+        if annee == PERIODE_ETUDE:
+            emissions["fin_de_vie"] += fin_de_vie
+            emissions["module_d"] += module_d
 
         # (b) remplacements (jamais à l'année 0)
-        remplacement = annee > 0 and annee % dvr == 0
-        if remplacement:
+        if annee > 0 and annee % dvr == 0:
             # le dernier remplacement n'est compté qu'au prorata de sa durée utile
             if nb_cycles_entiers > 0 and annee % annee_dernier_cycle == 0:
                 part = part_dernier_cycle
             else:
                 part = 1.0
-            total_annee += cout_remplacement * part * coefficient    # produit remplacé
-            total_annee += module_d * part * coefficient             # module D du remplacement
+            emissions["production"] += production * part        # produit remplacé : production,
+            emissions["construction"] += construction * part    # construction,
+            emissions["fin_de_vie"] += fin_de_vie * part        # fin de vie,
+            emissions["module_d"] += module_d * part            # et module D du remplacement
 
-        dynamique_par_annee.append(total_annee)
+        # (c) pondération par le coefficient de l'année
+        dynamique_par_annee.append(sum(emissions.values()) * coefficient)
+        for cle, valeur in emissions.items():
+            par_etape[cle] += valeur * coefficient
 
     # --- Regroupement par phase (cellules D24, E24, F24, G24 de l'Excel) -------------------------
     dynamique_t0 = dynamique_par_annee[0]
@@ -356,12 +480,18 @@ def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
         dynamique_t50=dynamique_t50, dynamique_total=dynamique_total,
         statique_t0=statique_t0, statique_intermediaire=statique_intermediaire,
         statique_t50=statique_t50, statique_total=statique_total,
+        dynamique_par_etape=tuple(par_etape.items()),
     )
 
 
 def calculer_depuis_inies(texte: str, dvr: int) -> ResultatA2:
     """Raccourci : texte collé depuis INIES + DVR -> résultat. C'est LA fonction à réutiliser."""
     return calculer_acv_dynamique(lire_valeurs_inies(texte), dvr)
+
+
+def calculer_indicateurs_climat(texte: str, dvr: int) -> Dict[str, ResultatA2]:
+    """Raccourci : les 4 lignes « Changement climatique » collées depuis INIES + DVR -> {clé: résultat}."""
+    return {cle: calculer_acv_dynamique(v, dvr) for cle, v in lire_indicateurs_climat(texte).items()}
 
 
 # =============================================================================

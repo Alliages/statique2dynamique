@@ -268,3 +268,71 @@ def test_palette_de_l_utilisateur():
     assert (pres.YALE_BLUE, pres.TOMATO_JAM, pres.COTTON_ROSE, pres.PACIFIC_CYAN, pres.AQUAMARINE) == (
         "#08415c", "#cc2936", "#ebbab9", "#388697", "#b5ffe1")
     assert pres.THEME["matieres"] == (pres.COTTON_ROSE, pres.PACIFIC_CYAN)    # A (ou matériau seul) rose, B bleu-vert
+
+
+# ----------------------------------------------------------------------------
+# 5) Détail du changement climatique : palette, courbes en couleurs propres, barres par étape
+# ----------------------------------------------------------------------------
+CLES_CLIMAT = ("total", "fossile", "biogenique", "sols")
+
+
+def test_palette_du_detail_climatique():
+    assert (pres.VERT_BLEU, pres.VERT_JAUNE) == ("#1a9e86", "#b0c020")
+    assert pres.THEME["climat"] == {"total": pres.YALE_BLUE, "fossile": pres.TOMATO_JAM,
+                                    "biogenique": pres.VERT_BLEU, "sols": pres.VERT_JAUNE}
+    assert tuple(pres.THEME["climat"]) == CLES_CLIMAT == tuple(cle for cle, _, _ in acv.INDICATEURS_CLIMAT)
+    assert len(set(pres.THEME["climat"].values())) == 4                                      # quatre couleurs distinctes
+    # chiffres sur fond blanc : le vert-jaune est assombri (il serait illisible), le total et le fossile sont inchangés
+    assert pres.THEME["texte_climat"]["sols"] == pres.assombrir(pres.VERT_JAUNE, .45) != pres.VERT_JAUNE
+    assert pres.THEME["texte_climat"]["total"] == pres.YALE_BLUE and pres.THEME["texte_climat"]["fossile"] == pres.TOMATO_JAM
+
+
+def test_la_palette_des_matieres_ne_change_pas():
+    """Le détail climatique ajoute des clés : les couleurs des matériaux A et B restent celles de l'utilisateur."""
+    assert pres.THEME["matieres"] == (pres.COTTON_ROSE, pres.PACIFIC_CYAN)
+
+
+def test_courbes_avec_couleur_propre_et_seulement_le_total_en_statique():
+    series = []
+    for cle, nom in zip(CLES_CLIMAT, ("Total", "Fossile", "Biogénique", "Occupation des sols")):
+        s = serie(0, nom, TEXTE_CLT, 100)
+        if cle != "total":
+            s["cumul_statique"] = []                                       # pas de statique pour les composantes
+        s["couleur"], s["couleur_texte"] = pres.THEME["climat"][cle], pres.THEME["texte_climat"][cle]
+        series.append(s)
+    sans = pres.figure_cumul(series)
+    avec = pres.figure_cumul(series, avec_statique=True)
+    courbes = [t for t in sans.data if t.mode == "lines"]
+    assert [t.line.color for t in courbes] == [pres.THEME["climat"][c] for c in CLES_CLIMAT]
+    assert len([t for t in avec.data if t.mode == "lines"]) == 5           # 4 courbes + le statique du total
+    assert [t for t in avec.data if t.mode == "lines"][-1].name.endswith("statique")
+
+
+def barres(valeurs_par_composante, net):
+    etapes = ["Production (A1-A3)", "Construction (A4-A5)", "Utilisation (B)", "Fin de vie (C)", "Module D", "Total"]
+    composantes = [{"nom": nom, "couleur": pres.THEME["climat"][cle], "valeurs": v}
+                   for (cle, nom), v in zip((("fossile", "Fossile"), ("biogenique", "Biogénique"), ("sols", "Occupation des sols")),
+                                            valeurs_par_composante)]
+    return pres.figure_barres_etapes(etapes, composantes, net)
+
+
+def test_barres_empilees_par_etape():
+    figure = barres([[103, 13.5, 0, 19.2, -130, 5.7], [-708, 0.3, 0, 418.5, -4.8, -294], [0.1, 0, 0, 0, 0, 0.1]],
+                    [-604, 13.8, 0, 438.1, -134.7, -286.8])
+    empilees = [t for t in figure.data if t.type == "bar"]
+    assert [t.name for t in empilees] == ["Fossile", "Biogénique", "Occupation des sols"]
+    assert [t.marker.color for t in empilees] == [pres.TOMATO_JAM, pres.VERT_BLEU, pres.VERT_JAUNE]
+    assert figure.layout.barmode == "relative"                                # positifs au-dessus, négatifs en dessous
+    net = next(t for t in figure.data if t.type == "scatter")
+    assert net.marker.symbol == "diamond" and list(net.y)[-1] == -286.8
+    assert "<b>−286,8</b>" in net.text                                        # valeurs au format français
+    assert list(empilees[0].x)[0] == "Production<br>(A1-A3)"                  # libellé sur deux lignes
+    assert figure.layout.paper_bgcolor == "#ffffff" and figure.layout.height == pres.HAUTEUR_BARRES
+
+
+def test_barres_avec_une_valeur_nulle_ou_vide_ne_plante_pas():
+    barres([[0] * 6, [0] * 6, [0] * 6], [0] * 6)
+
+
+def test_css_titre_des_graphiques():
+    assert ".titre-graphique" in pres.css() and "__" not in pres.css()

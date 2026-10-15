@@ -7,7 +7,8 @@ Mise en forme de l'application, SANS Streamlit (donc testable seul) :
   - tableau des étapes INIES (HTML) ;
   - feuille de style (CSS) aux couleurs de la palette.
 
-Palette : Yale Blue, Tomato Jam, Cotton Rose, Pacific Cyan, Aquamarine.
+Palette : Yale Blue, Tomato Jam, Cotton Rose, Pacific Cyan, Aquamarine ; plus, pour le détail du changement
+climatique, un vert-bleu (biogénique) et un vert-jaune (occupation des sols).
 Un seul thème (clair, imposé par .streamlit/config.toml) : fond en dégradé diagonal des couleurs
 de la palette éclaircies, boîtes blanches, matériau A = Pacific Cyan, matériau B = Cotton Rose.
 """
@@ -31,6 +32,8 @@ TOMATO_JAM = "#cc2936"
 COTTON_ROSE = "#ebbab9"
 PACIFIC_CYAN = "#388697"
 AQUAMARINE = "#b5ffe1"
+VERT_BLEU = "#1a9e86"       # biogénique : vert avec du bleu (écart au Tomato Jam validé pour le daltonisme rouge/vert)
+VERT_JAUNE = "#b0c020"      # occupation des sols
 
 # --- Couleurs de l'interface ---------------------------------------------------
 ECLAIRCISSEMENT = 0.78          # part de blanc mélangée aux couleurs du dégradé de fond (0 = pur, 1 = blanc)
@@ -48,6 +51,9 @@ THEME: dict = {
     "axes": "#111111", "grille": "rgba(0,0,0,.08)", "zero": "rgba(0,0,0,.45)",
     "filigrane": "#d3d7db",                             # ÉMISSIONS et SÉQUESTRATION : gris clair
     "texte": "#1f2933",
+    # Détail du changement climatique : une couleur par ligne INIES (clés de acv.INDICATEURS_CLIMAT)
+    "climat": {"total": YALE_BLUE, "fossile": TOMATO_JAM, "biogenique": VERT_BLEU, "sols": VERT_JAUNE},
+    "texte_climat": {},                                 # chiffres sur fond blanc (rempli plus bas, versions assombries)
 }
 
 # --- Graphique ----------------------------------------------------------------
@@ -74,6 +80,12 @@ X_FIN_AXE = 56                  # fin de l'axe horizontal (en années)
 MARGES = dict(l=70, r=95, b=70)            # la marge du haut dépend de la taille de la légende
 MARGE_HAUT_MIN = 40             # pixels au-dessus de la légende
 ESPACE_LEGENDE_PX = 28          # pixels entre le haut du tracé et le bas de la légende
+HAUTEUR_BARRES = 440            # pixels : graphique des étapes du cycle de vie
+LIBELLE_TOTAL_BARRES = "Total (module D inclus)"    # dernière barre : le total, qui rejoint la fin des courbes
+TAILLE_VALEUR_BARRE = 13
+TAILLE_LOSANGE_NET = 14
+ECART_BARRES = 0.4              # espace entre deux barres, en part de leur largeur
+MARGES_BARRES = dict(l=70, r=30, t=70, b=70)
 TEXTE_EMISSIONS = "ÉMISSIONS"
 TEXTE_SEQUESTRATION = "SÉQUESTRATION"
 UNITE = "kg CO₂ eq."
@@ -106,6 +118,8 @@ def assombrir(couleur: str, part_de_noir: float = ASSOMBRISSEMENT_TEXTE) -> str:
 
 
 THEME["texte_matieres"] = (assombrir(COTTON_ROSE), PACIFIC_CYAN)
+# Chiffres du détail climatique : le vert-jaune pur est trop clair sur fond blanc, on l'assombrit (le vert-bleu un peu)
+THEME["texte_climat"] = {**THEME["climat"], "biogenique": assombrir(VERT_BLEU, .12), "sols": assombrir(VERT_JAUNE, .45)}
 
 
 def degrade_fond() -> str:
@@ -216,6 +230,8 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
 
     `series` : une entrée par matériau, avec les clés
         "indice" (0 pour A, 1 pour B : fixe la couleur), "nom", "annees", "cumul", "cumul_statique".
+    Clés facultatives : "couleur" et "couleur_texte" (remplacent la couleur du matériau, pour le détail du
+    changement climatique) ; une série dont "cumul_statique" est vide n'a pas de courbe statique.
     """
     theme = THEME
     dernier_x = acv.PERIODE_ETUDE
@@ -224,7 +240,7 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
     # courbes à tracer : (série, valeurs, statique ?)
     courbes = [(s, s["cumul"], False) for s in series]
     if avec_statique:
-        courbes += [(s, s["cumul_statique"], True) for s in series]
+        courbes += [(s, s["cumul_statique"], True) for s in series if s["cumul_statique"]]
 
     # --- échelle verticale adaptée à ce qui est affiché ------------------------------
     toutes_les_valeurs = [v for _, valeurs, _ in courbes for v in valeurs]
@@ -233,7 +249,7 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
 
     # --- courbes + point final, dans la couleur du matériau ----------------------------
     for s, valeurs, statique in courbes:
-        couleur = theme["matieres"][s["indice"]]
+        couleur = s.get("couleur") or theme["matieres"][s["indice"]]
         nom = nom_court(s["nom"]) + (" — statique" if statique else "")
         trait = dict(color=couleur, width=EPAISSEUR_STATIQUE if statique else EPAISSEUR_COURBE,
                      dash="dot" if statique else "solid")
@@ -252,7 +268,7 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
         figure.add_annotation(
             x=dernier_x, y=hauteur, text=f"<b>{fr(valeurs[-1])}</b>", showarrow=False, xanchor="left", xshift=16,
             font=dict(size=TAILLE_VALEUR_STATIQUE if statique else TAILLE_VALEUR_FINALE,
-                      color=theme["texte_matieres"][s["indice"]]))
+                      color=s.get("couleur_texte") or theme["texte_matieres"][s["indice"]]))
 
     # --- ligne de zéro, axes fléchés et filigrane ÉMISSIONS / SÉQUESTRATION -----------
     figure.add_hline(y=0, line_width=1.5, line_dash="dash", line_color=theme["zero"])
@@ -284,6 +300,40 @@ def figure_cumul(series: List[dict], avec_statique: bool = False) -> go.Figure:
                    showgrid=False, zeroline=False, showline=False),
         yaxis=dict(range=[bas, haut], tick0=0, dtick=pas, title=f"{UNITE} cumulés",
                    gridcolor=theme["grille"], zeroline=False, showline=False, tickformat=format_graduations(pas)))
+    return figure
+
+
+# =============================================================================
+# GRAPHIQUE DES ÉTAPES DU CYCLE DE VIE (barres empilées)
+# =============================================================================
+def figure_barres_etapes(etapes: List[str], composantes: List[dict], net: List[float]) -> go.Figure:
+    """Barres empilées par étape du cycle de vie : les composantes s'empilent, un losange marque le total net.
+
+    `etapes`      : libellés des barres, dans l'ordre (la dernière est le total sur 50 ans) ;
+    `composantes` : une entrée par composante, avec "nom", "couleur" et "valeurs" (une valeur par étape) ;
+    `net`         : le total net de chaque étape (ligne « total » d'INIES).
+    Les valeurs sont dynamiques : chaque étape est pondérée par le coefficient de l'année où elle a lieu.
+    """
+    theme = THEME
+    libelles = [libelle.replace(" (", "<br>(") for libelle in etapes]       # deux lignes sous chaque barre
+    figure = go.Figure()
+    for c in composantes:
+        figure.add_trace(go.Bar(
+            x=libelles, y=c["valeurs"], name=c["nom"], marker=dict(color=c["couleur"]),
+            hovertemplate=html.escape(c["nom"]) + "<br>%{x} : %{y:,.2f} " + UNITE + "<extra></extra>"))
+    figure.add_trace(go.Scatter(
+        x=libelles, y=net, mode="markers+text", name="Total net", textposition="top center",
+        text=[f"<b>{fr(v)}</b>" for v in net], textfont=dict(size=TAILLE_VALEUR_BARRE, color=theme["titre"]),
+        marker=dict(symbol="diamond", size=TAILLE_LOSANGE_NET, color=theme["titre"], line=dict(color="#ffffff", width=2)),
+        hovertemplate="Total net<br>%{x} : %{y:,.2f} " + UNITE + "<extra></extra>"))
+    figure.add_hline(y=0, line_width=1.5, line_dash="dash", line_color=theme["zero"])
+    figure.add_vline(x=len(libelles) - 1.5, line_width=1, line_dash="dot", line_color=theme["zero"])   # avant le total
+    figure.update_layout(
+        barmode="relative", bargap=ECART_BARRES, height=HAUTEUR_BARRES, margin=MARGES_BARRES, separators=", ",
+        paper_bgcolor=theme["fond_boite"], plot_bgcolor=theme["fond_boite"], font=dict(color=theme["texte"], size=13),
+        legend=dict(orientation="h", x=0, y=1.02, yanchor="bottom", bgcolor="rgba(255,255,255,0)"),
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(title=f"{UNITE} (dynamique)", gridcolor=theme["grille"], zeroline=False))
     return figure
 
 
@@ -322,6 +372,7 @@ div[data-testid="stPlotlyChart"] {border: 1px solid __BORDURE__; padding: .4rem;
 .sous-titre {font-size: 1.35rem; font-weight: 600; color: __MOT__; margin: -.3rem 0 .8rem 0;}
 .titre-section {font-size: 1.7rem; font-weight: 700; margin: .4rem 0 .6rem 0; color: __TITRE__;
                 border-bottom: 3px solid __MOT__; display: inline-block; padding-bottom: .1rem;}
+.titre-graphique {font-size: 1.15rem; font-weight: 700; margin: 1rem 0 .3rem 0; color: __TITRE__;}
 .bandeau {font-size: 1.3rem; font-weight: 700; padding: .35rem .8rem; border-radius: 6px; margin-bottom: .6rem;}
 .bandeau.mat-A {background: __COULEUR_A__; color: __TEXTE_A__;}
 .bandeau.mat-B {background: __COULEUR_B__; color: __TEXTE_B__;}

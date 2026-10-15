@@ -59,6 +59,18 @@ EXEMPLE_B = {
     "texte": "1.54e+1\t5.14e+0\t0.00e+0\t5.95e-3\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t5.95e-3\t4.23e-1\t2.10e+1\t-9.65e-2"}
 PLACEHOLDER_COLLAGE = "Collez ici la ligne « Réchauffement climatique » copiée depuis INIES"
 
+# Détail du changement climatique (un seul matériau) : les 4 lignes INIES, sous la saisie du matériau
+HAUTEUR_ZONE_COLLAGE_DETAIL = 200   # pixels
+PLACEHOLDER_COLLAGE_DETAIL = ("Collez ici les 4 lignes « Changement climatique » (total, fossil, biogénique, "
+                              "occupation des sols) copiées depuis INIES, avec leur libellé")
+NOM_IMAGE_BARRES = "acv_etapes_re2020"         # nom du fichier image du graphique par étape
+ID_EXEMPLE_DETAIL = 33806                      # le bouton « exemple » remplit le détail si le matériau A est ce panneau CLT
+EXEMPLE_DETAIL = (
+    "Changement climatique - total (kg CO2 eq.)\t-6.04e+2\t1.38e+1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t7.58e+2\t1.67e+2\t-2.33e+2\n"
+    "Changement climatique - fossil (kg CO2 eq.)\t1.03e+2\t1.35e+1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t3.33e+1\t1.50e+2\t-2.25e+2\n"
+    "Changement climatique - biogénique (kg CO2 eq.)\t-7.08e+2\t3.06e-1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t7.24e+2\t1.67e+1\t-8.35e+0\n"
+    "Changement climatique - occupation des sols et transformation de l'occupation des sols (kg CO2 eq.)\t1.03e-1\t4.60e-4\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t4.38e-3\t1.08e-1\t-6.01e-2")
+
 TEXTE_INTRO = """
 Cet outil part des chiffres INIES et applique la méthode dynamique réglementaire RE2020 de l'ACV dynamique à votre place. \
 Une lecture pédagogique, qui rappelle aussi qu'évaluer un matériau ne se résume jamais au seul carbone.
@@ -100,6 +112,19 @@ TEXTE_LECTURE = f"""
 TEXTE_LECTURE_DEUX = """
 - **Comparez des produits qui rendent le même service** (même unité fonctionnelle, par exemple 1 m² de mur
   de même performance) : la comparaison carbone n'a de sens qu'à ce prix.
+"""
+
+# Ajouté à TEXTE_LECTURE quand le détail du changement climatique est affiché
+TEXTE_LECTURE_DETAIL = """
+- **Le détail du changement climatique** sépare le total en trois composantes : **fossile**, **biogénique** et
+  **occupation des sols** (fossile + biogénique + occupation des sols = total). Les courbes montrent le cumul année après
+  année ; la valeur au bout est le résultat dynamique de chaque ligne.
+- **Les barres** répartissent ce résultat par étape du cycle de vie. Au-dessus de zéro : émissions ; en dessous :
+  carbone stocké ou évité. Le losange est le total net ; la dernière barre rejoint la fin des courbes.
+- **Les barres sont dynamiques** : chaque étape est pondérée par le coefficient de l'année où elle a lieu. Elles
+  diffèrent donc des valeurs brutes du tableau INIES (la production, à l'année 0, garde tout son poids ; la fin de vie,
+  à l'année 50, est réduite). Avec une DVR inférieure à 50 ans, les remplacements sont comptés dans les étapes concernées.
+- **L'occupation des sols** pèse très peu : sa courbe se confond avec la ligne de zéro et sa barre est presque invisible.
 """
 
 MESSAGE_ATTENTE = ("Collez la ligne INIES d'un matériau (ou choisissez-en un dans la liste) pour voir le résultat. "
@@ -149,6 +174,8 @@ def remplir(indice: int, nom: str, identifiant, dvr: int, texte: str) -> None:
     st.session_state[f"id_{indice}"] = identifiant
     st.session_state[f"dvr_{indice}"] = dvr
     st.session_state[f"texte_{indice}"] = texte
+    if indice == 0:                         # le détail du changement climatique appartient au matériau saisi : on le vide
+        st.session_state["texte_detail"] = ""
 
 
 def choisir_catalogue(indice: int) -> None:
@@ -167,6 +194,8 @@ def charger_exemple(nb_materiaux: int) -> None:
         m = catalogue[0]
         remplir(0, m.nom, m.id, m.dvr, m.texte_inies())
         st.session_state["cat_0"] = 0
+        if nb_materiaux == 1 and m.id == ID_EXEMPLE_DETAIL:          # le détail n'existe qu'avec un seul matériau
+            st.session_state["texte_detail"] = EXEMPLE_DETAIL
     else:
         remplir(0, "Fiche 46517 (exemple, DVR 30)", 46517, 30, EXEMPLE_B["texte"])
     if nb_materiaux == 2:
@@ -305,6 +334,36 @@ def saisie_materiau(indice: int, catalogue: list, nb_materiaux: int) -> dict:
     return saisie
 
 
+def saisie_detail(saisie_materiau_a: dict):
+    """Les 4 lignes « Changement climatique » du même matériau (sa DVR est celle du matériau ci-dessus).
+
+    Renvoie {clé: ResultatA2} (clés de acv.INDICATEURS_CLIMAT), ou None si rien de lisible n'est collé.
+    """
+    detail = None
+    with st.container(border=True, key="boite_detail"):
+        st.markdown('<div class="bandeau mat-A">Détail du changement climatique</div>', unsafe_allow_html=True)
+        texte = st.text_area(
+            "Les 4 lignes « Changement climatique » copiées depuis INIES", key="texte_detail",
+            height=HAUTEUR_ZONE_COLLAGE_DETAIL, placeholder=PLACEHOLDER_COLLAGE_DETAIL,
+            help="Facultatif. Onglet « Indicateurs » de la fiche : les 4 lignes (total, fossil, biogénique, occupation "
+                 "des sols), chacune avec son libellé. L'ordre des lignes n'a pas d'importance. La DVR est celle du "
+                 "matériau ci-dessus.")
+        if texte.strip():
+            try:
+                valeurs = acv.lire_indicateurs_climat(texte)
+                detail = {cle: acv.calculer_acv_dynamique(v, saisie_materiau_a["dvr"]) for cle, v in valeurs.items()}
+                st.success("4 lignes lues : total, fossile, biogénique, occupation des sols.")
+                avertissements = acv.controler_coherence_indicateurs(valeurs)
+                if saisie_materiau_a["valeurs"] is not None:
+                    avertissements += [a for a in [acv.controler_meme_materiau(saisie_materiau_a["valeurs"],
+                                                                               valeurs[acv.CLE_TOTAL])] if a]
+                for avertissement in avertissements:
+                    st.warning(avertissement)
+            except acv.ErreurInies as erreur:
+                st.error(str(erreur))
+    return detail
+
+
 # =============================================================================
 # 2) RÉSULTATS
 # =============================================================================
@@ -332,8 +391,60 @@ def titre_resultats() -> None:
     st.markdown('<h2 class="titre-section">Résultats</h2>', unsafe_allow_html=True)
 
 
-def afficher_details(saisies_ok: list, nb_materiaux: int) -> None:
-    """Ce qui suit le ou les résultats : écart (deux matériaux), graphique, tableaux des étapes, exports CSV, détail."""
+def config_image(nom_fichier: str) -> dict:
+    """Réglages Plotly : icône appareil photo (image PNG nommée), sans logo."""
+    return {"displaylogo": False, "toImageButtonOptions": {"format": "png", "filename": nom_fichier, "scale": 2}}
+
+
+def series_courbes(saisies_ok: list, detail) -> list:
+    """Courbes à tracer : celle de chaque matériau, ou (si le détail est collé) les 4 lignes « Changement climatique »."""
+    if detail is None:
+        return [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
+                 "cumul": s["resultat"].cumul_dynamique(), "cumul_statique": s["resultat"].cumul_statique()}
+                for s in saisies_ok]
+    series = []
+    for cle, libelle, _ in acv.INDICATEURS_CLIMAT:
+        resultat = detail[cle]
+        series.append({
+            "indice": 0, "nom": libelle, "annees": list(resultat.annees), "cumul": resultat.cumul_dynamique(),
+            # le calcul statique E+C- n'existe que pour le total
+            "cumul_statique": resultat.cumul_statique() if cle == acv.CLE_TOTAL else [],
+            "couleur": pres.THEME["climat"][cle], "couleur_texte": pres.THEME["texte_climat"][cle]})
+    return series
+
+
+def figure_etapes(detail: dict):
+    """Barres empilées par étape : composantes + total net (ligne « total »), dynamiques."""
+    etapes = [libelle for _, libelle in acv.ETAPES] + [pres.LIBELLE_TOTAL_BARRES]
+
+    def valeurs(cle: str) -> list:         # une valeur par étape, puis le total sur 50 ans
+        return [v for _, v in detail[cle].dynamique_par_etape] + [detail[cle].dynamique_total]
+
+    composantes = [{"nom": libelle, "couleur": pres.THEME["climat"][cle], "valeurs": valeurs(cle)}
+                   for cle, libelle, _ in acv.INDICATEURS_CLIMAT if cle != acv.CLE_TOTAL]
+    return pres.figure_barres_etapes(etapes, composantes, valeurs(acv.CLE_TOTAL))
+
+
+def afficher_graphiques(saisies_ok: list, detail) -> None:
+    """Graphique des courbes cumulées (largeur plafonnée par le CSS du conteneur « graphique »),
+    puis, si le détail est collé, le graphique des étapes du cycle de vie."""
+    with st.container(key="graphique"):
+        avec_statique = st.checkbox("Afficher aussi le calcul statique E+C- (en pointillés, sans pondération)",
+                                    key="avec_statique")
+        if detail is not None:
+            st.markdown('<div class="titre-graphique">Émissions cumulées année après année</div>', unsafe_allow_html=True)
+        st.plotly_chart(pres.figure_cumul(series_courbes(saisies_ok, detail), avec_statique), width="stretch",
+                        config=config_image(NOM_IMAGE_GRAPHIQUE))
+        if detail is not None:
+            st.markdown('<div class="titre-graphique">Répartition par étape du cycle de vie</div>', unsafe_allow_html=True)
+            st.plotly_chart(figure_etapes(detail), width="stretch", config=config_image(NOM_IMAGE_BARRES))
+        st.caption("Pour enregistrer le graphique en image : icône appareil photo, en haut à droite au survol.")
+
+
+def afficher_details(saisies_ok: list, nb_materiaux: int, detail=None) -> None:
+    """Ce qui suit le ou les résultats : écart (deux matériaux), graphique(s), tableaux des étapes, exports CSV, détail.
+
+    `detail` : résultats des 4 lignes « Changement climatique » (un seul matériau), ou None."""
     # Phrase de comparaison carbone (deux matériaux renseignés)
     if len(saisies_ok) == 2:
         saisie_a, saisie_b = saisies_ok
@@ -345,17 +456,7 @@ def afficher_details(saisies_ok: list, nb_materiaux: int) -> None:
         st.caption("Attention, une comparaison carbone n'a de sens que pour deux produits rendant le même service "
                    "(même unité fonctionnelle au minimum).")
 
-    # Graphique (largeur plafonnée par le CSS du conteneur « graphique » : pleine largeur sur un petit écran)
-    series = [{"indice": s["indice"], "nom": nom_affiche(s), "annees": list(s["resultat"].annees),
-               "cumul": s["resultat"].cumul_dynamique(), "cumul_statique": s["resultat"].cumul_statique()}
-              for s in saisies_ok]
-    with st.container(key="graphique"):
-        avec_statique = st.checkbox("Afficher aussi le calcul statique E+C- (en pointillés, sans pondération)",
-                                    key="avec_statique")
-        st.plotly_chart(pres.figure_cumul(series, avec_statique), width="stretch",
-                        config={"displaylogo": False, "toImageButtonOptions": {
-                            "format": "png", "filename": NOM_IMAGE_GRAPHIQUE, "scale": 2}})
-        st.caption("Pour enregistrer le graphique en image : icône appareil photo, en haut à droite au survol.")
+    afficher_graphiques(saisies_ok, detail)
     for saisie in saisies_ok:
         st.markdown(pres.tableau_etapes_html(nom_affiche(saisie), saisie["valeurs"], saisie["indice"]),
                     unsafe_allow_html=True)
@@ -409,6 +510,7 @@ st.set_page_config(page_title=TITRE_PAGE, page_icon=ICONE_PAGE, layout="wide")
 
 LETTRES_LIEN, ERREURS_LIEN = appliquer_lien()      # doit être fait avant la création des champs de saisie
 NB_MATERIAUX = nombre_de_materiaux()               # lu APRÈS le lien
+DETAIL = None                                      # détail du changement climatique : un seul matériau
 CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
 COULEURS = pres.THEME["matieres"]
 
@@ -440,11 +542,14 @@ if NB_MATERIAUX == 1:
     colonne_saisie, colonne_resultats = st.columns(PROPORTIONS_UN_MATERIAU, gap="large")
     with colonne_saisie:
         saisies = [saisie_materiau(0, CATALOGUE, NB_MATERIAUX)]
+        DETAIL = saisie_detail(saisies[0])         # sous la saisie du matériau
     with colonne_resultats:
         titre_resultats()
         if saisies[0]["resultat"] is not None:
             afficher_carte(saisies[0])
-            afficher_details(saisies, NB_MATERIAUX)
+            afficher_details(saisies, NB_MATERIAUX, DETAIL)
+        elif DETAIL is not None:                   # seules les 4 lignes sont collées : on affiche leurs graphiques
+            afficher_graphiques([], DETAIL)
         else:
             st.info(MESSAGE_ATTENTE)
 else:
@@ -472,7 +577,8 @@ if NB_MATERIAUX == 2 and saisies_ok:
     afficher_details(saisies_ok, NB_MATERIAUX)
 
 with st.expander("Comment lire ce résultat ?"):
-    st.markdown(TEXTE_LECTURE + (TEXTE_LECTURE_DEUX if NB_MATERIAUX == 2 else ""))
+    st.markdown(TEXTE_LECTURE + (TEXTE_LECTURE_DEUX if NB_MATERIAUX == 2 else "")
+                + (TEXTE_LECTURE_DETAIL if DETAIL is not None else ""))
 
 # --- 3) Pied de page : version, licence, historique ----------------------------
 st.divider()

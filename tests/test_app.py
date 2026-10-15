@@ -119,7 +119,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert "Version 3.9.0 du 2026-10-15" in page
+    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.0"
 
 
 # ----------------------------------------------------------------------------
@@ -221,8 +221,10 @@ def test_tout_effacer():
     assert app.text_input(key="nom_0").value == "" and app.selectbox(key="cat_0").value is None
 
 
-@pytest.mark.parametrize("parametres, nb", [({}, 1), ({"materiaux": "2"}, 2)])
-def test_case_statique_ajoute_les_courbes_pointillees(parametres, nb):
+# Un seul matériau : l'exemple remplit aussi le détail du changement climatique, donc 4 courbes (total, fossile,
+# biogénique, occupation des sols) et une seule courbe statique (celle du total). Deux matériaux : une courbe chacun.
+@pytest.mark.parametrize("parametres, nb, nb_avec_statique", [({}, 4, 5), ({"materiaux": "2"}, 2, 4)])
+def test_case_statique_ajoute_les_courbes_pointillees(parametres, nb, nb_avec_statique):
     app = nouvelle_app(**parametres)
     bouton(app, "Essayer avec un exemple").click().run()
     case = app.checkbox(key="avec_statique")
@@ -232,7 +234,7 @@ def test_case_statique_ajoute_les_courbes_pointillees(parametres, nb):
         return len([t for t in figure["data"] if t.get("mode") == "lines"])
     assert nb_courbes(app) == nb
     case.check().run()
-    assert not app.exception and nb_courbes(app) == 2 * nb
+    assert not app.exception and nb_courbes(app) == nb_avec_statique
 
 
 def test_boutons_de_telechargement_csv():
@@ -341,7 +343,8 @@ def test_exemple_en_mode_un_materiau():
     assert not app.exception
     page = texte_page(app)
     assert page.count('class="carte"') == 1 and RESULTAT_PREMIER in page
-    assert page.count('class="tab-etapes') == 1 and len(app.get("plotly_chart")) == 1
+    # l'exemple remplit aussi le détail du changement climatique : deux graphiques (courbes, puis barres par étape)
+    assert page.count('class="tab-etapes') == 1 and len(app.get("plotly_chart")) == 2
     assert "écart entre les deux matériaux" not in page and "omparaison" not in page
 
 
@@ -397,7 +400,10 @@ def test_mode_de_base_saisie_un_tiers_resultats_deux_tiers_graphique_sous_le_res
     assert any(w.key == "nom_0" for w in saisie[0].text_input)
     colonne = resultats[0]
     assert any('class="carte"' in m.value for m in colonne.markdown)            # le résultat...
-    assert len(colonne.get("plotly_chart")) == 1                                  # ...et le graphique dessous
+    assert len(colonne.get("plotly_chart")) == 2                                  # ...et les graphiques dessous
+    # le détail du changement climatique : sous la saisie du matériau, dans la même colonne de gauche
+    cles = [w.key for w in saisie[0].text_area]
+    assert cles == ["texte_0", "texte_detail"]
     assert any('class="tab-etapes' in m.value for m in colonne.markdown)
 
 
@@ -406,3 +412,158 @@ def test_readme_sans_tampermonkey_notice_dans_son_dossier():
     assert "tampermonkey" not in readme.lower() and "materiaux=2" not in readme and "caché" not in readme
     notice = (RACINE / "tampermonkey" / "infos.txt").read_text(encoding="utf-8")
     assert "acv_inies.user.js" in notice and "INSTALLATION" in notice and "?materiaux=2" in notice
+
+
+# ----------------------------------------------------------------------------
+# Détail du changement climatique : les 4 lignes INIES d'un seul matériau
+# ----------------------------------------------------------------------------
+# Les 4 lignes du panneau CLT, comme copiées depuis INIES (celles du matériau 33806 du catalogue)
+QUATRE_LIGNES = "\n".join([
+    "Changement climatique - total (kg CO2 eq.)\t-6.04e+2\t1.38e+1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t7.58e+2\t1.67e+2\t-2.33e+2",
+    "Changement climatique - fossil (kg CO2 eq.)\t1.03e+2\t1.35e+1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t3.33e+1\t1.50e+2\t-2.25e+2",
+    "Changement climatique - biogénique (kg CO2 eq.)\t-7.08e+2\t3.06e-1\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t7.24e+2\t1.67e+1\t-8.35e+0",
+    "Changement climatique - occupation des sols et transformation de l'occupation des sols (kg CO2 eq.)\t1.03e-1\t4.60e-4\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t0.00e+0\t4.38e-3\t1.08e-1\t-6.01e-2"])
+DYNAMIQUE_CLT = -286.75          # Excel (DVR 100 ans)
+NOMS_COURBES = ["Total", "Fossile", "Biogénique", "Occupation des sols"]
+ECART_ARRONDI_INIES = 4.0        # kg CO2 eq. : INIES arrondit à 3 chiffres significatifs (environ ± 0,5 % de 700)
+
+
+def figures(app: AppTest) -> list:
+    """Les figures Plotly affichées, dans l'ordre."""
+    return [json.loads(g.proto.spec) for g in app.get("plotly_chart")]
+
+
+def app_avec_detail(**parametres) -> AppTest:
+    """Application avec le premier matériau du catalogue (CLT) et les 4 lignes collées."""
+    app = nouvelle_app(**parametres)
+    bouton(app, "Essayer avec un exemple").click().run()
+    return app
+
+
+def test_le_detail_est_sous_la_saisie_du_materiau_a_gauche_et_les_graphiques_a_droite():
+    app = nouvelle_app()
+    gauche = next(c for c in app.columns if c.proto.weight == pytest.approx(1 / 3))
+    assert [w.key for w in gauche.text_area] == ["texte_0", "texte_detail"]      # le nouveau champ, sous le 1er
+    assert any("Détail du changement climatique" in m.value for m in gauche.markdown)
+    assert not figures(app)                                                      # rien à tracer tant qu'rien n'est collé
+
+
+def test_pas_de_detail_en_mode_deux_materiaux():
+    app = app_deux_materiaux()
+    assert not any(w.key == "texte_detail" for w in app.text_area)
+    bouton(app, "Essayer avec un exemple").click().run()
+    assert not app.exception and len(figures(app)) == 1                          # un seul graphique, comme avant
+
+
+def test_l_exemple_remplit_le_detail_et_donne_deux_graphiques():
+    app = app_avec_detail()
+    assert not app.exception
+    assert app.text_area(key="texte_detail").value.count("Changement climatique") == 4
+    assert any("4 lignes lues" in m.value for m in app.success)
+    courbes, barres = figures(app)
+    assert [t["name"] for t in courbes["data"] if t.get("mode") == "lines"] == NOMS_COURBES
+
+
+def test_les_courbes_finissent_sur_le_resultat_dynamique_et_le_total_est_celui_de_la_carte():
+    app = app_avec_detail()
+    courbes, _ = figures(app)
+    fins = {t["name"]: t["y"][-1] for t in courbes["data"] if t.get("mode") == "lines"}
+    assert fins["Total"] == pytest.approx(DYNAMIQUE_CLT, abs=1e-6)
+    assert fins["Total"] == pytest.approx(acv.calculer_acv_dynamique(PREMIER.valeurs, PREMIER.dvr).dynamique_total)
+    # fossile + biogénique + occupation des sols = total, à l'arrondi INIES près
+    assert fins["Fossile"] + fins["Biogénique"] + fins["Occupation des sols"] == pytest.approx(fins["Total"], abs=ECART_ARRONDI_INIES)
+    assert RESULTAT_PREMIER in texte_page(app)
+
+
+def test_les_barres_empilent_les_composantes_et_rejoignent_la_fin_des_courbes():
+    app = app_avec_detail()
+    courbes, barres = figures(app)
+    empilees = [t for t in barres["data"] if t["type"] == "bar"]
+    assert [t["name"] for t in empilees] == NOMS_COURBES[1:]                    # fossile, biogénique, occupation des sols
+    net = next(t for t in barres["data"] if t["type"] == "scatter")
+    assert len(net["y"]) == len(acv.ETAPES) + 1                                  # 5 étapes + le total
+    assert net["y"][-1] == pytest.approx(DYNAMIQUE_CLT, abs=1e-6)               # la dernière barre = fin de la courbe « total »
+    assert sum(net["y"][:-1]) == pytest.approx(net["y"][-1], abs=1e-6)          # les étapes s'additionnent au total
+    for i in range(len(net["y"])):                                              # les composantes s'additionnent au net (arrondi INIES)
+        assert sum(t["y"][i] for t in empilees) == pytest.approx(net["y"][i], abs=ECART_ARRONDI_INIES)
+
+
+def test_une_seule_courbe_statique_celle_du_total():
+    app = app_avec_detail()
+    app.checkbox(key="avec_statique").check().run()
+    courbes, _ = figures(app)
+    lignes = [t["name"] for t in courbes["data"] if t.get("mode") == "lines"]
+    assert lignes == NOMS_COURBES + ["Total — statique"]
+
+
+def test_le_detail_utilise_la_dvr_du_materiau():
+    app = app_avec_detail()
+    app.number_input(key="dvr_0").set_value(30).run()
+    assert not app.exception
+    fin = [t for t in figures(app)[0]["data"] if t.get("name") == "Total"][0]["y"][-1]
+    assert fin == pytest.approx(acv.calculer_indicateurs_climat(QUATRE_LIGNES, 30)["total"].dynamique_total)
+    assert fin != pytest.approx(DYNAMIQUE_CLT)
+
+
+def test_lignes_collees_dans_le_desordre_avec_les_libelles_de_colonnes():
+    app = nouvelle_app()
+    lignes = QUATRE_LIGNES.splitlines()
+    en_tete = "Étape de production\nÉtape du processus de construction\nTotal cycle de vie\n"
+    app.text_area(key="texte_detail").set_value(en_tete + "\n".join(reversed(lignes))).run()
+    assert not app.exception and not app.error
+    courbes = figures(app)[0]
+    assert [t["name"] for t in courbes["data"] if t.get("mode") == "lines"] == NOMS_COURBES
+
+
+def test_seules_les_4_lignes_collees_les_graphiques_s_affichent_sans_la_carte():
+    app = nouvelle_app()
+    app.text_area(key="texte_detail").set_value(QUATRE_LIGNES).run()
+    assert not app.exception and len(figures(app)) == 2
+    assert 'class="carte"' not in texte_page(app)
+
+
+@pytest.mark.parametrize("retirer, attendu", [
+    (1, "Fossile"), (3, "Occupation des sols"),
+])
+def test_message_clair_si_une_ligne_manque(retirer, attendu):
+    app = nouvelle_app()
+    lignes = QUATRE_LIGNES.splitlines()
+    app.text_area(key="texte_detail").set_value("\n".join(l for i, l in enumerate(lignes) if i != retirer)).run()
+    assert not app.exception and not figures(app)
+    assert any(attendu in e.value for e in app.error)
+
+
+def test_avertissement_si_les_lignes_ne_s_additionnent_pas():
+    app = nouvelle_app()
+    fausse = QUATRE_LIGNES.replace("1.03e+2", "9.99e+2")                          # production fossile : 103 -> 999
+    app.text_area(key="texte_detail").set_value(fausse).run()
+    assert not app.exception and any("ne donne pas le total" in w.value for w in app.warning)
+
+
+def test_avertissement_si_le_total_n_est_pas_celui_du_materiau():
+    app = nouvelle_app()
+    app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()                  # un autre matériau...
+    app.text_area(key="texte_detail").set_value(QUATRE_LIGNES).run()             # ...et les lignes du CLT
+    assert any("ne correspond pas" in w.value for w in app.warning)
+    bouton(app, "Essayer avec un exemple").click().run()                          # le bon matériau : plus d'avertissement
+    assert not any("ne correspond pas" in w.value for w in app.warning)
+
+
+def test_tout_effacer_vide_aussi_le_detail():
+    app = app_avec_detail()
+    bouton(app, "Tout effacer").click().run()
+    assert not app.exception and app.text_area(key="texte_detail").value == "" and not figures(app)
+
+
+def test_choisir_un_autre_materiau_vide_le_detail():
+    app = app_avec_detail()
+    app.text_area(key="texte_0").set_value(EXEMPLE_46517).run()
+    app.text_area(key="texte_detail").set_value(QUATRE_LIGNES).run()
+    app.selectbox(key="cat_0").set_value(1).run()                                 # un autre matériau du catalogue remplace la saisie
+    assert not app.exception and app.text_area(key="texte_detail").value == ""
+
+
+def test_le_texte_de_lecture_explique_le_detail_seulement_quand_il_est_affiche():
+    avec = " ".join(m.value for m in app_avec_detail().markdown)
+    sans = " ".join(m.value for m in nouvelle_app().markdown)
+    assert "Les barres sont dynamiques" in avec and "Les barres sont dynamiques" not in sans

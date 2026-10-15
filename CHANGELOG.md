@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 4.0.0 — 2026-10-16
+Détail du changement climatique d'un matériau : un second champ, sous le premier, reçoit les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) ; à droite, courbes cumulées puis barres empilées par étape du cycle de vie. Palette : le biogénique en vert-bleu et l'occupation des sols en vert-jaune.
+
 ## 3.9.0 — 2026-10-15
 Réorganisation de l'interface.
 

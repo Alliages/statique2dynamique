@@ -4,6 +4,12 @@ Application Streamlit : on colle la ligne « Réchauffement climatique » d'une 
 on indique la durée de vie de référence (DVR), et l'outil donne l'**ACV dynamique RE2020** en grand,
 à côté du total affiché dans INIES en petit.
 
+Avec **un seul matériau**, un second champ, juste en dessous, reçoit les **4 lignes « Changement climatique »**
+(total, fossile, biogénique, occupation des sols) : à droite s'affichent les courbes cumulées sur 50 ans, puis les
+barres empilées par étape du cycle de vie (fossile + biogénique + occupation des sols = total). Les 4 lignes sont
+reconnues par leur libellé, dans n'importe quel ordre ; la DVR est celle du matériau. Les barres sont dynamiques
+(chaque étape pondérée par le coefficient de l'année où elle a lieu), elles diffèrent donc des valeurs brutes d'INIES.
+
 La méthode reprend à l'identique le classeur Excel `ACV_Dynamique_INIES_V2`
 (onglets « Interface +A2 », « Calcul +A2 », « Art. 11 »), licence GNU GPL v3.
 
@@ -52,12 +58,16 @@ L'adresse de l'application est la constante `URL_APP` de `app.py`.
 
 ## Réutiliser le calcul ailleurs
 
-    from acv_inies_a2 import calculer_depuis_inies, ErreurInies
+    from acv_inies_a2 import calculer_depuis_inies, calculer_indicateurs_climat, ErreurInies
 
     resultat = calculer_depuis_inies(texte_colle_depuis_inies, dvr=50)
     resultat.dynamique_total      # kg CO2 eq., module D inclus
     resultat.statique_total       # E+C-, module D / 3
     resultat.dynamique_par_annee  # 51 valeurs (années 0 à 50)
+    resultat.dynamique_par_etape  # répartition du total par étape ; la somme = dynamique_total
+
+    # les 4 lignes « Changement climatique » collées d'un coup, reconnues par leur libellé
+    resultats = calculer_indicateurs_climat(texte_des_4_lignes, dvr=50)   # {"total": ..., "fossile": ..., "biogenique": ..., "sols": ...}
 
 Les erreurs de saisie lèvent `ErreurInies`, avec un message en français prêt à afficher.
 En ligne de commande : `python acv_inies_a2.py "<13 valeurs>" 50`.
@@ -83,6 +93,8 @@ fonction ajoutée, majeur si les résultats changent (méthode, coefficients).
 
 - Norme +A2 uniquement (13 valeurs) ; une ligne +A1 (6 valeurs) est refusée avec un message explicite.
 - Le carbone biogénique stocké (« stockC » de l'Excel) n'entre dans aucune formule de l'Excel : il n'est pas repris.
-- Seul l'indicateur « Réchauffement climatique – total » est traité (l'onglet « résultats » de l'Excel,
-  avec fossile / biogénique / usage des sols, viendra dans un second temps).
+- Seul l'indicateur « Changement climatique » est traité (total, fossile, biogénique, occupation des sols) ;
+  les autres indicateurs INIES ne sont pas repris.
+- Le détail des 4 lignes n'existe qu'avec un seul matériau. Il n'est pas (encore) repris dans les liens pré-remplis,
+  le catalogue `materiaux.json` ni les exports CSV.
 - Le lien « Ouvrir la fiche » suppose le format `https://base-inies.fr/infos-produit/<id>` (`URL_FICHE_INIES` dans `app.py`).
