@@ -70,6 +70,52 @@
         "module_d": -0.478
       },
       "acv_dynamique_attendu": 13.539
+    },
+    {
+      "id": 46714,
+      "nom": "Panneau isolant GRAMITHERM® 120",
+      "lien_inies": "https://base-inies.fr/infos-produit/46714",
+      "dvr": 50,
+      "date_export": "2026-10-15",
+      "valeurs": {
+        "production": -3.94729,
+        "construction": 1.5396,
+        "b1": 0.0,
+        "b2": 0.0,
+        "b3": 0.0,
+        "b4": 0.0,
+        "b5": 0.0,
+        "b6": 0.0,
+        "b7": 0.0,
+        "utilisation": 0.0,
+        "fin_de_vie": 8.52237,
+        "total": 6.11468,
+        "module_d": 0.11829
+      },
+      "acv_dynamique_attendu": 2.587
+    },
+    {
+      "id": 45780,
+      "nom": "Fenêtre double vitrage - Masse totale 26,75 kg/m²",
+      "lien_inies": "https://base-inies.fr/infos-produit/45780",
+      "dvr": 30,
+      "date_export": "2026-10-15",
+      "valeurs": {
+        "production": 102.83708,
+        "construction": 7.48733,
+        "b1": 0.0,
+        "b2": 0.14342,
+        "b3": 0.0,
+        "b4": 0.0,
+        "b5": 0.0,
+        "b6": 0.0,
+        "b7": 0.0,
+        "utilisation": 0.14342,
+        "fin_de_vie": 1.22343,
+        "total": 111.69125,
+        "module_d": -35.64027
+      },
+      "acv_dynamique_attendu": 128.878
     }
   ]
 }
