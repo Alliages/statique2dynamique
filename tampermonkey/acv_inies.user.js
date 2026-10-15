@@ -1,12 +1,14 @@
 // ==UserScript==
-// @name         ACV dynamique RE2020 - envoyer la fiche INIES
+// @name         ACV dynamique RE2020 - envoyer les fiches INIES
 // @namespace    https://github.com/Alliages/statique2dynamique
-// @version      1.0.0
-// @description  Ajoute un bouton sur une fiche base-inies.fr (norme +A2) qui ouvre l'outil ACV dynamique RE2020 avec les valeurs de la fiche déjà remplies.
+// @version      1.1.0
+// @description  Ajoute un panneau sur les fiches base-inies.fr (norme +A2) : mettre une fiche en A, une autre en B, puis ouvrir l'outil ACV dynamique RE2020 avec les valeurs déjà remplies.
 // @author       Alliages
 // @match        https://www.base-inies.fr/*
 // @match        https://base-inies.fr/*
 // @grant        GM_openInTab
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @run-at       document-idle
 // @updateURL    https://raw.githubusercontent.com/Alliages/statique2dynamique/main/tampermonkey/acv_inies.user.js
 // @downloadURL  https://raw.githubusercontent.com/Alliages/statique2dynamique/main/tampermonkey/acv_inies.user.js
@@ -14,12 +16,13 @@
 
 /*
  * Ce que fait ce script, et rien d'autre :
- *   1. sur une page « .../infos-produit/<id> », il affiche un bouton en bas à droite ;
- *   2. au clic, il lit la fiche ouverte (adresse /api/Produit/<id>, avec votre session, comme le fait le site) ;
- *   3. il vérifie que la fiche est en norme +A2, en extrait les 13 valeurs « Changement climatique - total »
- *      et la durée de vie de référence (DVR), arrondies à 5 décimales comme l'application ;
- *   4. il ouvre l'application dans un nouvel onglet, avec un lien pré-rempli (format identique à lien.py).
- * Aucune donnée n'est envoyée ailleurs que dans l'adresse de ce lien. Une seule fiche à la fois, sur clic.
+ *   1. sur une page « .../infos-produit/<id> », il affiche un petit panneau en haut à droite ;
+ *   2. « Mettre en A » / « Mettre en B » lit la fiche ouverte (adresse /api/Produit/<id>, avec votre session,
+ *      comme le fait le site), vérifie qu'elle est en norme +A2, en extrait les 13 valeurs « Changement climatique
+ *      - total » et la durée de vie de référence (DVR), arrondies à 5 décimales comme l'application,
+ *      et range le résultat dans l'emplacement A ou B (mémorisé par Tampermonkey d'une fiche à l'autre) ;
+ *   3. « Voir les 2 » ouvre l'application dans un nouvel onglet, avec un lien pré-rempli (format identique à lien.py).
+ * Aucune donnée n'est envoyée ailleurs que dans l'adresse de ce lien. Une seule fiche lue par clic.
  */
 
 // =============================================================================
@@ -38,7 +41,16 @@ const DECIMALES = 5;                         // comme DECIMALES_ARRONDI de acv_i
 const DVR_MIN = 1, DVR_MAX = 1000;           // comme acv_inies_a2.py
 const LONGUEUR_NOM_MAX = 120;                // comme lien.py
 const DELAI_SURVEILLANCE_MS = 500;           // le site change de page sans recharger : on surveille l'adresse
-const ID_BOUTON = "acv-inies-bouton";
+const ID_PANNEAU = "acv-inies-panneau";
+const CLE_MEMOIRE = "acv_emplacements";      // clé de mémorisation Tampermonkey : { A: fiche|null, B: fiche|null }
+const LETTRES = ["A", "B"];
+// Aspect du panneau
+const COULEUR_FOND = "#ebbab9", COULEUR_TEXTE = "#08415c";
+const POSITION_PANNEAU = { right: "20px", top: "85px" };
+// Textes affichés
+const TEXTE_TITRE = "ACV dynamique RE2020";
+const TEXTE_VIDE = "(vide)";
+const TEXTE_ERREUR = "ACV dynamique RE2020 : ";
 
 // =============================================================================
 // 1) EXTRACTION ET LIEN (fonctions pures, testées sous Node contre lien.py)
@@ -122,16 +134,35 @@ function extraireFiche(json, idAttendu) {
   return { id, nom: nettoyerNom(json.nomProduit || ""), dvr, valeurs };
 }
 
-/** Lien pré-rempli, identique à lien.construire_lien(url_app, 0, nom, id, dvr, valeurs) (matériau A). */
-function construireLien(fiche, urlApp = URL_APP) {
+/**
+ * Lien pré-rempli pour les emplacements remplis, identique à lien.construire_lien (matériau A et/ou B).
+ * `emplacements` = { A: fiche|null, B: fiche|null } ; renvoie null si les deux sont vides.
+ */
+function construireLien(emplacements, urlApp = URL_APP) {
   const parametres = [["v", String(FORMAT_LIEN)]];
-  if (fiche.nom) parametres.push(["a_nom", fiche.nom]);
-  parametres.push(["a_id", String(fiche.id)], ["a_dvr", String(fiche.dvr)], ["a_v", fiche.valeurs.map(nombre).join(",")]);
+  let nombreRempli = 0;
+  LETTRES.forEach((lettre) => {
+    const fiche = emplacements[lettre];
+    if (!fiche) return;
+    const p = lettre.toLowerCase();
+    nombreRempli += 1;
+    if (fiche.nom) parametres.push([`${p}_nom`, fiche.nom]);
+    parametres.push([`${p}_id`, String(fiche.id)], [`${p}_dvr`, String(fiche.dvr)],
+                    [`${p}_v`, fiche.valeurs.map(nombre).join(",")]);
+  });
+  if (!nombreRempli) return null;
   return urlApp.replace(/\?+$/, "") + "?" + parametres.map(([c, v]) => `${encoder(c)}=${encoder(v)}`).join("&");
 }
 
+/** Texte du bouton d'ouverture : « Voir les 2 », « Voir A » ou « Voir B » selon ce qui est rangé. */
+function texteVoir(emplacements) {
+  const remplis = LETTRES.filter((l) => emplacements[l]);
+  if (remplis.length === 2) return "Voir les 2 ▸";
+  return remplis.length === 1 ? `Voir ${remplis[0]} ▸` : "Voir ▸";
+}
+
 // =============================================================================
-// 2) BOUTON SUR LA PAGE (non exécuté sous Node)
+// 2) PANNEAU SUR LA PAGE (non exécuté sous Node)
 // =============================================================================
 function idDeLaPage() {
   const trouve = CHEMIN_FICHE.exec(location.pathname + location.hash);
@@ -149,39 +180,102 @@ function ouvrir(lien) {
   else window.open(lien, "_blank", "noopener");
 }
 
-function creerBouton() {
-  const bouton = document.createElement("button");
-  bouton.id = ID_BOUTON;
-  bouton.type = "button";
-  bouton.textContent = "ACV dynamique RE2020 ▸";
-  bouton.title = "Ouvre l'outil statique2dynamique avec les valeurs RE2020 de cette fiche";
-  Object.assign(bouton.style, {
-    position: "fixed", right: "20px", top: "85px", zIndex: "2147483647", padding: "12px 18px",
-    background: "#ebbab9", color: "#fff", border: "0", borderRadius: "8px", font: "600 15px sans-serif",
-    cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,.35)",
-  });
-  bouton.addEventListener("click", async () => {
-    const id = idDeLaPage();
-    if (!id) return;
-    const libelle = bouton.textContent;
-    bouton.disabled = true;
-    bouton.textContent = "Lecture de la fiche…";
-    try {
-      ouvrir(construireLien(await lireFiche(id)));
-    } catch (erreur) {
-      alert("ACV dynamique RE2020 : " + erreur.message);
-    } finally {
-      bouton.disabled = false;
-      bouton.textContent = libelle;
-    }
-  });
-  return bouton;
+/** Emplacements mémorisés (toujours relus : un autre onglet INIES a pu les changer). Contenu invalide = vide. */
+function lireEmplacements() {
+  const vides = { A: null, B: null };
+  try {
+    const brut = typeof GM_getValue === "function" ? GM_getValue(CLE_MEMOIRE, "") : "";
+    const lus = brut ? JSON.parse(brut) : vides;
+    // chaque fiche mémorisée est revérifiée avant usage (ses valeurs finiront dans une adresse)
+    const propre = (f) => (f && Number.isInteger(f.id) && Number.isInteger(f.dvr) && Array.isArray(f.valeurs) &&
+      f.valeurs.length === PHASES.length && f.valeurs.every(Number.isFinite)
+      ? { id: f.id, nom: nettoyerNom(f.nom || ""), dvr: f.dvr, valeurs: f.valeurs } : null);
+    return { A: propre(lus.A), B: propre(lus.B) };
+  } catch (e) {
+    return vides;
+  }
 }
 
-/** Affiche le bouton seulement sur une fiche (le site est une application sans rechargement de page). */
+function ecrireEmplacements(emplacements) {
+  if (typeof GM_setValue === "function") GM_setValue(CLE_MEMOIRE, JSON.stringify(emplacements));
+}
+
+function style(element, css) { Object.assign(element.style, css); return element; }
+
+function creerBoutonPanneau(texte, action, principal = false) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = texte;
+  style(b, { padding: "7px 10px", border: `2px solid ${COULEUR_TEXTE}`, borderRadius: "6px", cursor: "pointer",
+             font: "600 13px sans-serif", whiteSpace: "nowrap", color: principal ? COULEUR_FOND : COULEUR_TEXTE,
+             background: principal ? COULEUR_TEXTE : "transparent" });
+  b.addEventListener("click", action);
+  return b;
+}
+
+/** (Re)dessine le contenu du panneau d'après les emplacements mémorisés. */
+function dessiner(panneau) {
+  const emplacements = lireEmplacements();
+  panneau.replaceChildren();
+  panneau.appendChild(style(document.createElement("div"), { font: "700 14px sans-serif", marginBottom: "8px" }))
+    .textContent = TEXTE_TITRE;
+
+  LETTRES.forEach((lettre) => {
+    const fiche = emplacements[lettre];
+    const ligne = style(document.createElement("div"), { display: "flex", gap: "6px", alignItems: "center", marginBottom: "6px" });
+    ligne.appendChild(creerBoutonPanneau(`${fiche ? "Remplacer" : "Mettre en"} ${lettre}`, () => mettre(panneau, lettre)));
+    const libelle = style(document.createElement("span"), { font: "13px sans-serif", maxWidth: "130px", overflow: "hidden",
+                                                            textOverflow: "ellipsis", whiteSpace: "nowrap" });
+    libelle.textContent = `${lettre} : ${fiche ? fiche.nom || `fiche ${fiche.id}` : TEXTE_VIDE}`;
+    libelle.title = libelle.textContent;
+    ligne.appendChild(libelle);
+    if (fiche) {
+      const croix = creerBoutonPanneau("✕", () => { ecrireEmplacements({ ...lireEmplacements(), [lettre]: null }); dessiner(panneau); });
+      croix.title = `Vider l'emplacement ${lettre}`;
+      ligne.appendChild(croix);
+    }
+    panneau.appendChild(ligne);
+  });
+
+  const voir = creerBoutonPanneau(texteVoir(emplacements), () => {
+    const adresse = construireLien(lireEmplacements());
+    if (adresse) ouvrir(adresse);
+  }, true);
+  voir.disabled = !LETTRES.some((l) => emplacements[l]);
+  voir.style.width = "100%";
+  voir.style.opacity = voir.disabled ? "0.5" : "1";
+  panneau.appendChild(voir);
+}
+
+/** Lit la fiche ouverte et la range dans l'emplacement `lettre`. */
+async function mettre(panneau, lettre) {
+  const id = idDeLaPage();
+  if (!id) return;
+  panneau.style.opacity = "0.6";
+  try {
+    const fiche = await lireFiche(id);
+    ecrireEmplacements({ ...lireEmplacements(), [lettre]: fiche });
+  } catch (erreur) {
+    alert(TEXTE_ERREUR + erreur.message);
+  } finally {
+    panneau.style.opacity = "1";
+    dessiner(panneau);
+  }
+}
+
+function creerPanneau() {
+  const panneau = style(document.createElement("div"), {
+    position: "fixed", ...POSITION_PANNEAU, zIndex: "2147483647", padding: "12px", width: "290px",
+    background: COULEUR_FOND, color: COULEUR_TEXTE, borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,.35)" });
+  panneau.id = ID_PANNEAU;
+  dessiner(panneau);
+  return panneau;
+}
+
+/** Affiche le panneau seulement sur une fiche (le site est une application sans rechargement de page). */
 function surveiller() {
-  const present = document.getElementById(ID_BOUTON);
-  if (idDeLaPage() && !present) document.body.appendChild(creerBouton());
+  const present = document.getElementById(ID_PANNEAU);
+  if (idDeLaPage() && !present) document.body.appendChild(creerPanneau());
   else if (!idDeLaPage() && present) present.remove();
 }
 
@@ -190,5 +284,5 @@ if (typeof document !== "undefined" && typeof module === "undefined") {
   setInterval(surveiller, DELAI_SURVEILLANCE_MS);
 }
 if (typeof module !== "undefined") {
-  module.exports = { developper, nombre, arrondir, nettoyerNom, encoder, extraireFiche, construireLien, PHASES };
+  module.exports = { developper, nombre, arrondir, nettoyerNom, encoder, extraireFiche, construireLien, texteVoir, PHASES };
 }

@@ -68,11 +68,36 @@ def test_extraction_donne_le_meme_resultat_que_l_application(fiche):
 def test_le_lien_est_identique_a_celui_de_lien_py(fiche):
     res = node("s.extraireFiche(d, 50632)", fiche)
     attendu = lien.construire_lien(URL_APP, 0, res["nom"], res["id"], res["dvr"], acv.ValeursA2(*res["valeurs"]))
-    assert node("s.construireLien(s.extraireFiche(d, 50632))", fiche) == attendu
+    assert node("s.construireLien({A: s.extraireFiche(d, 50632), B: null})", fiche) == attendu
+
+
+def test_lien_pour_b_seul_et_pour_les_deux_relu_par_l_application(fiche):
+    from urllib.parse import parse_qsl, urlparse
+    res = node("s.extraireFiche(d, 50632)", fiche)
+    # B seul : identique à lien.py pour l'indice 1
+    attendu_b = lien.construire_lien(URL_APP, 1, res["nom"], res["id"], res["dvr"], acv.ValeursA2(*res["valeurs"]))
+    assert node("s.construireLien({A: null, B: s.extraireFiche(d, 50632)})", fiche) == attendu_b
+    # A + B : les paramètres sont la réunion de ceux de A et de B, et l'application relit bien les deux
+    donnees = {"fiche": fiche, "autre": 123}
+    deux = node("s.construireLien({A: s.extraireFiche(d.fiche, 50632), "
+                "B: {id: 7, nom: 'Autre (test)', dvr: 30, valeurs: s.extraireFiche(d.fiche, 50632).valeurs}})", donnees)
+    parametres = dict(parse_qsl(urlparse(deux).query))
+    materiaux, erreurs = lien.lire_lien(parametres)
+    assert erreurs == [] and [m.lettre for m in materiaux] == ["A", "B"]
+    assert [m.dvr for m in materiaux] == [50, 30] and materiaux[1].nom == "Autre (test)"
+
+
+def test_aucun_emplacement_rempli_donne_pas_de_lien():
+    assert node("s.construireLien({A: null, B: null})", {}) is None
+
+
+def test_libelle_du_bouton_voir():
+    assert node("[s.texteVoir({A:1,B:1}), s.texteVoir({A:1,B:null}), s.texteVoir({A:null,B:1}), s.texteVoir({A:null,B:null})]",
+                {}) == ["Voir les 2 ▸", "Voir A ▸", "Voir B ▸", "Voir ▸"]
 
 
 def test_le_lien_du_script_est_relu_par_l_application(fiche):
-    adresse = node("s.construireLien(s.extraireFiche(d, 50632))", fiche)
+    adresse = node("s.construireLien({A: s.extraireFiche(d, 50632), B: null})", fiche)
     from urllib.parse import parse_qsl, urlparse
     parametres = dict(parse_qsl(urlparse(adresse).query))
     materiaux, erreurs = lien.lire_lien(parametres)
@@ -92,7 +117,7 @@ def test_noms_delicats_encodes_comme_en_python():
         attendu = lien.construire_lien(URL_APP, 0, nom, 7, 30, valeurs)
         fiche_js = {"id": 7, "nom": nom, "dvr": 30, "valeurs": VALEURS_50632}
         # le script nettoie le nom lui-même à l'extraction : on applique le même nettoyage avant de construire
-        obtenu = node("s.construireLien({...d, nom: s.nettoyerNom(d.nom)})", fiche_js)
+        obtenu = node("s.construireLien({A: {...d, nom: s.nettoyerNom(d.nom)}, B: null})", fiche_js)
         assert obtenu == attendu, nom
 
 

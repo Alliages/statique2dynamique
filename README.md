@@ -43,10 +43,16 @@ L'adresse de l'application est la constante `URL_APP` de `app.py`.
 
 ## Bouton sur base-inies.fr (script Tampermonkey)
 
-Le script ajoute, sur une fiche INIES en norme +A2, un bouton « ACV dynamique RE2020 ▸ » (en bas à droite). Un clic lit la
-fiche ouverte (comme le fait le site lui-même), en extrait la DVR et les 13 valeurs « Changement climatique - total »
-(arrondies à 5 décimales) et ouvre l'application dans un nouvel onglet, matériau A déjà rempli.
-Il ne lit qu'une fiche à la fois, sur clic, et n'envoie rien ailleurs que dans l'adresse du lien.
+Sur une fiche INIES en norme +A2, le script affiche un petit panneau (en haut à droite) :
+
+- « Mettre en A » / « Mettre en B » lit la fiche ouverte (comme le fait le site lui-même), en extrait la DVR et les
+  13 valeurs « Changement climatique - total » (arrondies à 5 décimales) et les range dans l'emplacement A ou B.
+  Les emplacements sont mémorisés par Tampermonkey : vous pouvez changer de fiche, puis remplir l'autre.
+- ✕ vide un emplacement ; « Remplacer A » / « Remplacer B » met la fiche ouverte à la place de l'ancienne.
+- « Voir les 2 ▸ » (ou « Voir A ▸ », « Voir B ▸ » si un seul emplacement est rempli) ouvre l'application dans un
+  nouvel onglet, avec A et/ou B déjà remplis. Chaque clic ouvre un nouvel onglet.
+
+Une seule fiche est lue par clic ; rien n'est envoyé ailleurs que dans l'adresse du lien.
 
 **Installation (une seule fois)**
 
@@ -56,7 +62,11 @@ Il ne lit qu'une fiche à la fois, sur clic, et n'envoie rien ailleurs que dans 
 3. Ouvrir ce lien, puis cliquer sur « Installer » :
    https://raw.githubusercontent.com/Alliages/statique2dynamique/main/tampermonkey/acv_inies.user.js
    (Tampermonkey se met ensuite à jour tout seul quand le fichier change sur GitHub.)
-4. Ouvrir une fiche, par exemple https://www.base-inies.fr/infos-produit/50632 : le bouton apparaît.
+4. Ouvrir une fiche, par exemple https://www.base-inies.fr/infos-produit/50632 : le panneau apparaît.
+
+**Mise à jour du script** : Tampermonkey vérifie seul les mises à jour (version dans l'en-tête du script). Pour forcer :
+icône Tampermonkey → Tableau de bord → onglet « Scripts installés » → ligne du script → clic sur la version / « Dernière mise à jour »,
+ou ouvrir de nouveau le lien d'installation ci-dessus et cliquer sur « Mettre à jour ».
 
 **Si ça ne marche pas** : le message d'erreur s'affiche dans une fenêtre (fiche non +A2, DVR absente, valeur introuvable,
 réponse du site inattendue). L'adresse de l'outil et les numéros de phases sont regroupés en haut du script.
