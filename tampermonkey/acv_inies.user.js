@@ -154,10 +154,10 @@ function creerBouton() {
   bouton.id = ID_BOUTON;
   bouton.type = "button";
   bouton.textContent = "ACV dynamique RE2020 ▸";
-  bouton.title = "Ouvre l'outil ACV dynamique avec les valeurs +A2 de cette fiche";
+  bouton.title = "Ouvre l'outil statique2dynamique avec les valeurs RE2020 de cette fiche";
   Object.assign(bouton.style, {
-    position: "fixed", right: "20px", bottom: "20px", zIndex: "2147483647", padding: "12px 18px",
-    background: "#388697", color: "#fff", border: "0", borderRadius: "8px", font: "600 15px sans-serif",
+    position: "fixed", right: "20px", top: "20px", zIndex: "2147483647", padding: "12px 18px",
+    background: "#ebbab9", color: "#fff", border: "0", borderRadius: "8px", font: "600 15px sans-serif",
     cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,.35)",
   });
   bouton.addEventListener("click", async () => {
