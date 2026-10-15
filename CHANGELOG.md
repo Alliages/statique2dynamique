@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 4.0.1 — 2026-10-16
+Correction mineure.
+
 ## 4.0.0 — 2026-10-16
 Détail du changement climatique d'un matériau : un second champ, sous le premier, reçoit les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) ; à droite, courbes cumulées puis barres empilées par étape du cycle de vie. Palette : le biogénique en vert-bleu et l'occupation des sols en vert-jaune.
 
@@ -35,7 +38,7 @@ Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanc
 Graphique resserré (traits épais, axes fléchés, filigrane émissions / séquestration, valeur finale), tableau des étapes INIES, catalogue de matériaux (materiaux.json avec date d'export), palette de couleurs et nouveau titre.
 
 ## 3.0.0 — 2026-10-13
-Version web (Streamlit) : norme +A2 uniquement, comparaison carbone de deux matériaux,
+Version web (Streamlit) : norme +A2 uniquement,
 module de calcul autonome et testé contre l'Excel.
 
 ## Excel V2 — 2023-05-15

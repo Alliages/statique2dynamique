@@ -47,12 +47,13 @@ from typing import Dict, List, Optional, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "4.0.0"
+VERSION = "4.0.1"
 DATE_VERSION = "2026-10-16"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("4.0.1", "2026-10-16", "Correction mineure."),
     ("4.0.0", "2026-10-16",
      "Détail du changement climatique d'un matériau : un second champ, sous le premier, reçoit les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) ; à droite, courbes cumulées puis barres empilées par étape du cycle de vie. Palette : le biogénique en vert-bleu et l'occupation des sols en vert-jaune."),
     ("3.9.0", "2026-10-15",
@@ -74,7 +75,7 @@ HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
     ("3.1.0", "2026-10-14",
      "Graphique resserré (traits épais, axes fléchés, filigrane émissions / séquestration, valeur finale), tableau des étapes INIES, catalogue de matériaux (materiaux.json avec date d'export), palette de couleurs et nouveau titre."),
     ("3.0.0", "2026-10-13",
-     "Version web (Streamlit) : norme +A2 uniquement, comparaison carbone de deux matériaux, "
+     "Version web (Streamlit) : norme +A2 uniquement, "
      "module de calcul autonome et testé contre l'Excel."),
     ("Excel V2", "2023-05-15", "Ajout de la norme +A2 (et de l'onglet de résultats A2)."),
     ("Excel V1", "2022-06-02", "Version initiale (norme +A1)."),

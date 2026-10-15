@@ -119,7 +119,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.0"
+    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.1"
 
 
 # ----------------------------------------------------------------------------
@@ -567,3 +567,22 @@ def test_le_texte_de_lecture_explique_le_detail_seulement_quand_il_est_affiche()
     avec = " ".join(m.value for m in app_avec_detail().markdown)
     sans = " ".join(m.value for m in nouvelle_app().markdown)
     assert "Les barres sont dynamiques" in avec and "Les barres sont dynamiques" not in sans
+
+
+# =============================================================================
+# 4.0.1 : historique masqué, colonnes du détail du calcul
+# =============================================================================
+def test_historique_affiche_sans_les_versions_masquees():
+    at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=30).run()
+    versions = [v for df in at.dataframe for v in (df.value["Version"] if "Version" in df.value else [])]
+    assert "4.0.1" in versions and "3.9.0" in versions
+    assert not {"3.5.0", "3.6.0", "3.6.1"} & set(versions)
+    assert {"3.5.0", "3.6.0", "3.6.1"} <= {v[0] for v in acv.HISTORIQUE_VERSIONS}      # l'historique complet reste
+
+
+def test_detail_du_calcul_un_materiau_titres_courts():
+    at = AppTest.from_file(FICHIER_APP, default_timeout=30).run()
+    at.button[0].click().run()                                       # « Essayer avec un exemple »
+    colonnes = [list(df.value.columns) for df in at.dataframe if "Phase" in df.value.columns or "Année" in df.value.columns]
+    assert ["Phase", "Dynamique RE2020", "Statique E+C-"] in colonnes
+    assert ["Année", "Coefficient (art. 11)", "Émissions pondérées", "Cumul"] in colonnes

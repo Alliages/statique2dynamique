@@ -26,6 +26,7 @@ import presentation as pres
 # =============================================================================
 # VARIABLES (tout ce qui se règle est regroupé ici)
 # =============================================================================
+VERSIONS_MASQUEES = ("3.5.0", "3.6.0", "3.6.1")     # absentes de l'historique affiché (restent dans CHANGELOG.md)
 TITRE_PAGE = "Comprendre l'impact carbone d'un matériau — L'ACV dynamique dans la RE2020"
 ICONE_PAGE = "🏗️"
 UNITE = pres.UNITE
@@ -476,6 +477,11 @@ def afficher_details(saisies_ok: list, nb_materiaux: int, detail=None) -> None:
         st.dataframe(tableau_annees(saisies_ok), hide_index=True, width="stretch", height=300)
 
 
+def titre_colonne(saisie: dict, saisies_ok: list, libelle: str) -> str:
+    """Titre de colonne court : le nom du matériau n'est ajouté que s'il y en a plusieurs à distinguer."""
+    return f"{nom_affiche(saisie)} — {libelle}" if len(saisies_ok) > 1 else libelle[0].upper() + libelle[1:]
+
+
 def tableau_phases(saisies_ok: list) -> pd.DataFrame:
     """Tableau récapitulatif par phase, dynamique et statique, pour chaque matériau."""
     lignes = (
@@ -486,9 +492,8 @@ def tableau_phases(saisies_ok: list) -> pd.DataFrame:
     )
     tableau = {"Phase": [ligne[0] for ligne in lignes]}
     for saisie in saisies_ok:
-        nom = nom_affiche(saisie)
-        tableau[f"{nom} — dynamique RE2020"] = [pres.fr(getattr(saisie["resultat"], l[1])) for l in lignes]
-        tableau[f"{nom} — statique E+C-"] = [pres.fr(getattr(saisie["resultat"], l[2])) for l in lignes]
+        tableau[titre_colonne(saisie, saisies_ok, "dynamique RE2020")] = [pres.fr(getattr(saisie["resultat"], l[1])) for l in lignes]
+        tableau[titre_colonne(saisie, saisies_ok, "statique E+C-")] = [pres.fr(getattr(saisie["resultat"], l[2])) for l in lignes]
     return pd.DataFrame(tableau)
 
 
@@ -497,9 +502,8 @@ def tableau_annees(saisies_ok: list) -> pd.DataFrame:
     tableau = {"Année": list(range(acv.PERIODE_ETUDE + 1)),
                "Coefficient (art. 11)": [pres.fr(c, 3) for c in acv.COEFFICIENTS_ART11]}
     for saisie in saisies_ok:
-        nom = nom_affiche(saisie)
-        tableau[f"{nom} — émissions pondérées"] = [pres.fr(v, 3) for v in saisie["resultat"].dynamique_par_annee]
-        tableau[f"{nom} — cumul"] = [pres.fr(v, 3) for v in saisie["resultat"].cumul_dynamique()]
+        tableau[titre_colonne(saisie, saisies_ok, "émissions pondérées")] = [pres.fr(v, 3) for v in saisie["resultat"].dynamique_par_annee]
+        tableau[titre_colonne(saisie, saisies_ok, "cumul")] = [pres.fr(v, 3) for v in saisie["resultat"].cumul_dynamique()]
     return pd.DataFrame(tableau)
 
 
@@ -586,5 +590,5 @@ st.caption(f"Version {acv.VERSION} du {acv.DATE_VERSION} · Licence GNU GPL v3 �
            f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier]({URL_METHODE}) · "
            f"Coefficients : arrêté du 4 août 2021, article 11.")
 with st.expander("Historique des versions"):
-    st.dataframe(pd.DataFrame(acv.HISTORIQUE_VERSIONS, columns=["Version", "Date", "Changements"]),
+    st.dataframe(pd.DataFrame([v for v in acv.HISTORIQUE_VERSIONS if v[0] not in VERSIONS_MASQUEES], columns=["Version", "Date", "Changements"]),
                  hide_index=True, width="stretch")
