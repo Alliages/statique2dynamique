@@ -47,12 +47,13 @@ from typing import Dict, List, Optional, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "4.0.1"
+VERSION = "4.0.2"
 DATE_VERSION = "2026-10-16"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("4.0.2", "2026-10-16", "Mise à jour documentaire et nettoyage du code."),
     ("4.0.1", "2026-10-16", "Correction mineure."),
     ("4.0.0", "2026-10-16",
      "Détail du changement climatique d'un matériau : un second champ, sous le premier, reçoit les 4 lignes « Changement climatique » (total, fossile, biogénique, occupation des sols) ; à droite, courbes cumulées puis barres empilées par étape du cycle de vie. Palette : le biogénique en vert-bleu et l'occupation des sols en vert-jaune."),
@@ -69,7 +70,7 @@ HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
     ("3.3.1", "2026-10-14",
      "Échelle verticale du graphique calée sur la valeur maximale réellement tracée (plus de haut gonflé par un grand côté négatif) ; filigrane ÉMISSIONS / SÉQUESTRATION en horizontal contre la ligne de zéro quand la place manque ; légende un peu plus haut."),
     ("3.3.0", "2026-10-14",
-     "Nouveau titre et textes pédagogiques (« comparaison carbone », StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées."),
+     "Nouveau titre et textes pédagogiques (StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées."),
     ("3.2.0", "2026-10-14",
      "Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanches, matériaux en Pacific Cyan et Cotton Rose (chiffres du matériau B légèrement foncés pour rester lisibles), filigrane ÉMISSIONS / SÉQUESTRATION en gris clair. Thème clair unique."),
     ("3.1.0", "2026-10-14",
@@ -191,7 +192,7 @@ class ResultatA2:
     dynamique_intermediaire: float              # années 1 à 49
     dynamique_t50: float                        # année 50 (fin de vie + module D)
     dynamique_total: float                      # somme : LE résultat à retenir
-    # --- Statique E+C- (module D compté pour 1/3), pour la comparaison carbone ---
+    # --- Statique E+C- (module D compté pour 1/3), pour repère ---
     statique_t0: float
     statique_intermediaire: float
     statique_t50: float
@@ -395,7 +396,7 @@ def verifier_dvr(dvr) -> int:
 
 
 def calculer_acv_dynamique(valeurs: ValeursA2, dvr: int) -> ResultatA2:
-    """Calcule l'ACV dynamique RE2020 (et le statique E+C- pour la comparaison carbone).
+    """Calcule l'ACV dynamique RE2020 (et le statique E+C-, pour repère).
 
     Étapes, qui suivent l'onglet « Calcul +A2 » du classeur Excel :
       1. on arrondit les valeurs INIES (5 décimales) ;

@@ -389,6 +389,7 @@ def afficher_carte(saisie: dict) -> None:
 
 
 def titre_resultats() -> None:
+    """Affiche le titre « Résultats » de la page."""
     st.markdown('<h2 class="titre-section">Résultats</h2>', unsafe_allow_html=True)
 
 
@@ -492,8 +493,8 @@ def tableau_phases(saisies_ok: list) -> pd.DataFrame:
     )
     tableau = {"Phase": [ligne[0] for ligne in lignes]}
     for saisie in saisies_ok:
-        tableau[titre_colonne(saisie, saisies_ok, "dynamique RE2020")] = [pres.fr(getattr(saisie["resultat"], l[1])) for l in lignes]
-        tableau[titre_colonne(saisie, saisies_ok, "statique E+C-")] = [pres.fr(getattr(saisie["resultat"], l[2])) for l in lignes]
+        tableau[titre_colonne(saisie, saisies_ok, "dynamique RE2020")] = [pres.fr(getattr(saisie["resultat"], ligne[1])) for ligne in lignes]
+        tableau[titre_colonne(saisie, saisies_ok, "statique E+C-")] = [pres.fr(getattr(saisie["resultat"], ligne[2])) for ligne in lignes]
     return pd.DataFrame(tableau)
 
 
@@ -573,7 +574,7 @@ else:
                     afficher_carte(saisie)
                 else:
                     st.info(f"Collez la ligne INIES du matériau {LETTRES[saisie['indice']]} "
-                            f"pour la comparaison carbone.")
+                            "pour afficher son résultat ici.")
 saisies_ok = [s for s in saisies if s["resultat"] is not None]
 
 # --- 2) Détails, quand deux matériaux sont affichés (sinon ils sont déjà sous le résultat)

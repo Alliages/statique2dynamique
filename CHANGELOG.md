@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 4.0.2 — 2026-10-16
+Mise à jour documentaire et nettoyage du code.
+
 ## 4.0.1 — 2026-10-16
 Correction mineure.
 
@@ -29,7 +32,7 @@ Liens pré-remplis : l'application lit un lien (identifiant, nom, DVR, 13 valeur
 Échelle verticale du graphique calée sur la valeur maximale réellement tracée (plus de haut gonflé par un grand côté négatif) ; filigrane ÉMISSIONS / SÉQUESTRATION en horizontal contre la ligne de zéro quand la place manque ; légende un peu plus haut.
 
 ## 3.3.0 — 2026-10-14
-Nouveau titre et textes pédagogiques (« comparaison carbone », StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées.
+Nouveau titre et textes pédagogiques (StockC, objectif de la RE2020) ; échelle verticale du graphique adaptée automatiquement aux courbes ; courbes statiques E+C- en option (pointillés) ; exports CSV (résumé, année par année) et image du graphique ; graphique en pleine largeur sur petit écran ; versions de Streamlit et Plotly fixées.
 
 ## 3.2.0 — 2026-10-14
 Fond en dégradé diagonal aux couleurs de la palette éclaircies, boîtes blanches, matériaux en Pacific Cyan et Cotton Rose (chiffres du matériau B légèrement foncés pour rester lisibles), filigrane ÉMISSIONS / SÉQUESTRATION en gris clair. Thème clair unique.

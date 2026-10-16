@@ -17,7 +17,7 @@ from __future__ import annotations
 import html
 import math
 from decimal import Decimal
-from typing import Dict, List
+from typing import List
 
 import plotly.graph_objects as go
 

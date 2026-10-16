@@ -9,7 +9,6 @@ Usage (depuis la racine du projet) :  python3 tests/generer_reference_excel.py
 Prérequis : openpyxl et LibreOffice (commande `soffice`).
 """
 import json
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path

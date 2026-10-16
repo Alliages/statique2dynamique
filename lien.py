@@ -24,7 +24,7 @@ from __future__ import annotations
 import math
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import List, Mapping, Optional, Tuple
 from urllib.parse import quote, urlencode
 
 import acv_inies_a2 as acv
@@ -54,6 +54,7 @@ class MaterielLien:
 
     @property
     def lettre(self) -> str:
+        """Lettre du matériau : « A » ou « B »."""
         return PREFIXES[self.indice].upper()
 
     def texte_inies(self) -> str:
@@ -94,6 +95,7 @@ def contient_un_lien(parametres: Mapping[str, str]) -> bool:
 
 
 def cles_connues() -> List[str]:
+    """Tous les noms de paramètres qu'un lien peut contenir (format, puis nom, id, dvr et valeurs de A et B)."""
     return [PARAM_FORMAT] + [f"{p}_{suffixe}" for p in PREFIXES for suffixe in ("nom", "id", "dvr", "v")]
 
 

@@ -119,7 +119,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.1"
+    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.2"
 
 
 # ----------------------------------------------------------------------------
@@ -528,7 +528,7 @@ def test_seules_les_4_lignes_collees_les_graphiques_s_affichent_sans_la_carte():
 def test_message_clair_si_une_ligne_manque(retirer, attendu):
     app = nouvelle_app()
     lignes = QUATRE_LIGNES.splitlines()
-    app.text_area(key="texte_detail").set_value("\n".join(l for i, l in enumerate(lignes) if i != retirer)).run()
+    app.text_area(key="texte_detail").set_value("\n".join(ligne for i, ligne in enumerate(lignes) if i != retirer)).run()
     assert not app.exception and not figures(app)
     assert any(attendu in e.value for e in app.error)
 
