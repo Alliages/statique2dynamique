@@ -47,12 +47,13 @@ from typing import Dict, List, Optional, Tuple
 # =============================================================================
 
 # --- Version (voir aussi CHANGELOG.md, à tenir à jour en même temps) ----------
-VERSION = "4.0.2"
+VERSION = "4.0.3"
 DATE_VERSION = "2026-10-16"
 
 # Historique des versions, de la plus récente à la plus ancienne : (version, date, description).
 # Les versions « Excel » sont celles de l'onglet « Infos » du classeur d'origine.
 HISTORIQUE_VERSIONS: Tuple[Tuple[str, str, str], ...] = (
+    ("4.0.3", "2026-10-16", "Optimisations mineures."),
     ("4.0.2", "2026-10-16", "Mise à jour documentaire et nettoyage du code."),
     ("4.0.1", "2026-10-16", "Correction mineure."),
     ("4.0.0", "2026-10-16",

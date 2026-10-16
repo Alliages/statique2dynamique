@@ -119,7 +119,7 @@ def test_etapes_la_norme_a2_n_est_plus_une_etape():
 def test_pied_de_page_lien_vers_la_methode():
     page = texte_page(nouvelle_app())
     assert f"[Méthode issue du classeur Excel « ACV_Dynamique_INIES_V2 » de Guillaume Meunier](https://www.{URL_METHODE})" in page
-    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.2"
+    assert f"Version {acv.VERSION} du {acv.DATE_VERSION}" in page and acv.VERSION == "4.0.3"
 
 
 # ----------------------------------------------------------------------------

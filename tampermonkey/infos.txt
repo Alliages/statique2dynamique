@@ -21,7 +21,30 @@ CONTENU DU PANNEAU
   l'application dans un nouvel onglet, avec A et/ou B déjà remplis. Chaque clic ouvre un nouvel
   onglet. Un lien qui contient un matériau B ouvre l'application en mode deux matériaux.
 
-Une seule fiche est lue par clic ; rien n'est envoyé ailleurs que dans l'adresse du lien.
+Rien n'est envoyé ailleurs que dans l'adresse du lien.
+
+
+APPELS À INIES (LIMITÉS AU STRICT MINIMUM)
+------------------------------------------
+
+Le script lit l'API de la fiche (/api/Produit/<id>), comme le fait le site lui-même. Cette API n'est pas
+documentée par INIES : elle est donc utilisée le moins possible.
+
+- Aucun appel : à l'ouverture d'une fiche, au survol du panneau, sur « Voir ▸ », sur ✕, ni quand vous
+  rouvrez INIES (les emplacements A et B sont mémorisés par Tampermonkey, pas relus sur le site).
+- Un appel au plus par clic sur « Mettre en A/B » ou « Remplacer A/B », jamais en automatique.
+- Aucun appel si la fiche est déjà rangée en A ou en B et a été lue il y a moins de 30 jours : elle est
+  recopiée depuis la mémoire. Pour forcer une relecture, videz (✕) les emplacements qui la contiennent,
+  puis remettez-la.
+- Les boutons sont inactifs pendant une lecture (pas de double clic), et le script attend 2 secondes
+  minimum entre deux appels.
+- La copie que le navigateur vient de charger pour afficher la fiche est réutilisée si elle existe (réglage
+  MODE_CACHE_FETCH). Si une fiche semble périmée, mettre "default" à la place de "force-cache".
+  Vérification à la main : outils de développement du navigateur > onglet Réseau, filtre « Produit » : la
+  colonne Taille indique « (cache disque) » quand aucun appel n'est parti vers INIES.
+- Aucune nouvelle tentative automatique en cas d'erreur.
+
+Réglages en haut du script : DUREE_VALIDITE_FICHE_MS, DELAI_MIN_ENTRE_APPELS_MS, MODE_CACHE_FETCH.
 
 
 INSTALLATION (UNE SEULE FOIS)

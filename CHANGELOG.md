@@ -4,6 +4,9 @@ Format : [numérotation sémantique](https://semver.org/lang/fr/) — `MAJEUR.MI
 Cet historique est repris dans l'application (rubrique « Versions ») depuis `acv_inies_a2.py`
 (`HISTORIQUE_VERSIONS`) : les deux doivent rester identiques (un test le vérifie).
 
+## 4.0.3 — 2026-10-16
+Optimisations mineures.
+
 ## 4.0.2 — 2026-10-16
 Mise à jour documentaire et nettoyage du code.
 

@@ -47,6 +47,16 @@ def node(expression: str, donnees=None):
     return json.loads(sortie.stdout)
 
 
+def node_async(corps: str, donnees=None):
+    """Comme node(), pour du code asynchrone : `corps` est le corps d'une fonction async (avec `s` et `d`) qui renvoie le résultat."""
+    programme = (f"const s = require({json.dumps(str(SCRIPT))}); "
+                 f"const d = JSON.parse(require('fs').readFileSync(0, 'utf8')); "
+                 f"(async () => {{ {corps} }})().then(r => process.stdout.write(JSON.stringify(r)));")
+    sortie = subprocess.run(["node", "-e", programme], input=json.dumps(donnees), capture_output=True,
+                            text=True, check=True)
+    return json.loads(sortie.stdout)
+
+
 @pytest.fixture(scope="module")
 def fiche():
     return json.loads(FICHE.read_text(encoding="utf-8"))
@@ -150,3 +160,115 @@ def test_constantes_du_script_alignees_sur_python():
     assert f"const DVR_MIN = {acv.DVR_MIN}, DVR_MAX = {acv.DVR_MAX};" in texte
     assert f"const LONGUEUR_NOM_MAX = {lien.LONGUEUR_NOM_MAX};" in texte
     assert f'const URL_APP = "{URL_APP}";' in texte
+
+
+# ----------------------------------------------------------------------------
+# Limitation des appels à l'API d'INIES : fiche déjà rangée, donc pas de nouvel appel
+# ----------------------------------------------------------------------------
+UNE_HEURE_MS = 3600 * 1000
+TRENTE_JOURS_MS = 30 * 24 * UNE_HEURE_MS
+
+
+def test_fiche_deja_rangee_reutilisee_pour_a_comme_pour_b():
+    fiche_rangee = {"id": 7, "luLe": 1000}
+    expr = "[s.ficheDejaLue(d.e1, 7, d.t), s.ficheDejaLue(d.e2, 7, d.t), s.ficheDejaLue(d.e1, '7', d.t)]"
+    donnees = {"e1": {"A": fiche_rangee, "B": None}, "e2": {"A": None, "B": fiche_rangee}, "t": 1000 + UNE_HEURE_MS}
+    assert node(expr, donnees) == [fiche_rangee, fiche_rangee, fiche_rangee]
+
+
+def test_fiche_trop_ancienne_autre_fiche_ou_sans_date_pas_reutilisee():
+    def reutilisee(fiche_rangee, id_demande, maintenant):
+        return node("s.ficheDejaLue({A: d.f, B: null}, d.id, d.t)", {"f": fiche_rangee, "id": id_demande, "t": maintenant})
+    assert reutilisee({"id": 7, "luLe": 0}, 7, TRENTE_JOURS_MS - 1) is not None   # juste avant 30 jours : réutilisée
+    assert reutilisee({"id": 7, "luLe": 0}, 7, TRENTE_JOURS_MS) is None            # 30 jours : relue
+    assert reutilisee({"id": 7, "luLe": 5000}, 7, 4000) is None                           # date dans le futur : relue
+    assert reutilisee({"id": 7, "luLe": 1000}, 8, 2000) is None                           # autre fiche : lue
+    assert reutilisee({"id": 7}, 7, 2000) is None                                         # sans date de lecture : relue
+    assert node("s.ficheDejaLue({A: null, B: null}, 7, 2000)", {}) is None                # emplacements vides
+
+
+def test_emplacements_memorises_sans_date_de_lecture_sont_relus_une_fois():
+    ancienne = {"id": 7, "nom": "Ancienne fiche", "dvr": 50, "valeurs": VALEURS_50632}      # format d'avant : pas de luLe
+    recente = {**ancienne, "id": 8, "luLe": 1000}
+    res = node_async("globalThis.GM_getValue = () => JSON.stringify(d.stocke); const e = s.lireEmplacements();"
+                     "return {e, ancienne: s.ficheDejaLue(e, 7, 2000), recente: s.ficheDejaLue(e, 8, 2000)};",
+                     {"stocke": {"A": ancienne, "B": recente}})
+    assert res["e"]["A"]["luLe"] is None and res["e"]["B"]["luLe"] == 1000   # la date de lecture est conservée
+    assert res["ancienne"] is None and res["recente"] is not None
+
+
+def test_une_fiche_deja_rangee_ne_declenche_aucun_appel_a_l_api(fiche):
+    res = node_async("""
+        let appels = 0;
+        globalThis.fetch = async () => { appels += 1; return {ok: true, status: 200, json: async () => d}; };
+        const premiere = await s.obtenirFiche(50632, {A: null, B: null});          // fiche inconnue : 1 appel
+        const pour_b = await s.obtenirFiche(50632, {A: premiere, B: null});       // déjà en A : aucun appel
+        const encore = await s.obtenirFiche(50632, {A: premiere, B: pour_b});      // déjà en A et B : aucun appel
+        return {appels, memeFiche: pour_b === premiere && encore === premiere, luLe: Number.isFinite(premiere.luLe)};
+    """, fiche)
+    assert res == {"appels": 1, "memeFiche": True, "luLe": True}
+
+
+def test_un_clic_pendant_une_lecture_est_ignore_puis_le_verrou_est_relache():
+    res = node_async("""
+        let appels = 0, liberer;
+        const protegee = s.uneSeuleALaFois(async (x) => { appels += 1; await new Promise(r => { liberer = r; }); return x; });
+        const premier = protegee("a");                 // lecture en cours...
+        const pendant = await protegee("b");           // ...ce second clic est ignoré
+        await new Promise(r => setTimeout(r, 0));      // laisse la première démarrer
+        liberer();
+        const fini = await premier;
+        const apres = protegee("c");                   // le verrou est relâché : une nouvelle lecture démarre
+        await new Promise(r => setTimeout(r, 0)); liberer();
+        return {appels, pendant: pendant === undefined, fini, apres: await apres};
+    """)
+    assert res == {"appels": 2, "pendant": True, "fini": "a", "apres": "c"}
+
+
+def test_le_verrou_est_relache_meme_si_la_lecture_echoue():
+    res = node_async("""
+        let appels = 0;
+        const protegee = s.uneSeuleALaFois(async () => { appels += 1; throw new Error("échec"); });
+        const erreurs = [];
+        for (let i = 0; i < 2; i++) { try { await protegee(); } catch (e) { erreurs.push(e.message); } }
+        return {appels, erreurs};
+    """)
+    assert res == {"appels": 2, "erreurs": ["échec", "échec"]}
+
+
+def test_attente_restante_avant_un_nouvel_appel():
+    # (dernier appel, maintenant, délai minimum) -> attente restante
+    cas = [[1000, 1000, 2000], [1000, 2500, 2000], [1000, 3000, 2000], [1000, 9000, 2000], [0, 1_700_000_000_000, 2000], [5000, 1000, 2000]]
+    assert node("d.map(([dernier, maintenant, minimum]) => s.attenteRestante(dernier, maintenant, minimum))", cas) == [
+        2000, 500, 0, 0, 0, 2000]     # le dernier cas (horloge reculée) est plafonné au délai minimum
+    assert node("s.attenteRestante(Date.now() - 5000)", {}) == 0              # délai par défaut : écoulé
+    assert node("s.attenteRestante(Date.now()) > 1900", {}) is True           # délai par défaut : 2 s
+
+
+def test_deux_appels_a_l_api_sont_espaces_d_au_moins_2_secondes_meme_apres_un_echec(fiche):
+    res = node_async("""
+        const debuts = [];
+        globalThis.fetch = async () => {
+          debuts.push(Date.now());
+          if (debuts.length === 1) throw new Error("réseau");        // le premier appel échoue
+          return {ok: true, status: 200, json: async () => d};
+        };
+        try { await s.lireFiche(50632); } catch (e) { /* attendu */ }
+        const lue = await s.lireFiche(50632);                         // le second doit patienter
+        return {appels: debuts.length, ecart: debuts[1] - debuts[0], id: lue.id};
+    """, fiche)
+    assert res["appels"] == 2 and res["id"] == 50632
+    assert 1900 <= res["ecart"] < 4000
+
+
+def test_l_appel_a_l_api_reutilise_le_cache_du_navigateur_et_la_session(fiche):
+    res = node_async("""
+        let recu;
+        globalThis.fetch = async (url, options) => { recu = {url, options}; return {ok: true, status: 200, json: async () => d}; };
+        await s.lireFiche(50632);
+        return recu;
+    """, fiche)
+    assert res["url"] == "/api/Produit/50632"
+    assert res["options"]["cache"] == "force-cache"            # copie du navigateur réutilisée si elle existe
+    assert res["options"]["credentials"] == "same-origin"      # même session que la page
+    assert res["options"]["headers"] == {"Accept": "application/json"}

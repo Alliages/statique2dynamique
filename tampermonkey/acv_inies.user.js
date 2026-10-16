@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ACV dynamique RE2020 - envoyer les fiches INIES
 // @namespace    https://github.com/Alliages/statique2dynamique
-// @version      1.2.0
+// @version      1.3.0
 // @description  Ajoute un panneau sur les fiches base-inies.fr (norme +A2) : mettre une fiche en A, une autre en B, puis ouvrir l'outil ACV dynamique RE2020 avec les valeurs déjà remplies.
 // @author       Alliages
 // @match        https://www.base-inies.fr/*
@@ -22,7 +22,11 @@
  *      - total » et la durée de vie de référence (DVR), arrondies à 5 décimales comme l'application,
  *      et range le résultat dans l'emplacement A ou B (mémorisé par Tampermonkey d'une fiche à l'autre) ;
  *   3. « Voir les 2 » ouvre l'application dans un nouvel onglet, avec un lien pré-rempli (format identique à lien.py).
- * Aucune donnée n'est envoyée ailleurs que dans l'adresse de ce lien. Une seule fiche lue par clic.
+ * Aucune donnée n'est envoyée ailleurs que dans l'adresse de ce lien.
+ * Appels à l'API d'INIES réduits au strict minimum : jamais à l'ouverture d'une page, jamais automatiquement ;
+ * au plus un par clic sur « Mettre en / Remplacer », aucun si la fiche est déjà rangée en A ou B depuis moins de
+ * 30 jours, un seul à la fois (boutons inactifs pendant la lecture), 2 s minimum entre deux, copie du navigateur
+ * réutilisée si elle existe, pas de nouvel essai automatique en cas d'erreur.
  */
 
 // =============================================================================
@@ -41,9 +45,16 @@ const DECIMALES = 5;                         // comme DECIMALES_ARRONDI de acv_i
 const DVR_MIN = 1, DVR_MAX = 1000;           // comme acv_inies_a2.py
 const LONGUEUR_NOM_MAX = 120;                // comme lien.py
 const DELAI_SURVEILLANCE_MS = 500;           // le site change de page sans recharger : on surveille l'adresse
+// Limitation des appels à l'API d'INIES : un appel seulement quand c'est vraiment nécessaire
+const DUREE_VALIDITE_FICHE_MS = 30 * 24 * 60 * 60 * 1000;  // une fiche rangée en A ou B est réutilisée sans appel pendant 30 jours (1 mois)
+const DELAI_MIN_ENTRE_APPELS_MS = 2000;      // pause minimale entre deux appels à l'API (on patiente, on ne refuse pas)
+const MODE_CACHE_FETCH = "force-cache";      // « force-cache » : réutilise la copie du navigateur (celle que la page vient de charger) si elle existe ;
+                                             // « default » : comportement normal du navigateur (revenir à cette valeur si une fiche semble périmée)
 const ID_PANNEAU = "acv-inies-panneau";
 const CLE_MEMOIRE = "acv_emplacements";      // clé de mémorisation Tampermonkey : { A: fiche|null, B: fiche|null }
 const LETTRES = ["A", "B"];
+// État (change pendant l'utilisation)
+let dernierAppelMs = 0;                      // moment du dernier appel à l'API INIES (millisecondes), pour espacer les appels
 // Aspect du panneau
 const COULEUR_FOND = "#ebbab9", COULEUR_TEXTE = "#08415c";
 const POSITION_PANNEAU = { right: "20px", top: "10px" };
@@ -155,6 +166,39 @@ function construireLien(emplacements, urlApp = URL_APP) {
   return urlApp.replace(/\?+$/, "") + "?" + parametres.map(([c, v]) => `${encoder(c)}=${encoder(v)}`).join("&");
 }
 
+/**
+ * Fiche déjà rangée en A ou en B pour cet identifiant, et lue il y a moins de DUREE_VALIDITE_FICHE_MS : on la
+ * réutilise au lieu d'appeler l'API. Renvoie null sinon (fiche absente, trop ancienne, ou sans date de lecture).
+ * `luLe` = moment de la lecture, en millisecondes ; une date dans le futur (horloge changée) est refusée.
+ */
+function ficheDejaLue(emplacements, id, maintenant = Date.now()) {
+  for (const lettre of LETTRES) {
+    const fiche = emplacements[lettre];
+    if (!fiche || fiche.id !== Number(id) || !Number.isFinite(fiche.luLe)) continue;
+    const age = maintenant - fiche.luLe;
+    if (age >= 0 && age < DUREE_VALIDITE_FICHE_MS) return fiche;
+  }
+  return null;
+}
+
+/** Temps à attendre (ms) avant de pouvoir appeler l'API de nouveau : 0 si le délai minimum est écoulé. */
+function attenteRestante(dernierAppel, maintenant = Date.now(), minimum = DELAI_MIN_ENTRE_APPELS_MS) {
+  return Math.min(minimum, Math.max(0, minimum - (maintenant - dernierAppel)));   // plafonné si l'horloge a reculé
+}
+
+/**
+ * Enveloppe une action asynchrone : tant qu'elle n'est pas terminée, tout nouvel appel est ignoré (anti double-clic).
+ * Le verrou est relâché à la fin de l'action, qu'elle réussisse ou échoue.
+ */
+function uneSeuleALaFois(action) {
+  let enCours = false;
+  return async (...parametres) => {
+    if (enCours) return undefined;
+    enCours = true;
+    try { return await action(...parametres); } finally { enCours = false; }
+  };
+}
+
 /** Texte du bouton d'ouverture : « Voir les 2 », « Voir A » ou « Voir B » selon ce qui est rangé. */
 function texteVoir(emplacements) {
   const remplis = LETTRES.filter((l) => emplacements[l]);
@@ -171,9 +215,18 @@ function idDeLaPage() {
 }
 
 async function lireFiche(id) {
-  const reponse = await fetch(CHEMIN_API + id, { credentials: "same-origin", headers: { Accept: "application/json" } });
+  const attente = attenteRestante(dernierAppelMs);
+  if (attente > 0) await new Promise((resolve) => setTimeout(resolve, attente));
+  dernierAppelMs = Date.now();            // noté avant l'appel : un échec compte aussi, et il n'y a jamais de nouvel essai automatique
+  const reponse = await fetch(CHEMIN_API + id, { credentials: "same-origin", cache: MODE_CACHE_FETCH,
+                                                headers: { Accept: "application/json" } });
   if (!reponse.ok) throw new Error(`Le site INIES a répondu « ${reponse.status} » : fiche illisible.`);
-  return extraireFiche(await reponse.json(), id);
+  return { ...extraireFiche(await reponse.json(), id), luLe: Date.now() };   // luLe : voir ficheDejaLue
+}
+
+/** La fiche d'identifiant `id` : réutilisée si elle est déjà rangée en A ou B (aucun appel), sinon lue sur l'API. */
+async function obtenirFiche(id, emplacements) {
+  return ficheDejaLue(emplacements, id) || await lireFiche(id);
 }
 
 function ouvrir(lien) {
@@ -190,7 +243,8 @@ function lireEmplacements() {
     // chaque fiche mémorisée est revérifiée avant usage (ses valeurs finiront dans une adresse)
     const propre = (f) => (f && Number.isInteger(f.id) && Number.isInteger(f.dvr) && Array.isArray(f.valeurs) &&
       f.valeurs.length === PHASES.length && f.valeurs.every(Number.isFinite)
-      ? { id: f.id, nom: nettoyerNom(f.nom || ""), dvr: f.dvr, valeurs: f.valeurs } : null);
+      ? { id: f.id, nom: nettoyerNom(f.nom || ""), dvr: f.dvr, valeurs: f.valeurs,
+          luLe: Number.isFinite(f.luLe) ? f.luLe : null } : null);   // sans date de lecture : jamais réutilisée sans appel
     return { A: propre(lus.A), B: propre(lus.B) };
   } catch (e) {
     return vides;
@@ -247,20 +301,26 @@ function dessiner(corps) {
 }
 
 /** Lit la fiche ouverte et la range dans l'emplacement `lettre`. */
-async function mettre(corps, lettre) {
+async function mettreFiche(corps, lettre) {
   const id = idDeLaPage();
   if (!id) return;
   corps.style.opacity = "0.6";
+  corps.style.pointerEvents = "none";     // boutons inactifs pendant la lecture
   try {
-    const fiche = await lireFiche(id);
+    const emplacements = lireEmplacements();
+    const fiche = await obtenirFiche(id, emplacements);
     ecrireEmplacements({ ...lireEmplacements(), [lettre]: fiche });
   } catch (erreur) {
     alert(TEXTE_ERREUR + erreur.message);
   } finally {
     corps.style.opacity = "1";
+    corps.style.pointerEvents = "";
     dessiner(corps);
   }
 }
+
+/** Version utilisée par les boutons : un second clic pendant une lecture est ignoré (aucun appel en double). */
+const mettre = uneSeuleALaFois(mettreFiche);
 
 /**
  * Panneau déroulant : seul le titre est visible. Le survol déroule le contenu ; un clic sur le titre l'épingle
@@ -304,5 +364,6 @@ if (typeof document !== "undefined" && typeof module === "undefined") {
   setInterval(surveiller, DELAI_SURVEILLANCE_MS);
 }
 if (typeof module !== "undefined") {
-  module.exports = { developper, nombre, arrondir, nettoyerNom, encoder, extraireFiche, construireLien, texteVoir, PHASES };
+  module.exports = { developper, nombre, arrondir, nettoyerNom, encoder, extraireFiche, construireLien, texteVoir, PHASES,
+                     ficheDejaLue, obtenirFiche, lireEmplacements, uneSeuleALaFois, attenteRestante, lireFiche };
 }
