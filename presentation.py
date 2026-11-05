@@ -369,6 +369,7 @@ div[data-testid="stNumberInput"] input, div[data-testid="stNumberInput"] > div >
 div[data-testid="stPlotlyChart"] {border: 1px solid __BORDURE__; padding: .4rem;}
 .titre-principal {font-size: 2.1rem; font-weight: 800; line-height: 1.2; margin: .2rem 0 .6rem 0; color: __TITRE__;}
 .titre-principal .mot {color: __MOT__;}
+.titre-principal .icone-titre {height: 1.5em; vertical-align: -.4em; margin-right: .45rem;}
 .sous-titre {font-size: 1.35rem; font-weight: 600; color: __MOT__; margin: -.3rem 0 .8rem 0;}
 .titre-section {font-size: 1.7rem; font-weight: 700; margin: .4rem 0 .6rem 0; color: __TITRE__;
                 border-bottom: 3px solid __MOT__; display: inline-block; padding-bottom: .1rem;}

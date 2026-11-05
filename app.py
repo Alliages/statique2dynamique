@@ -11,8 +11,10 @@ Organisation du projet :
     presentation.py   nombres français, graphique, tableau des étapes, styles
     app.py            cette interface (aucun calcul ici)
 """
+import base64
 import html
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -28,7 +30,9 @@ import presentation as pres
 # =============================================================================
 VERSIONS_MASQUEES = ("3.5.0", "3.6.0", "3.6.1")     # absentes de l'historique affiché (restent dans CHANGELOG.md)
 TITRE_PAGE = "Comprendre l'impact carbone d'un matériau — L'ACV dynamique dans la RE2020"
-ICONE_PAGE = "🏗️"
+DOSSIER_ICONES = Path(__file__).resolve().parent / "assets"
+ICONE_PAGE = str(DOSSIER_ICONES / "favicon.png")           # favicon (onglet du navigateur)
+ICONE_TITRE = DOSSIER_ICONES / "icone.svg"                 # même icône, affichée à côté du titre
 UNITE = pres.UNITE
 
 # Lien vers la fiche d'un produit à partir de son identifiant ({id} est remplacé).
@@ -520,7 +524,8 @@ CATALOGUE, ERREUR_CATALOGUE = charger_catalogue()
 COULEURS = pres.THEME["matieres"]
 
 st.markdown(pres.css(), unsafe_allow_html=True)
-st.markdown('<h1 class="titre-principal">Comprendre l\'impact <span class="mot">carbone</span> '
+ICONE_TITRE_URI = "data:image/svg+xml;base64," + base64.b64encode(ICONE_TITRE.read_bytes()).decode()
+st.markdown(f'<h1 class="titre-principal"><img class="icone-titre" src="{ICONE_TITRE_URI}" alt="">Comprendre l\'impact <span class="mot">carbone</span> '
             'd\'un matériau</h1><div class="sous-titre">L\'ACV dynamique dans la RE2020</div>', unsafe_allow_html=True)
 st.markdown(TEXTE_INTRO)
 with st.expander("Comment faire ? (3 étapes)", expanded=True):
